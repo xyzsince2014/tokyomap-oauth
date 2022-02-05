@@ -9,7 +9,7 @@ import org.springframework.web.context.support.AnnotationConfigWebApplicationCon
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.servlet.DispatcherServlet;
 
-public class MrsApplicationInitializer implements WebApplicationInitializer {
+public class AuthApplicationInitializer implements WebApplicationInitializer {
 
   /**
    * cf. https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/WebApplicationInitializer.html
