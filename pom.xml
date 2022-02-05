@@ -251,13 +251,25 @@
 
   <profiles>
     <profile>
-      <id>develop</id>
+      <id>develop_1</id>
       <activation>
         <activeByDefault>true</activeByDefault>
       </activation>
       <build>
         <resources>
-          <resource><directory>src/profiles/develop/resources</directory></resource>
+          <resource><directory>src/profiles/develop_1/resources</directory></resource>
+          <resource><directory>src/main/resources</directory></resource>
+        </resources>
+      </build>
+    </profile>
+    <profile>
+      <id>develop_2</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <build>
+        <resources>
+          <resource><directory>src/profiles/develop_2/resources</directory></resource>
           <resource><directory>src/main/resources</directory></resource>
         </resources>
       </build>
