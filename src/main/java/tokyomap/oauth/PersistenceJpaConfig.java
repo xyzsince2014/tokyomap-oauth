@@ -25,7 +25,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @ComponentScan
 @EnableJpaRepositories
 @EnableTransactionManagement
-@PropertySource("/WEB-INF/jdbc.properties")
+@PropertySource("classpath:/conf/jdbc.properties")
 public class PersistenceJpaConfig {
 
   @Value("${db.driverClassName}")  private String driverClassName;

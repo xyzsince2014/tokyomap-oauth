@@ -16,7 +16,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @ComponentScan
 @EnableWebMvc
 @EnableAspectJAutoProxy(proxyTargetClass = true)
-@PropertySource("/WEB-INF/application.properties")
+@PropertySource("classpath:/conf/application.properties")
 public class ApplicationConfig implements WebMvcConfigurer {
   @Bean
   public static PropertySourcesPlaceholderConfigurer placeholderConfigurer() {
