@@ -1,0 +1,21 @@
+target/
+.mvn/repository
+
+### shellscripts
+sh/~/
+
+### postgres
+postgres/var
+
+### Tomcat
+tomcat/logs
+tomcat/webapps
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### VS Code ###
+.vscode/

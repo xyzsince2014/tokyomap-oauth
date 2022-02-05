@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8" />
+  <title th:text="|${#temporals.format(date, 'yyyy/M/d')}の${room.roomName}|"/>
+</head>
+<body th:with="user=${#authentication.principal.user}">
+<div><a th:href="@{'/rooms/' + ${date}}">会議室一覧へ</a></div>
+<p style="color: red" th:if="${error != null}" th:text="${error}"></p>
+<form th:object="${reservationForm}" th:action="@{'/reservations/' + ${date} + '/' + ${roomId}}" method="post">
+  <p>会議室: <span th:text="${room.roomName}"/></p>
+  <p>予約者名: <span th:text="${user.familyName + ' ' + user.givenName}"/>&nbsp;(<span th:text="${user.userId}"/>)</p>
+  <p>日付: <span th:text="${#temporals.format(date, 'yyyy/M/d')}"/></p>
+  <p>時間帯:
+    <select th:field="*{startTime}">
+      <option th:each="time : ${timeList}" th:text="${time}" th:value="${time}">09:00</option>
+    </select>
+    <span th:if="${#fields.hasErrors('startTime')}" th:errors="*{startTime}" style="color: red">error!</span>-
+    <select th:field="*{finishTime}">
+      <option th:each="time : ${timeList}" th:text="${time}" th:value="${time}">10:00</option>
+    </select>
+    <span th:if="${#fields.hasErrors('finishTime')}" th:errors="*{finishTime}" style="color: red">error!</span>
+  </p>
+  <button type="submit">予約</button>
+</form>
+<table>
+  <tr>
+    <th>時間帯</th>
+    <th>予約者</th>
+    <th>操作</th>
+  </tr>
+  <tr th:each="reservation : ${reservations}">
+    <td>
+      <span th:text="${reservation.startTime}" />
+      -
+      <span th:text="${reservation.finishTime}" />
+    </td>
+    <td>
+      <span th:text="${reservation.user.familyName}" />
+      <span th:text="${reservation.user.givenName}" />
+    </td>
+        <td><span>hoge</span><span>fuga</span></td>
+    <td>
+      <form method="post"
+            th:action="@{'/reservations/' + ${date} + '/' + ${roomId} + '/cancel'}"
+            sec:authorize="${hasRole('ADMIN') or #vars.user.userId==#vars.reservation.user.userId}">
+        <input type="hidden" name="reservationId" th:value="${reservation.reservationId}" />
+        <input type="submit" name="cancel" value="取消" />
+      </form>
+    </td>
+  </tr>
+</table>
+</body>
+</html>
