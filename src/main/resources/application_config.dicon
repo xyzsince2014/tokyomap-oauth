@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE components PUBLIC "-//SEASAR//DTD S2Container 2.4//EN" "http://www.seasar.org/dtd/components24.dtd">
+<components namespace="application_config">
+  <!-- コンポーネントの自動登録-->
+  <component class="org.seasar.framework.container.autoregister.ComponentAutoRegister">
+<!--    <initMethod name="addReferenceClass"><arg>@tokyomap.oauth.daos.tokyomapdb.ReferenceComponentAutoRegisterDao@class</arg></initMethod>-->
+    <initMethod name="addClassPattern">
+      <arg>"tokyomap.oauth.daos.tokyomapdb"</arg>
+      <arg>".*Dao,.*DaoImpl"</arg>
+    </initMethod>
+  </component>
+  <!-- アスペクトの自動登録 -->
+  <component class="org.seasar.framework.container.autoregister.AspectAutoRegister">
+    <property name="interceptor">tokyomapdb_dao.interceptor</property>
+    <initMethod name="addClassPattern">
+      <arg>"tokyomap.oauth.daos.tokyomapdb"</arg>
+      <arg>".*Dao,.*DaoImpl"</arg>
+    </initMethod>
+  </component>
+  <!-- services -->
+  <component name="IndexService" class="tokyomap.oauth.services.IndexServiceImpl">
+    <aspect>serviceChain</aspect>
+  </component>
+  <!-- logics -->
+<!--  <component class="org.seasar.framework.container.autoregister.ComponentAutoRegister">-->
+<!--    <initMethod name="addReferenceClass"><arg>@tokyomap.oauth.logics.ContentsLogic@class</arg></initMethod>-->
+<!--    <initMethod name="addClassPattern">-->
+<!--      <arg>"tokyomap.oauth.logics"</arg>-->
+<!--      <arg>".*Logic"</arg>-->
+<!--    </initMethod>-->
+<!--    <initMethod name="addIgnorePattern">-->
+<!--      <arg>"tokyomap.oauth.logics"</arg>-->
+<!--      <arg>"HogeLogic"</arg>-->
+<!--    </initMethod>-->
+<!--  </component>-->
+  <!-- interceptors -->
+  <component name="serviceChain" class="org.seasar.framework.aop.interceptors.InterceptorChain">
+    <initMethod name="add"><arg>j2ee.requiredTx</arg></initMethod>
+<!--    <initMethod name="add"><arg>servicetrace</arg></initMethod>-->
+<!--    <initMethod name="add"><arg>endExternalApiTrace</arg></initMethod>-->
+  </component>
+</components>

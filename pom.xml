@@ -18,6 +18,9 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.version>3.8.1</maven.version>
     <servlet-api.version>4.0.1</servlet-api.version>
+    <java-ee.version>2.1.1</java-ee.version>
+    <java.transaction.version>1.2</java.transaction.version>
+    <jersey.version>2.35</jersey.version>
     <spring-framework.version>5.3.15</spring-framework.version>
     <spring-framework-data.version>3.6.1</spring-framework-data.version>
     <spring-framework-jpa.version>2.6.1</spring-framework-jpa.version>
@@ -30,9 +33,24 @@
     <javax-persistence.version>2.2</javax-persistence.version>
     <validation-api.version>2.0.1.Final</validation-api.version>
     <thymeleaf-extras.version>3.0.4.RELEASE</thymeleaf-extras.version>
-    <!--    <lombok.version>1.18.8</lombok.version>-->
+    <jyaml.version>1.3</jyaml.version>
+    <s2.container.version>2.4.48</s2.container.version>
+    <s2.dao.version>1.0.51</s2.dao.version>
     <postgresql.version>42.3.1</postgresql.version>
   </properties>
+
+  <repositories>
+    <repository>
+      <id>maven.central</id>
+      <name>Maven Central Repository</name>
+      <url>https://repo1.maven.apache.org/maven2</url>
+    </repository>
+    <repository>
+      <id>maven.seasar.org</id>
+      <name>The Seasar Foundation Maven2 Repository</name>
+      <url>https://www.seasar.org/maven/maven2/</url>
+    </repository>
+  </repositories>
 
   <dependencyManagement>
     <dependencies>
@@ -54,17 +72,18 @@
       <version>${servlet-api.version}</version>
       <scope>provided</scope>
     </dependency>
-    <!-- Jersey-->
-<!--        <dependency>-->
-<!--          <groupId>com.sun.jersey</groupId>-->
-<!--          <artifactId>jersey-server</artifactId>-->
-<!--          <version>1.19.4</version>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--          <groupId>com.sun.jersey</groupId>-->
-<!--          <artifactId>jersey-json</artifactId>-->
-<!--          <version>1.19.4</version>-->
-<!--        </dependency>-->
+    <!-- Java EE -->
+    <dependency>
+      <groupId>javax.ws.rs</groupId>
+      <artifactId>javax.ws.rs-api</artifactId>
+      <version>${java-ee.version}</version>
+    </dependency>
+    <!-- Java Transaction -->
+    <dependency>
+      <groupId>javax.transaction</groupId>
+      <artifactId>javax.transaction-api</artifactId>
+      <version>${java.transaction.version}</version>
+    </dependency>
     <!-- Spring MVC -->
     <dependency>
       <groupId>org.springframework</groupId>
@@ -123,6 +142,27 @@
       <artifactId>spring-aop</artifactId>
       <version>${spring-framework.version}</version>
     </dependency>
+    <!-- Jersey -->
+    <dependency>
+      <groupId>org.glassfish.jersey.containers</groupId>
+      <artifactId>jersey-container-servlet</artifactId>
+      <version>${jersey.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.glassfish.jersey.core</groupId>
+      <artifactId>jersey-client</artifactId>
+      <version>${jersey.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.glassfish.jersey.inject</groupId>
+      <artifactId>jersey-hk2</artifactId>
+      <version>${jersey.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.glassfish.jersey.media</groupId>
+      <artifactId>jersey-media-json-binding</artifactId>
+      <version>${jersey.version}</version>
+    </dependency>
     <!-- AspectJ -->
     <dependency>
       <groupId>org.aspectj</groupId>
@@ -168,36 +208,40 @@
       <artifactId>thymeleaf-extras-springsecurity5</artifactId>
       <version>${thymeleaf-extras.version}</version>
     </dependency>
-    <!-- lombok -->
-    <!--		<dependency>-->
-    <!--			<groupId>org.projectlombok</groupId>-->
-    <!--			<artifactId>lombok</artifactId>-->
-    <!--      <version>${lombok.version}</version>-->
-    <!--      <scope>compile</scope>-->
-    <!--		</dependency>-->
-    <!-- Postgres JDBC driver-->
+    <!-- JYaml -->
+    <dependency>
+      <groupId>org.jyaml</groupId>
+      <artifactId>jyaml</artifactId>
+      <version>${jyaml.version}</version>
+    </dependency>
+    <!-- Seasar -->
+    <dependency>
+      <groupId>org.seasar.container</groupId>
+      <artifactId>s2-extension</artifactId>
+      <version>${s2.container.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.seasar.container</groupId>
+      <artifactId>s2-tiger</artifactId>
+      <version>${s2.container.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.seasar.dao</groupId>
+      <artifactId>s2-dao</artifactId>
+      <version>${s2.dao.version}</version>
+    </dependency>
     <dependency>
       <groupId>org.postgresql</groupId>
       <artifactId>postgresql</artifactId>
       <version>${postgresql.version}</version>
     </dependency>
     <!-- logging with SLF4J -->
-    <!--    <dependency>-->
-    <!--      <groupId>org.slf4j</groupId>-->
-    <!--      <artifactId>slf4j-api</artifactId>-->
-    <!--      <version>${slf4j-api.version}</version>-->
-    <!--      <scope>compile</scope>-->
-    <!--    </dependency>-->
-    <!-- to log4j -->
-    <!--    <dependency>-->
-    <!--      <groupId>org.slf4j</groupId>-->
-    <!--      <artifactId>slf4j-log4j13</artifactId>-->
-    <!--    </dependency>-->
-    <!--    <dependency>-->
-    <!--      <groupId>ch.qos.logback</groupId>-->
-    <!--      <artifactId>logback-classic</artifactId>-->
-    <!--      <version>${logback-classic.version}</version>-->
-    <!--    </dependency>-->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>${slf4j-api.version}</version>
+      <scope>compile</scope>
+    </dependency>
   </dependencies>
 
   <build>

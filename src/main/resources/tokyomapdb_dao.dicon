@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE components PUBLIC "-//SEASAR//DTD S2Container 2.4//EN" "http://www.seasar.org/dtd/components24.dtd">
+<components namespace="tokyomapdb_dao">
+  <include path="tokyomapdb_j2ee.dicon"/>
+  <component class="org.seasar.dao.impl.AnnotationReaderFactoryImpl"/>
+  <component class="org.seasar.dao.impl.DaoMetaDataFactoryImpl"/>
+  <component name="interceptor" class="org.seasar.dao.pager.PagerS2DaoInterceptorWrapper">
+    <arg>
+      <component class="org.seasar.dao.interceptors.S2DaoInterceptor"/>
+    </arg>
+  </component>
+  <component class="org.seasar.dao.impl.ValueTypeFactoryImpl"/>
+<!--  <component class="stringClobType">@org.seasar.dao.types.ValueTypes@CLOB</component>-->
+  <component class="org.seasar.dao.impl.BeanMetaDataFactoryImpl"/>
+  <component class="org.seasar.dao.impl.DaoNamingConventionImpl"/>
+  <component class="org.seasar.dao.impl.NullBeanEnhancer"/>
+  <component class="org.seasar.dao.impl.ResultSetHandlerFactorySelector"/>
+  <component class="org.seasar.dao.impl.DtoMetaDataFactoryImpl"/>
+  <component class="org.seasar.dao.impl.PropertyTypeFactoryBuilderImpl"/>
+  <component class="org.seasar.dao.impl.RelationPropertyTypeFactoryBuilderImpl"/>
+  <component class="org.seasar.dao.impl.DecamelizeTableNaming"/>
+  <component class="org.seasar.dao.impl.DecamelizeColumnNaming"/>
+  <component class="org.seasar.dao.impl.ProcedureMetaDataFactoryImpl"/>
+</components>
