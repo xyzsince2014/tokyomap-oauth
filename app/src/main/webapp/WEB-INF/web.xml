@@ -18,17 +18,4 @@
     <dispatcher>ASYNC</dispatcher>
   </filter-mapping>
 
-  <filter>
-    <filter-name>clientInfoMdcPutFilter</filter-name>
-    <filter-class>tokyomap.oauth.filters.ClinentInfoMdcPutFilter</filter-class>
-    <init-param>
-      <param-name>mdcKey</param-name>
-      <param-value>remoteIp</param-value>
-    </init-param>
-  </filter>
-  <filter-mapping>
-    <filter-name>clientInfoMdcPutFilter</filter-name>
-    <url-pattern>/*</url-pattern>
-  </filter-mapping>
-
 </web-app>

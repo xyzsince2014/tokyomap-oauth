@@ -1,7 +1,6 @@
 package tokyomap.oauth;
 
 import java.util.List;
-import tokyomap.oauth.interceptors.LoginHandlerInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
@@ -28,9 +27,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableAspectJAutoProxy(proxyTargetClass = true) // enable AOP
 @PropertySource("classpath:conf/application.properties")
 public class WebMvcConfig implements WebMvcConfigurer {
-
-  @Autowired
-  LoginHandlerInterceptor loginHandlerInterceptor;
 
 //  /**
 //   * enable injenctions by @Value
@@ -84,12 +80,12 @@ public class WebMvcConfig implements WebMvcConfigurer {
     // configurer.registerDeferredResultInterceptors(new CustomDeferredResultProcessingInterceptor());
   }
 
-  /**
-   * register handler interceptors
-   * @param registry
-   */
-  @Override
-  public void addInterceptors(InterceptorRegistry registry) {
-    registry.addInterceptor(this.loginHandlerInterceptor).addPathPatterns("/login");
-  }
+//  /**
+//   * register handler interceptors
+//   * @param registry
+//   */
+//  @Override
+//  public void addInterceptors(InterceptorRegistry registry) {
+//    registry.addInterceptor(this.loginHandlerInterceptor).addPathPatterns("/login");
+//  }
 }
