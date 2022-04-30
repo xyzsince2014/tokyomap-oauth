@@ -1,23 +1,28 @@
 package tokyomap.oauth.domain.services.user;
 
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import tokyomap.oauth.aspects.UserNotFoundException;
 import tokyomap.oauth.domain.models.entities.Role;
 import tokyomap.oauth.domain.models.entities.User;
 import tokyomap.oauth.domain.repositories.user.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service
 public class UserService {
 
-  @Autowired
-  private UserRepository userRepository;
+  private final UserRepository userRepository;
 
-  public User findUserByUserId(String userId) throws Exception {
+  @Autowired
+  public UserService(UserRepository userRepository) {
+    this.userRepository = userRepository;
+  }
+
+  public User findUserByUserId(String userId) throws UserNotFoundException {
     User user = this.userRepository.findByUserId(userId);
 
     if(user == null) {
-      throw new Exception("User Not Found, userId = " + userId);
+      throw new UserNotFoundException("User Not Found, userId = " + userId);
     }
 
     return user;

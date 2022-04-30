@@ -14,10 +14,14 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 
+/**
+ * configure Spring Data JPA.
+ * cf. https://www.baeldung.com/the-persistence-layer-with-spring-and-jpa
+ */
 @Configuration
 @EnableJpaRepositories
-@EnableTransactionManagement
-@PropertySource("classpath:jpa.properties")
+@EnableTransactionManagement // enables declarative transaction management by @Transactional
+@PropertySource("classpath:conf/jpa.properties")
 public class JpaConfig {
 
   @Value("${db.driver_class_name}") private String driverClassName;
@@ -37,7 +41,11 @@ public class JpaConfig {
 
   @Value("${spring.jpa.packages.entities}") private String packagesToScan;
 
-  @Bean(destroyMethod = "close")
+  /**
+   * configure the data source used by JPA.
+   * @return BasicDataSource
+   */
+  @Bean(destroyMethod = "close") // invoke BasicDataSource.close() on destroy to release the data source
   public BasicDataSource dataSource(){
     BasicDataSource dataSource = new BasicDataSource();
     dataSource.setDriverClassName(this.driverClassName);
@@ -52,6 +60,12 @@ public class JpaConfig {
     return dataSource;
   }
 
+  /**
+   * configure EntityManagerFactory which Spring Data JPA needs on the DI container.
+   * EntityManager synchronises entities in PersistenceContexts (entities managed by the EntityManager) and RDB by executing SQL queries.
+   * Note that a PersistenceContext is made for every transaction.
+   * @return LocalContainerEntityManagerFactoryBean
+   */
   @Bean
   public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
     Properties jpaProperties = new Properties();
@@ -68,6 +82,10 @@ public class JpaConfig {
     return entityManager;
   }
 
+  /**
+   * configure PlatformTransactionManager, via which JpaTransactionManager calls EntityTransaction APIs.
+   * @return PlatformTransactionManager
+   */
   @Bean
   public PlatformTransactionManager transactionManager() {
     JpaTransactionManager transactionManager = new JpaTransactionManager();

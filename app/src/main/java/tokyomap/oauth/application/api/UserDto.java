@@ -6,8 +6,7 @@ import java.time.LocalDate;
 import org.springframework.lang.Nullable;
 
 public class UserDto implements Serializable {
-
-  private static final long serialVersionUID = 5045870685362456022L;
+  private static final long serialVersionUID = 1L;
 
   private String userId;
   private String givenName;

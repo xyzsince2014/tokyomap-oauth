@@ -4,17 +4,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.when;
 
+import tokyomap.oauth.domain.models.entities.Role;
+import tokyomap.oauth.domain.models.entities.User;
+import tokyomap.oauth.domain.repositories.user.UserRepository;
+import tokyomap.oauth.domain.services.user.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import tokyomap.oauth.domain.models.entities.Role;
-import tokyomap.oauth.domain.models.entities.User;
-import tokyomap.oauth.domain.repositories.user.UserRepository;
-import tokyomap.oauth.domain.services.user.UserService;
 
 public class UserServiceTest {
+
+  // the test target
   @InjectMocks
   private UserService userService;
 
@@ -29,7 +31,7 @@ public class UserServiceTest {
   }
 
   @Test
-  public void test_findByUserId() throws Exception {
+  public void test_findByUserId() {
     final String userId = "999";
     final String password = "pass";
 

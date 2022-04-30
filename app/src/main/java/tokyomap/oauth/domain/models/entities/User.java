@@ -9,11 +9,12 @@ import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+
 @Entity
 @Table(name = "usr")
 public class User implements Serializable {
 
-  private static final long serialVersionUID = 4542219079071932779L;
+  private static final long serialVersionUID = 1L;
 
   @Id
   @Column(name = "user_id")
