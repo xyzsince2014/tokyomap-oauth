@@ -25,7 +25,6 @@ public class OAuthApplicationInitializer implements WebApplicationInitializer {
     AnnotationConfigWebApplicationContext webApplicationContext = new AnnotationConfigWebApplicationContext();
     webApplicationContext.setConfigLocation(WebMvcConfig.class.getName());
     webApplicationContext.setConfigLocation(JpaConfig.class.getName());
-    webApplicationContext.setConfigLocation(AsyncConfig.class.getName());
     webApplicationContext.setConfigLocation(ThymeleafConfig.class.getName());
     webApplicationContext.registerShutdownHook();
     servletContext.addListener(new ContextLoaderListener(webApplicationContext));
