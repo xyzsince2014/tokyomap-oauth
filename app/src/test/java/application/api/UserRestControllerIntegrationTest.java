@@ -42,7 +42,7 @@ public class UserRestControllerIntegrationTest {
   public void testGetUser() throws Exception {
 
     String res = this.mockMvc
-        .perform(get("/api/user/bbbb").accept(MediaType.APPLICATION_JSON))
+        .perform(get("/api/users/bbbb").accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
         .andReturn().getResponse().getContentAsString();
