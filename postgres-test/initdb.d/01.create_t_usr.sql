@@ -13,13 +13,13 @@ create table if not exists t_usr (
   , locale character varying(256)
   , password character varying(256) not null
   , email character varying(256)
-  , email_verified boolean
+  , email_verified boolean not null default false
   , address character varying(256)
   , phone character varying(256)
-  , phone_number_verified character varying(256)
+  , phone_number_verified boolean not null default false
   , scope character varying(256) not null
-  , created_at timestamp not null default current_timestamp
-  , updated_at timestamp not null default current_timestamp
+  , created_at timestamp without time zone not null default current_timestamp
+  , updated_at timestamp without time zone not null default current_timestamp
 );
 
 -- dummy users

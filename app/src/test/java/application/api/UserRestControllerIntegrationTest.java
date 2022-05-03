@@ -1,12 +1,12 @@
 package application.api;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertNull;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,12 +22,12 @@ import org.springframework.web.context.WebApplicationContext;
 import tokyomap.oauth.WebMvcConfig;
 import tokyomap.oauth.application.api.UserDto;
 
-
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = {WebMvcConfig.class})
 @WebAppConfiguration
 @ActiveProfiles("test")
 public class UserRestControllerIntegrationTest {
+
   @Autowired
   private WebApplicationContext context;
 
@@ -40,18 +40,52 @@ public class UserRestControllerIntegrationTest {
 
   @Test
   public void testGetUser() throws Exception {
-
-    String res = this.mockMvc
-        .perform(get("/api/users/bbbb").accept(MediaType.APPLICATION_JSON))
+    this.mockMvc
+        .perform(get("/api/user/9XE3-JI34-99999A").accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
-        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-        .andReturn().getResponse().getContentAsString();
-
-    UserDto actualDto = (new ObjectMapper()).readValue(res, UserDto.class);
-
-    assertThat(actualDto.getUserId()).isEqualTo("bbbb");
-    assertThat(actualDto.getGivenName()).isEqualTo("Bbb");
-    assertThat(actualDto.getFamilyName()).isEqualTo("Bbb");
-    assertNull(actualDto.getCreatedAt());
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON));
   }
+
+  @Test
+  public void testGetAllUsers() throws Exception {
+    this.mockMvc
+        .perform(get("/api/user").accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+  }
+
+// todo:
+//  @Test
+//  public void testCreateUser() throws Exception {
+//    UserDto dto = new UserDto();
+//    dto.setSub("hoge");
+//    dto.setFamilyName("fuga");
+//    dto.setScope("hoge fuga");
+//
+//    this.mockMvc
+//        .perform(post("/api/user", dto).accept(MediaType.APPLICATION_JSON))
+//        .andExpect(status().isCreated())
+//        .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+//  }
+
+// todo:
+//  @Test
+//  public void testUpdateUser() throws Exception {
+//    UserDto dto = new UserDto();
+//    dto.setSub("hoge");
+//    dto.setFamilyName("foo");
+//    dto.setGivenName("boo");
+//
+//    this.mockMvc
+//        .perform(put("/api/user", dto).accept(MediaType.APPLICATION_JSON))
+//        .andExpect(status().isNoContent());
+//  }
+
+// todo:
+//  @Test
+//  public void testDeleteUser() throws Exception {
+//    this.mockMvc
+//        .perform(delete("/api/user/hoge"))
+//        .andExpect(status().isNoContent());
+//  }
 }

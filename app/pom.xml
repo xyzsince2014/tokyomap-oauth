@@ -43,6 +43,7 @@
     <javax-persistence.version>2.2</javax-persistence.version>
     <validation-api.version>2.0.1.Final</validation-api.version>
     <jackson-databind.version>2.13.2.1</jackson-databind.version>
+    <jackson-datatype.version>2.13.2</jackson-datatype.version>
     <thymeleaf-extras.version>3.0.4.RELEASE</thymeleaf-extras.version>
     <postgresql.version>42.2.23</postgresql.version>
     <junit-jupiter.version>5.8.2</junit-jupiter.version>
@@ -175,6 +176,12 @@
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
       <version>${jackson-databind.version}</version>
+    </dependency>
+    <!-- Jackson Datatype -->
+    <dependency>
+      <groupId>com.fasterxml.jackson.datatype</groupId>
+      <artifactId>jackson-datatype-jsr310</artifactId>
+      <version>${jackson-datatype.version}</version>
     </dependency>
     <!-- Thymeleaf with Spring -->
     <dependency>

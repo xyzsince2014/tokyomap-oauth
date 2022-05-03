@@ -4,9 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import tokyomap.oauth.JpaConfig;
 import tokyomap.oauth.WebMvcConfig;
-import tokyomap.oauth.domain.models.entities.Role;
-import tokyomap.oauth.domain.models.entities.User;
-import tokyomap.oauth.domain.services.user.UserService;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +12,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
+import tokyomap.oauth.domain.entities.Usr;
+import tokyomap.oauth.domain.services.usr.UsrService;
 
 @RunWith(SpringRunner.class) // the Runner class to run the test DI container
 @ContextConfiguration(classes = {WebMvcConfig.class, JpaConfig.class}) // the test DI container's configs
@@ -22,14 +22,16 @@ import org.springframework.test.context.web.WebAppConfiguration;
 public class UserServiceIntegrationTest {
 
   @Autowired
-  private UserService userService; // the test target Bean
+  private UsrService usrService; // the test target Bean
 
   @Test
   public void testFindUserByUserId() {
-    User actual = this.userService.findUserByUserId("hoge-fuga");
+    Usr actual = this.usrService.findUsrBySub("00u1sneigDs6Rolmu2p6");
 
-    assertThat(actual.getFamilyName()).isEqualTo("fuga");
-    assertThat(actual.getGivenName()).isEqualTo("hoge");
-    assertThat(actual.getRole()).isEqualTo(Role.ADMIN);
+    assertThat(actual.getName()).isEqualTo("Ken Vinson");
+    assertThat(actual.getPicture()).isNull();
+    assertThat(actual.getAddress()).isEqualTo("{\"streetAddress\":\"999 Patpong Street\", \"locality\": \"unknown\", \"region\": \"Central Thailand\", \"postalCode\": \"10###\", \"country\": \"Thailand\"}");
   }
+
+  // todo: test the other functions
 }

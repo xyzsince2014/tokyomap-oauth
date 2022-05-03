@@ -7,9 +7,9 @@ import org.springframework.stereotype.Component;
 @Aspect
 @Component
 public class NamedPointCuts {
-  @Pointcut("execution(* mrs.application.*.*Controller.*(..))")
+  @Pointcut("execution(* tokyomap.oauth.application.*.*Controller.*(..))")
   public void anyControllerOperation() {}
 
-  @Pointcut("execution(* mrs.domain.services.*.*Service.*(..))")
+  @Pointcut("execution(* tokyomap.oauth.domain.services.*.*Service.*(..))")
   public void anyServiceOperation() {}
 }

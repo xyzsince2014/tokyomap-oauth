@@ -1,4 +1,4 @@
-package tokyomap.oauth.domain.models.converters;
+package tokyomap.oauth.domain.converters;
 
 import java.sql.Date;
 
