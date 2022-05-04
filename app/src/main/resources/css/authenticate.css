@@ -1,0 +1,15 @@
+body {
+  padding-top: 60px;
+}
+
+.navbar-inverse {
+  background-color: #223;
+}
+
+.mt-5 {
+  margin-top: 5px;
+}
+
+.mt-10 {
+  margin-top: 10px;
+}

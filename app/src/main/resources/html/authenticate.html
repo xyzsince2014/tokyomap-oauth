@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>OAuth in Action: OAuth Authorization Server</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+  <link rel="stylesheet" href="../css/authenticate.css">
+</head>
+
+<body>
+<nav class="navbar navbar-inverse navbar-fixed-top">
+  <div class="container">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="/">OAuth in Action: <span class="label label-danger">OAuth Authorization Server</span></a>
+    </div>
+  </div>
+</nav>
+<div class="container">
+  <section class="jumbotron">
+    <h2>Approve this client ?</h2>
+    <p>client:&nbsp;<span th:text="${dto.client}"/></p>
+    <p>requestId:&nbsp;<span th:text="${dto.requestId}"/></p>
+    <p>requestedScope:&nbsp;<span th:text="${dto.requestedScope}"/></p>
+<!-- todo:   <p>Client Name:&nbsp;<span th:text="${dto.client.name}"/></p>-->
+<!-- todo:   <p>Client Id:&nbsp;<code><%- client.clientId ?? ''%></code></p>-->
+<!-- todo:   <p>Client URI:&nbsp;<code><%- client.clientUri ?? '' %></code></p>-->
+    <form class="form" action="/api/authorise" method="POST">
+      <input type="hidden" name="requestId" value="${dto.requestId}">
+      <input type="text" name="username" placeholder="username">
+      <input type="password" name="password" placeholder="password">
+      <input type="submit" class="btn btn-success" value="Authenticate">
+    </form>
+  </section>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+</body>
+
+</html>
