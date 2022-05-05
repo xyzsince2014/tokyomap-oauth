@@ -24,6 +24,9 @@ Thumbs.db
 # Postgres
 postgres/var/lib/postgresql/data
 
+# Redis
+redis/data/*
+
 # Postgres for tests
 postgres-test/var/lib/postgresql/data
 

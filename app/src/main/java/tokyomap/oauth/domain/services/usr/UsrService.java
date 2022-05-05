@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import tokyomap.oauth.domain.entities.Usr;
-import tokyomap.oauth.domain.repositories.usr.UsrRepository;
+import tokyomap.oauth.domain.entities.postgres.Usr;
+import tokyomap.oauth.domain.repositories.postgres.UsrRepository;
 
 @Service
 public class UsrService {

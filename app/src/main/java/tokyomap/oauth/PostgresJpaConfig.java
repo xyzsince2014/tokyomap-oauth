@@ -13,16 +13,11 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-
-/**
- * configure Spring Data JPA.
- * cf. https://www.baeldung.com/the-persistence-layer-with-spring-and-jpa
- */
 @Configuration
 @EnableJpaRepositories
-@EnableTransactionManagement // enables declarative transaction management by @Transactional
+@EnableTransactionManagement
 @PropertySource("classpath:conf/jpa.properties")
-public class JpaConfig {
+public class PostgresJpaConfig {
 
   @Value("${db.driver_class_name}") private String driverClassName;
   @Value("${db.url}") private String url;
@@ -42,7 +37,7 @@ public class JpaConfig {
   @Value("${spring.jpa.packages.entities}") private String packagesToScan;
 
   /**
-   * configure the data source used by JPA.
+   * the data source used by JPA.
    * @return BasicDataSource
    */
   @Bean(destroyMethod = "close") // invoke BasicDataSource.close() on destroy to release the data source
@@ -61,35 +56,35 @@ public class JpaConfig {
   }
 
   /**
-   * configure EntityManagerFactory which Spring Data JPA needs on the DI container.
+   * the EntityManagerFactory which Spring Data JPA needs on the DI container.
    * EntityManager synchronises entities in PersistenceContexts (entities managed by the EntityManager) and RDB by executing SQL queries.
    * Note that a PersistenceContext is made for every transaction.
    * @return LocalContainerEntityManagerFactoryBean
    */
   @Bean
-  public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
+  public LocalContainerEntityManagerFactoryBean entityManagerFactory(BasicDataSource dataSource) {
     Properties jpaProperties = new Properties();
     jpaProperties.setProperty("hibernate.dialect", this.dialect);
     jpaProperties.setProperty("hibernate.hbm2ddl.auto", this.hbm2ddlAuto);
     jpaProperties.setProperty("hibernate.show_sql", this.showSql);
     jpaProperties.setProperty("hibernate.format_sql", this.formatSql);
 
-    LocalContainerEntityManagerFactoryBean entityManager = new LocalContainerEntityManagerFactoryBean();
-    entityManager.setDataSource(dataSource());
-    entityManager.setPackagesToScan(this.packagesToScan);
-    entityManager.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
-    entityManager.setJpaProperties(jpaProperties);
-    return entityManager;
+    LocalContainerEntityManagerFactoryBean entityManagerFactory = new LocalContainerEntityManagerFactoryBean();
+    entityManagerFactory.setDataSource(dataSource);
+    entityManagerFactory.setPackagesToScan(this.packagesToScan);
+    entityManagerFactory.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
+    entityManagerFactory.setJpaProperties(jpaProperties);
+    return entityManagerFactory;
   }
 
   /**
-   * configure PlatformTransactionManager, via which JpaTransactionManager calls EntityTransaction APIs.
+   * the PlatformTransactionManager, via which JpaTransactionManager calls EntityTransaction APIs.
    * @return PlatformTransactionManager
    */
   @Bean
-  public PlatformTransactionManager transactionManager() {
+  public PlatformTransactionManager transactionManager(LocalContainerEntityManagerFactoryBean entityManagerFactory) {
     JpaTransactionManager transactionManager = new JpaTransactionManager();
-    transactionManager.setEntityManagerFactory(entityManagerFactory().getObject());
+    transactionManager.setEntityManagerFactory(entityManagerFactory.getObject());
     return transactionManager;
   }
 }

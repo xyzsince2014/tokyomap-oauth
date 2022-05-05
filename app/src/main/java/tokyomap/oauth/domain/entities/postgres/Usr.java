@@ -1,4 +1,4 @@
-package tokyomap.oauth.domain.entities;
+package tokyomap.oauth.domain.entities.postgres;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;

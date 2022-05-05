@@ -8,7 +8,7 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import org.springframework.lang.Nullable;
-import tokyomap.oauth.domain.entities.Usr;
+import tokyomap.oauth.domain.entities.postgres.Usr;
 
 public class UserDto implements Serializable {
 

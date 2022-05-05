@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
-import tokyomap.oauth.domain.entities.Usr;
+import tokyomap.oauth.domain.entities.postgres.Usr;
 import tokyomap.oauth.domain.services.usr.UsrService;
 
 // todo: @CrossOrigin

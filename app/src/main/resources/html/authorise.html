@@ -19,13 +19,19 @@
 </nav>
 <div class="container">
   <section class="jumbotron">
-    <h2>Approve this client ?</h2>
-    <p>client:&nbsp;<span th:text="${dto.client}"/></p>
+    <h2>Authorise this client ?</h2>
     <p>requestId:&nbsp;<span th:text="${dto.requestId}"/></p>
     <p>requestedScope:&nbsp;<span th:text="${dto.requestedScope}"/></p>
-<!-- todo:   <p>Client Name:&nbsp;<span th:text="${dto.client.name}"/></p>-->
-<!-- todo:   <p>Client Id:&nbsp;<code><%- client.clientId ?? ''%></code></p>-->
-<!-- todo:   <p>Client URI:&nbsp;<code><%- client.clientUri ?? '' %></code></p>-->
+    <p>Client Name:&nbsp;<span th:text="${dto.client.clientName}"/></p>
+    <p>Client Id:&nbsp;<span th:text="${dto.client.clientId}"/></p>
+    <p>Client URI:&nbsp;<span th:text="${dto.client.clientUri}"/></p>
+    <p>Client Token Endpoint Auth Method:&nbsp;<span th:text="${dto.client.tokenEndpointAuthMethod}"/></p>
+    <p>Client Redirect Uris:&nbsp;<span th:text="${dto.client.redirectUris}"/></p>
+    <p>Client Grant Types:&nbsp;<span th:text="${dto.client.grantTypes}"/></p>
+    <p>Client Response Types:&nbsp;<span th:text="${dto.client.responseTypes}"/></p>
+    <p>Client Scope:&nbsp;<span th:text="${dto.client.scope}"/></p>
+    <p>Client Registration Access Token:&nbsp;<span th:text="${dto.client.registrationAccessToken}"/></p>
+    <p>Client Registration Client Uri:&nbsp;<span th:text="${dto.client.registrationClientUri}"/></p>
     <form class="form" action="/api/authorise" method="POST">
       <input type="hidden" name="requestId" value="${dto.requestId}">
       <input type="text" name="username" placeholder="username">

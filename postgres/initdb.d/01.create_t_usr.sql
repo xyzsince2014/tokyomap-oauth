@@ -22,7 +22,7 @@ create table if not exists t_usr (
   , updated_at timestamp without time zone not null default current_timestamp
 );
 
--- dummy users
+-- insert dummy users
 begin;
 
 insert into
