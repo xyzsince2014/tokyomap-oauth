@@ -10,14 +10,14 @@ public class AuthorisationRestController {
 //  private final ProAuthorisationService proAuthorisationService;
 //
 //  @Autowired
-//  public AuthorisationRestController(PreAuthorisationService proAuthorisationService) {
+//  public AuthorisationRestController(PreAuthoriseService proAuthorisationService) {
 //    this.proAuthorisationService = proAuthorisationService;
 //  }
 
 // todo: @RequestMapping(method = RequestMethod.POST)
   @RequestMapping(method = RequestMethod.GET)
   public String proAuthorise() {
-//    PreAuthoriseDto dto = this.proAuthorisationService.execute();
+//    PreAuthoriseResponseDto dto = this.proAuthorisationService.execute();
     return "hoge";
   }
 }

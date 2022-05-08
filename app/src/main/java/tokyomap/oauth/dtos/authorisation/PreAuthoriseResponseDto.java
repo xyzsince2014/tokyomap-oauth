@@ -3,7 +3,7 @@ package tokyomap.oauth.dtos.authorisation;
 import java.io.Serializable;
 import tokyomap.oauth.domain.entities.postgres.Client;
 
-public class PreAuthoriseDto implements Serializable {
+public class PreAuthoriseResponseDto implements Serializable {
 
   private static final long serialVersionUID = -3731207544869794764L;
 
@@ -11,7 +11,7 @@ public class PreAuthoriseDto implements Serializable {
   private String requestId;
   private String[] requestedScope;
 
-  public PreAuthoriseDto(Client client, String requestId, String[] requestedScope) {
+  public PreAuthoriseResponseDto(Client client, String requestId, String[] requestedScope) {
     this.client = client;
     this.requestId = requestId;
     this.requestedScope = requestedScope;

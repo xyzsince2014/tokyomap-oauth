@@ -9,6 +9,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+import tokyomap.oauth.domain.entities.redis.AuthCache;
 import tokyomap.oauth.domain.entities.redis.AuthReqParams;
 
 @Configuration
@@ -44,6 +45,20 @@ public class RedisClientConfig {
     redisTemplate.setConnectionFactory(jedisConnectionFactory);
     redisTemplate.setKeySerializer(new StringRedisSerializer());
     redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer(AuthReqParams.class));
+    return redisTemplate;
+  }
+
+  /**
+   * the RedisTemplate<String, AuthCache> bean with Jackson2JsonRedisSerializer
+   * @param jedisConnectionFactory
+   * @return redisTemplate
+   */
+  @Bean
+  public RedisTemplate<String, AuthCache> authCodeRedisTemplate(JedisConnectionFactory jedisConnectionFactory) {
+    RedisTemplate<String, AuthCache> redisTemplate = new RedisTemplate();
+    redisTemplate.setConnectionFactory(jedisConnectionFactory);
+    redisTemplate.setKeySerializer(new StringRedisSerializer());
+    redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer(AuthCache.class));
     return redisTemplate;
   }
 }

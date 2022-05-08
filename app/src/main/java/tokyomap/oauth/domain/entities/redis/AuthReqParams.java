@@ -14,6 +14,9 @@ public class AuthReqParams implements Serializable {
   private String codeChallenge;
   private String codeChallengeMethod;
 
+  // used to deserialise values by authReqParamsRedisTemplate
+  AuthReqParams() {}
+
   public AuthReqParams(
       String responseType, String scope, String clientId, String redirectUri,
       String state, String codeChallenge, String codeChallengeMethod

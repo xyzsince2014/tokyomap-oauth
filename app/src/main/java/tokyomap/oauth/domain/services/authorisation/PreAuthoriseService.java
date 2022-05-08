@@ -8,16 +8,16 @@ import org.springframework.stereotype.Service;
 import tokyomap.oauth.domain.entities.postgres.Client;
 import tokyomap.oauth.domain.entities.redis.AuthReqParams;
 import tokyomap.oauth.domain.repositories.postgres.ClientRepository;
-import tokyomap.oauth.dtos.authorisation.PreAuthoriseDto;
+import tokyomap.oauth.dtos.authorisation.PreAuthoriseResponseDto;
 
 @Service
-public class PreAuthorisationService {
+public class PreAuthoriseService {
 
   private final RedisTemplate<String, AuthReqParams> authReqParamsRedisTemplate;
   private final ClientRepository clientRepository;
 
   @Autowired
-  public PreAuthorisationService(RedisTemplate<String, AuthReqParams> authReqParamsRedisTemplate, ClientRepository clientRepository) {
+  public PreAuthoriseService(RedisTemplate<String, AuthReqParams> authReqParamsRedisTemplate, ClientRepository clientRepository) {
     this.authReqParamsRedisTemplate = authReqParamsRedisTemplate;
     this.clientRepository = clientRepository;
   }
@@ -25,22 +25,22 @@ public class PreAuthorisationService {
   /**
    * validates the given request params, then cache them in the Redis
    * @param authReqParams
-   * @return PreAuthoriseDto
+   * @return PreAuthoriseResponseDto
    */
-  public PreAuthoriseDto execute(AuthReqParams authReqParams) {
+  public PreAuthoriseResponseDto execute(AuthReqParams authReqParams) {
     // todo: logging `${util.fetchCurrentDatetimeJst()} [preAuthoriseService.execute]` with aspect
-    ValidationResult result = this.validateAuthReqParams(authReqParams);
+    ValidateAuthReqParamsResult result = this.validateAuthReqParams(authReqParams);
     String requestId = this.registerParams(authReqParams);
-    return new PreAuthoriseDto(result.getClient(), requestId, result.getRequestedScope());
+    return new PreAuthoriseResponseDto(result.getClient(), requestId, result.getRequestedScope());
   }
 
   /**
    * validate the authReqParams
    * @param authReqParams
-   * @return ValidationResult
+   * @return ValidateAuthReqParamsResult
    */
   // todo: @Transactional
-  private ValidationResult validateAuthReqParams(AuthReqParams authReqParams) {
+  private ValidateAuthReqParamsResult validateAuthReqParams(AuthReqParams authReqParams) {
     // todo: console.log(`${util.fetchCurrentDatetimeJst()} [preAuthoriseLogic.validateParams] authReqParams = ${JSON.stringify(authReqParams)}`);
 
     Optional<Client> optionalClient = this.clientRepository.findById(authReqParams.getClientId());
@@ -60,7 +60,7 @@ public class PreAuthorisationService {
     // todo: String[] scope = client.getScope().split(" ");
     // todo: throw new Error('invalid scope requested'); if requestedScope is not included by scope
 
-    ValidationResult result = new ValidationResult(client, requestedScope);
+    ValidateAuthReqParamsResult result = new ValidateAuthReqParamsResult(client, requestedScope);
     return result;
   }
 
@@ -73,23 +73,5 @@ public class PreAuthorisationService {
     String requestId = RandomStringUtils.random(8, true, true);
     this.authReqParamsRedisTemplate.opsForValue().set(requestId, authReqParams);
     return requestId;
-  }
-
-  private class ValidationResult {
-    private Client client;
-    private String[] requestedScope;
-
-    private ValidationResult(Client client, String[] requestedScope) {
-      this.client = client;
-      this.requestedScope = requestedScope;
-    }
-
-    public Client getClient() {
-      return client;
-    }
-
-    public String[] getRequestedScope() {
-      return requestedScope;
-    }
   }
 }

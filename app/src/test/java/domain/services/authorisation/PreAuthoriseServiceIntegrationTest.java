@@ -12,17 +12,17 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import tokyomap.oauth.RedisClientConfig;
 import tokyomap.oauth.WebMvcConfig;
 import tokyomap.oauth.domain.entities.redis.AuthReqParams;
-import tokyomap.oauth.domain.services.authorisation.PreAuthorisationService;
-import tokyomap.oauth.dtos.authorisation.PreAuthoriseDto;
+import tokyomap.oauth.domain.services.authorisation.PreAuthoriseService;
+import tokyomap.oauth.dtos.authorisation.PreAuthoriseResponseDto;
 
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = {WebMvcConfig.class, RedisClientConfig.class})
 @WebAppConfiguration
 @ActiveProfiles("test")
-public class PreAuthorisationIntegrationTest {
+public class PreAuthoriseServiceIntegrationTest {
 
   @Autowired
-  private PreAuthorisationService preAuthorisationService; // the test target Bean
+  private PreAuthoriseService preAuthoriseService;
 
   @Test
   public void testExecute() {
@@ -36,7 +36,7 @@ public class PreAuthorisationIntegrationTest {
         "SHA256"
     );
 
-    PreAuthoriseDto actualDto = this.preAuthorisationService.execute(authReqParams);
+    PreAuthoriseResponseDto actualDto = this.preAuthoriseService.execute(authReqParams);
 
     assertThat(actualDto.getClient().getClientId()).isEqualTo("sLoBOeuIkRtEH7rXmQeCjeuc8Iz4ub1t");
     assertThat(actualDto.getRequestId()).isNotNull();

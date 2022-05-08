@@ -1,25 +1,38 @@
 package tokyomap.oauth.application.authorisation;
 
+import java.net.URI;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import tokyomap.oauth.domain.entities.redis.AuthReqParams;
-import tokyomap.oauth.domain.services.authorisation.PreAuthorisationService;
-import tokyomap.oauth.dtos.authorisation.PreAuthoriseDto;
+import tokyomap.oauth.domain.services.authorisation.PreAuthoriseService;
+import tokyomap.oauth.domain.services.authorisation.ProAuthoriseService;
+import tokyomap.oauth.dtos.authorisation.PreAuthoriseResponseDto;
 
 @Controller
 @RequestMapping("/authorise")
 public class AuthorisationController {
 
-  private final PreAuthorisationService preAuthorisationService;
+  private final PreAuthoriseService preAuthoriseService;
+  private final ProAuthoriseService proAuthoriseService;
 
   @Autowired
-  public AuthorisationController(PreAuthorisationService preAuthorisationService) {
-    this.preAuthorisationService = preAuthorisationService;
+  public AuthorisationController(PreAuthoriseService preAuthoriseService, ProAuthoriseService proAuthoriseService) {
+    this.preAuthoriseService = preAuthoriseService;
+    this.proAuthoriseService = proAuthoriseService;
+  }
+
+  @ModelAttribute("authorisationForm")
+  public AuthorisationForm setUpForm() {
+    return new AuthorisationForm();
   }
 
   /**
@@ -36,11 +49,24 @@ public class AuthorisationController {
         reqParams.get("redirectUri"), reqParams.get("state"), reqParams.get("codeChallenge"), reqParams.get("codeChallengeMethod")
     );
 
-    PreAuthoriseDto dto = this.preAuthorisationService.execute(authReqParams);
+    PreAuthoriseResponseDto dto = this.preAuthoriseService.execute(authReqParams);
 
     // todo: instead of rendering a view, return to clients a JS module to authenticate
     model.addAttribute("dto", dto);
 
     return "authorise";
+  }
+
+  /**
+   * authorise requests from authorise.html, issue an Authorisation Code, and redirect to callback endpoints
+   * @param authorisationForm
+   * @return String
+   */
+  @RequestMapping(method = RequestMethod.POST, consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE})
+  public String proAuthorise(@Validated AuthorisationForm authorisationForm) {
+
+    URI redirectUri = this.proAuthoriseService.execute(authorisationForm);
+
+    return "redirect:" + redirectUri.toString();
   }
 }

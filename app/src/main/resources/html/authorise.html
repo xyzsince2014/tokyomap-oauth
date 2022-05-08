@@ -32,8 +32,8 @@
     <p>Client Scope:&nbsp;<span th:text="${dto.client.scope}"/></p>
     <p>Client Registration Access Token:&nbsp;<span th:text="${dto.client.registrationAccessToken}"/></p>
     <p>Client Registration Client Uri:&nbsp;<span th:text="${dto.client.registrationClientUri}"/></p>
-    <form class="form" action="/api/authorise" method="POST">
-      <input type="hidden" name="requestId" value="${dto.requestId}">
+    <form th:object="${authorisationForm}" th:action="@{/authorise}" method="POST" class="form" >
+      <input type="hidden" name="requestId" th:value="${dto.requestId}">
       <input type="text" name="username" placeholder="username">
       <input type="password" name="password" placeholder="password">
       <input type="submit" class="btn btn-success" value="Authenticate">
