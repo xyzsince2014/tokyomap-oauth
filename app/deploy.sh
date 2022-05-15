@@ -12,14 +12,9 @@ report() {
   mvn help:effective-settings -Doutput=.mvn/effective-settings.xml
 }
 
-test() {
-  mvn --settings .mvn/settings.xml -P test clean test
-  echo "test completed."
-}
-
 # todo: build and deploy should be done by Jenkins or something
 build() {
-  # todo: mvn --settings .mvn/settings.xml -P prod -Dmaven.test.skip=true package
+  # todo: mvn --settings .mvn/settings.xml -P production -Dmaven.test.skip=true package
   mvn --settings .mvn/settings.xml -P $1 -Dmaven.test.skip=true package
   echo "build completed."
 }
@@ -37,7 +32,7 @@ deploy() {
 #  docker build -t test:dev .
 #}
 
-PROFILES=("develop" "test" "production")
+PROFILES=("develop" "production")
 
 for PROFILE in ${PROFILES[@]}; do
   if [ $PROFILE != $1 ]; then
@@ -45,7 +40,6 @@ for PROFILE in ${PROFILES[@]}; do
   fi
 
   report
-  test
   build $1
   deploy
   #todo  buildImage

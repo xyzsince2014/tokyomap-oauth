@@ -7,13 +7,13 @@ public class AuthCache implements Serializable {
   private static final long serialVersionUID = -5514415646648723349L;
 
   private String sub;
-  private String scopeRequested;
+  private String[] scopeRequested;
   private AuthReqParams authReqParams;
 
   // used to deserialisation by authCodeRedisTemplate
   public AuthCache() {}
 
-  public AuthCache(String sub, String scopeRequested, AuthReqParams authReqParams) {
+  public AuthCache(String sub, String[] scopeRequested, AuthReqParams authReqParams) {
     this.sub = sub;
     this.scopeRequested = scopeRequested;
     this.authReqParams = authReqParams;
@@ -27,11 +27,11 @@ public class AuthCache implements Serializable {
     this.sub = sub;
   }
 
-  public String getScopeRequested() {
+  public String[] getScopeRequested() {
     return scopeRequested;
   }
 
-  public void setScopeRequested(String scopeRequested) {
+  public void setScopeRequested(String[] scopeRequested) {
     this.scopeRequested = scopeRequested;
   }
 

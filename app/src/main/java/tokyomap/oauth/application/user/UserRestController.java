@@ -1,4 +1,4 @@
-package tokyomap.oauth.application.api;
+package tokyomap.oauth.application.user;
 
 import java.net.URI;
 import java.util.List;
@@ -19,7 +19,7 @@ import tokyomap.oauth.domain.services.usr.UsrService;
 
 // todo: @CrossOrigin
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("/user")
 public class UserRestController {
 
   private final UsrService usrService;
@@ -30,7 +30,7 @@ public class UserRestController {
   }
 
   /**
-   * curl -v -X GET "http://localhost:80/api/user/{sub}"
+   * curl -v -X GET "http://localhost:80/user/{sub}"
    * @param sub
    * @return UserDto
    */
@@ -42,7 +42,7 @@ public class UserRestController {
   }
 
   /**
-   * curl -v -X GET "http://localhost:80/api/user"
+   * curl -v -X GET "http://localhost:80/user"
    * @return List<UserDto>
    */
   @RequestMapping(method = RequestMethod.GET)
@@ -52,7 +52,7 @@ public class UserRestController {
   }
 
   /**
-   * curl -v -X POST "http://localhost:80/api/user" -H "Content-Type: application/json" -d '{"userId":"fuga","givenName":"ueno","familyName":"tokyo"}'
+   * curl -v -X POST "http://localhost:80/user" -H "Content-Type: application/json" -d '{"userId":"fuga","givenName":"ueno","familyName":"tokyo"}'
    * @param dto
    * @return ResponseEntity<Void>
    */
@@ -70,7 +70,7 @@ public class UserRestController {
     Usr usrCreated = this.usrService.save(usr);
 
     URI resourceUri = uriBuilder
-        .path("/api/user/{sub}")
+        .path("/user/{sub}")
         .buildAndExpand(usrCreated.getSub()) // build a UriComponents instance and replaces URI template variables with the values from an array
         .encode()
         .toUri();
@@ -79,7 +79,7 @@ public class UserRestController {
   }
 
   /**
-   * curl -i -X PUT "http://localhost:80/api/user/hoge" -H "Content-Type: application/json" -d '{"userId":"fuga","givenName":"foo","familyName":"boo"}'
+   * curl -i -X PUT "http://localhost:80/user/hoge" -H "Content-Type: application/json" -d '{"userId":"fuga","givenName":"foo","familyName":"boo"}'
    * @param sub
    * @param dto
    */
@@ -99,7 +99,7 @@ public class UserRestController {
   }
 
   /**
-   * curl -v -X DELETE "http://localhost:80/api/user/{sub}"
+   * curl -v -X DELETE "http://localhost:80/user/{sub}"
    * @param sub
    */
   @RequestMapping(path = "/{sub}", method = RequestMethod.DELETE)

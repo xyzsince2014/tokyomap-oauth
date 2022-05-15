@@ -94,7 +94,7 @@ public class ProAuthoriseService {
     String code = RandomStringUtils.random(8, true, true);
 
     // todo: error handling for registration
-    AuthCache authCache = new AuthCache(sub, String.join(" ", scopeRequested), authReqParams);
+    AuthCache authCache = new AuthCache(sub, scopeRequested, authReqParams);
     this.authCodeRedisTemplate.opsForValue().set(code, authCache);
 
     URI redirectUri = UriComponentsBuilder.fromUriString(authReqParams.getRedirectUri())

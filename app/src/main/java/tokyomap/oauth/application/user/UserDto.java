@@ -1,4 +1,4 @@
-package tokyomap.oauth.application.api;
+package tokyomap.oauth.application.user;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;

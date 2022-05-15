@@ -1,9 +1,6 @@
-package application.api;
+package application.user;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -20,7 +17,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import tokyomap.oauth.WebMvcConfig;
-import tokyomap.oauth.application.api.UserDto;
 
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = {WebMvcConfig.class})
@@ -41,7 +37,7 @@ public class UserRestControllerIntegrationTest {
   @Test
   public void testGetUser() throws Exception {
     this.mockMvc
-        .perform(get("/api/user/9XE3-JI34-99999A").accept(MediaType.APPLICATION_JSON))
+        .perform(get("/user/9XE3-JI34-99999A").accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON));
   }
@@ -49,7 +45,7 @@ public class UserRestControllerIntegrationTest {
   @Test
   public void testGetAllUsers() throws Exception {
     this.mockMvc
-        .perform(get("/api/user").accept(MediaType.APPLICATION_JSON))
+        .perform(get("/user").accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON));
   }
@@ -63,7 +59,7 @@ public class UserRestControllerIntegrationTest {
 //    dto.setScope("hoge fuga");
 //
 //    this.mockMvc
-//        .perform(post("/api/user", dto).accept(MediaType.APPLICATION_JSON))
+//        .perform(post("/user", dto).accept(MediaType.APPLICATION_JSON))
 //        .andExpect(status().isCreated())
 //        .andExpect(content().contentType(MediaType.APPLICATION_JSON));
 //  }
@@ -77,7 +73,7 @@ public class UserRestControllerIntegrationTest {
 //    dto.setGivenName("boo");
 //
 //    this.mockMvc
-//        .perform(put("/api/user", dto).accept(MediaType.APPLICATION_JSON))
+//        .perform(put("/user", dto).accept(MediaType.APPLICATION_JSON))
 //        .andExpect(status().isNoContent());
 //  }
 
@@ -85,7 +81,7 @@ public class UserRestControllerIntegrationTest {
 //  @Test
 //  public void testDeleteUser() throws Exception {
 //    this.mockMvc
-//        .perform(delete("/api/user/hoge"))
+//        .perform(delete("/user/hoge"))
 //        .andExpect(status().isNoContent());
 //  }
 }
