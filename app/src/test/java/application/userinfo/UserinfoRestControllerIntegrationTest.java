@@ -1,4 +1,4 @@
-package application.user;
+package application.userinfo;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -21,8 +21,8 @@ import tokyomap.oauth.WebMvcConfig;
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = {WebMvcConfig.class})
 @WebAppConfiguration
-@ActiveProfiles("test")
-public class UserRestControllerIntegrationTest {
+@ActiveProfiles("develop")
+public class UserinfoRestControllerIntegrationTest {
 
   @Autowired
   private WebApplicationContext context;
@@ -37,7 +37,7 @@ public class UserRestControllerIntegrationTest {
   @Test
   public void testGetUser() throws Exception {
     this.mockMvc
-        .perform(get("/user/9XE3-JI34-99999A").accept(MediaType.APPLICATION_JSON))
+        .perform(get("/userinfo/9XE3-JI34-99999A").accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON));
   }
@@ -45,7 +45,7 @@ public class UserRestControllerIntegrationTest {
   @Test
   public void testGetAllUsers() throws Exception {
     this.mockMvc
-        .perform(get("/user").accept(MediaType.APPLICATION_JSON))
+        .perform(get("/userinfo").accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON));
   }
@@ -53,7 +53,7 @@ public class UserRestControllerIntegrationTest {
 // todo:
 //  @Test
 //  public void testCreateUser() throws Exception {
-//    UserDto dto = new UserDto();
+//    UserInfoDto dto = new UserInfoDto();
 //    dto.setSub("hoge");
 //    dto.setFamilyName("fuga");
 //    dto.setScope("hoge fuga");
@@ -67,7 +67,7 @@ public class UserRestControllerIntegrationTest {
 // todo:
 //  @Test
 //  public void testUpdateUser() throws Exception {
-//    UserDto dto = new UserDto();
+//    UserInfoDto dto = new UserInfoDto();
 //    dto.setSub("hoge");
 //    dto.setFamilyName("foo");
 //    dto.setGivenName("boo");

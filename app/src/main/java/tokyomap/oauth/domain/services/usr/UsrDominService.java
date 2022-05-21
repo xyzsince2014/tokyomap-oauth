@@ -8,12 +8,12 @@ import tokyomap.oauth.domain.entities.postgres.Usr;
 import tokyomap.oauth.domain.repositories.postgres.UsrRepository;
 
 @Service
-public class UsrService {
+public class UsrDominService {
 
   private final UsrRepository usrRepository;
 
   @Autowired
-  public UsrService(UsrRepository usrRepository) {
+  public UsrDominService(UsrRepository usrRepository) {
     this.usrRepository = usrRepository;
   }
 

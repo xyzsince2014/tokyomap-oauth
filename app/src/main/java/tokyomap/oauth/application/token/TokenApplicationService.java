@@ -1,12 +1,12 @@
-package tokyomap.oauth.application.services.token;
+package tokyomap.oauth.application.token;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tokyomap.oauth.domain.services.token.TokenDomainService;
-import tokyomap.oauth.dtos.token.IssueTokensRequestDto;
-import tokyomap.oauth.dtos.token.IssueTokensResponseDto;
-import tokyomap.oauth.dtos.token.ValidationResultDto;
+import tokyomap.oauth.dtos.userinfo.token.IssueTokensRequestDto;
+import tokyomap.oauth.dtos.userinfo.token.IssueTokensResponseDto;
+import tokyomap.oauth.dtos.userinfo.token.ValidationResultDto;
 
 @Service
 public class TokenApplicationService {

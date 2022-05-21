@@ -11,10 +11,10 @@ import tokyomap.oauth.domain.logics.AuthCodeLogic;
 import tokyomap.oauth.domain.logics.ClientLogic;
 import tokyomap.oauth.domain.logics.TokenLogic;
 import tokyomap.oauth.domain.logics.UsrLogic;
-import tokyomap.oauth.dtos.token.ClientCredentialsDto;
-import tokyomap.oauth.dtos.token.IssueTokensRequestDto;
-import tokyomap.oauth.dtos.token.IssueTokensResponseDto;
-import tokyomap.oauth.dtos.token.ValidationResultDto;
+import tokyomap.oauth.dtos.userinfo.token.ClientCredentialsDto;
+import tokyomap.oauth.dtos.userinfo.token.IssueTokensRequestDto;
+import tokyomap.oauth.dtos.userinfo.token.IssueTokensResponseDto;
+import tokyomap.oauth.dtos.userinfo.token.ValidationResultDto;
 import tokyomap.oauth.utils.Logger;
 
 @Component

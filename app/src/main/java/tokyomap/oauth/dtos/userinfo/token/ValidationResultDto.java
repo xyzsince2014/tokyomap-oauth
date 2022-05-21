@@ -1,4 +1,4 @@
-package tokyomap.oauth.dtos.token;
+package tokyomap.oauth.dtos.userinfo.token;
 
 import tokyomap.oauth.domain.entities.redis.AuthCache;
 

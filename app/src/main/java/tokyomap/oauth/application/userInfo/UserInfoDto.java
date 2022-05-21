@@ -1,4 +1,4 @@
-package tokyomap.oauth.application.user;
+package tokyomap.oauth.application.userInfo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -7,13 +7,15 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Map;
 import org.springframework.lang.Nullable;
 import tokyomap.oauth.domain.entities.postgres.Usr;
 
-public class UserDto implements Serializable {
+public class UserInfoDto implements Serializable {
 
   private static final long serialVersionUID = 4417173416400833319L;
 
+  @Nullable
   private String sub;
 
   @Nullable
@@ -78,9 +80,9 @@ public class UserDto implements Serializable {
   @Nullable
   private LocalDateTime updatedAt;
 
-  public UserDto() {}
+  public UserInfoDto() {}
 
-  public UserDto(Usr usr) {
+  public UserInfoDto(Usr usr) {
     this.sub = usr.getSub();
     this.familyName = usr.getFamilyName();
     this.givenName = usr.getGivenName();
@@ -103,11 +105,35 @@ public class UserDto implements Serializable {
     this.updatedAt = usr.getUpdatedAt();
   }
 
+  public UserInfoDto(Map<String, Object> userInfoMap) {
+    this.sub = (String) userInfoMap.get("sub");
+    this.familyName = (String) userInfoMap.get("familyName");
+    this.givenName = (String) userInfoMap.get("givenName");
+    this.middleName = (String) userInfoMap.get("middleName");
+    this.nickname = (String) userInfoMap.get("nickname");
+    this.preferredUsername = (String) userInfoMap.get("preferredUsername");
+    this.profile = (String) userInfoMap.get("profile");
+    this.picture = (String) userInfoMap.get("picture");
+    this.website = (String) userInfoMap.get("website");
+    this.zoneinfo = (String) userInfoMap.get("zoneinfo");
+    this.locale = (String) userInfoMap.get("locale");
+    this.password = (String) userInfoMap.get("password");
+    this.email = (String) userInfoMap.get("email");
+    this.emailVerified = (Boolean) userInfoMap.get("emailVerified");
+    this.address = (String) userInfoMap.get("address");
+    this.phone = (String) userInfoMap.get("phone");
+    this.phoneNumberVerified = (Boolean) userInfoMap.get("phoneNumberVerified");
+    this.scope = (String) userInfoMap.get("scope");
+    this.createdAt = (LocalDateTime) userInfoMap.get("createdAt");
+    this.updatedAt = (LocalDateTime) userInfoMap.get("updatedAt");
+  }
+
+  @Nullable
   public String getSub() {
     return sub;
   }
 
-  public void setSub(String sub) {
+  public void setSub(@Nullable String sub) {
     this.sub = sub;
   }
 

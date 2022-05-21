@@ -13,12 +13,12 @@ import tokyomap.oauth.RedisClientConfig;
 import tokyomap.oauth.WebMvcConfig;
 import tokyomap.oauth.domain.entities.redis.AuthReqParams;
 import tokyomap.oauth.domain.services.authorisation.PreAuthoriseService;
-import tokyomap.oauth.dtos.authorisation.PreAuthoriseResponseDto;
+import tokyomap.oauth.dtos.userinfo.authorisation.PreAuthoriseResponseDto;
 
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = {WebMvcConfig.class, RedisClientConfig.class})
 @WebAppConfiguration
-@ActiveProfiles("test")
+@ActiveProfiles("develop")
 public class PreAuthoriseServiceIntegrationTest {
 
   @Autowired

@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import tokyomap.oauth.domain.entities.postgres.Client;
 import tokyomap.oauth.domain.entities.redis.AuthReqParams;
 import tokyomap.oauth.domain.repositories.postgres.ClientRepository;
-import tokyomap.oauth.dtos.authorisation.PreAuthoriseResponseDto;
+import tokyomap.oauth.dtos.userinfo.authorisation.PreAuthoriseResponseDto;
 
 @Service
 public class PreAuthoriseService {

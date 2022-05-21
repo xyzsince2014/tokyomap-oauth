@@ -22,7 +22,7 @@ import tokyomap.oauth.domain.entities.postgres.AccessToken;
 import tokyomap.oauth.domain.entities.postgres.RefreshToken;
 import tokyomap.oauth.domain.repositories.postgres.AccessTokenRepository;
 import tokyomap.oauth.domain.repositories.postgres.RefreshTokenRepository;
-import tokyomap.oauth.dtos.token.IssueTokensResponseDto;
+import tokyomap.oauth.dtos.userinfo.token.IssueTokensResponseDto;
 
 @Component
 public class TokenLogic {
@@ -138,10 +138,10 @@ public class TokenLogic {
     JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
         .claim("iss", this.ISSUER) // the issuer, normally the URI of the auth server
         .claim("sub", sub) // the subject, normally the unique identifier for the resource owner
-        .claim("aud", aud) // the audience, normally the URI(s) of the protected resource(s) the access token can be sent to
-        .claim("iat", ldt) // the issued-at timestamp of the token in seconds from 1 Jan 1970 (GMT)
+        .claim("aud", this.AUDIENCE) // the audience, normally the URI(s) of the protected resource(s) the access token can be sent to
+        .claim("iat", ldt.toString()) // the issued-at timestamp of the token in seconds from 1 Jan 1970 (GMT)
         // todo: fix exp
-        .claim("exp", ldt) // the expiration time, the token expires in 5 min later in this case
+        .claim("exp", ldt.toString()) // the expiration time, the token expires in 5 min later in this case
         .claim("jti", jti) // the unique identifier of the token, that is a value unique to each token created by the issuer, and it’s often a cryptographically random value
         .claim("scope", scope) // String[] scope
         .claim("clientId", clientId)
@@ -171,9 +171,9 @@ public class TokenLogic {
         .claim("iss", this.ISSUER) // the issuer of the token, i.e. the URL of the Id Provider
         .claim("sub", sub) // the subject of the token, a stable and unique identifier for the user at the Id Provider, which is usually a machine-readable string and shouldn’t be used as a username
         .claim("aud", clientId) // the audience of the token that must contain the client ID of the Relying Party
-        .claim("iat", ldt) // the timestamp at which the token is issued
+        .claim("iat", ldt.toString()) // the timestamp at which the token is issued
         // todo: fix exp
-        .claim("exp", ldt) // the expiration timestamp of the token at which all ID tokens expire and usually pretty quickly
+        .claim("exp", ldt.toString()) // the expiration timestamp of the token at which all ID tokens expire and usually pretty quickly
         .claim("nonce", nonce) // a string sent by the Relying Party during the authentication request, used to mitigate replay attacks similar to the state parameter. It must be included if the Relying Party sends it
         .build();
 

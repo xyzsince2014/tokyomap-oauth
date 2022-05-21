@@ -1,7 +1,10 @@
 package tokyomap.oauth.domain.entities.postgres;
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -245,5 +248,29 @@ public class Usr implements Serializable {
 
   public void setUpdatedAt(LocalDateTime updatedAt) {
     this.updatedAt = updatedAt;
+  }
+
+  public Map<String, Object> convertToMap() {
+    Map<String, Object> usrMap = new HashMap();
+    usrMap.put("sub", this.sub);
+    usrMap.put("name", this.name);
+    usrMap.put("familyName", this.familyName);
+    usrMap.put("givenName", this.givenName);
+    usrMap.put("middleName", this.middleName);
+    usrMap.put("nickname", this.nickname);
+    usrMap.put("preferredUsername", this.preferredUsername);
+    usrMap.put("profile", this.profile);
+    usrMap.put("picture", this.picture);
+    usrMap.put("website", this.website);
+    usrMap.put("zoneinfo", this.zoneinfo);
+    usrMap.put("locale", this.locale);
+    usrMap.put("password", this.password);
+    usrMap.put("email", this.email);
+    usrMap.put("emailVerified", this.emailVerified);
+    usrMap.put("address", this.address);
+    usrMap.put("phone", this.phone);
+    usrMap.put("phoneNumberVerified", this.phoneNumberVerified);
+    usrMap.put("scope", this.scope);
+    return usrMap;
   }
 }
