@@ -8,7 +8,7 @@ report() {
 }
 
 test() {
-  mvn --settings .mvn/settings.xml -P test clean test
+  mvn --settings .mvn/settings.xml -P develop clean test
   echo "test completed."
 }
 

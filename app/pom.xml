@@ -334,15 +334,6 @@
       </build>
     </profile>
     <profile>
-      <id>test</id>
-      <build>
-        <resources>
-          <resource><directory>src/profiles/test/resources</directory></resource>
-          <resource><directory>src/main/resources</directory></resource>
-        </resources>
-      </build>
-    </profile>
-    <profile>
       <id>production</id>
       <build>
         <resources>
