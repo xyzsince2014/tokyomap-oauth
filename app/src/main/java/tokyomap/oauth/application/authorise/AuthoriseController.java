@@ -1,4 +1,4 @@
-package tokyomap.oauth.application.authorisation;
+package tokyomap.oauth.application.authorise;
 
 import java.net.URI;
 import java.util.Map;
@@ -12,21 +12,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import tokyomap.oauth.domain.entities.redis.AuthReqParams;
-import tokyomap.oauth.domain.services.authorisation.PreAuthoriseService;
-import tokyomap.oauth.domain.services.authorisation.ProAuthoriseService;
+import tokyomap.oauth.domain.services.authorise.PreAuthoriseDomainService;
+import tokyomap.oauth.domain.services.authorise.ProAuthoriseDomainService;
 import tokyomap.oauth.dtos.userinfo.authorisation.PreAuthoriseResponseDto;
 
 @Controller
 @RequestMapping("/authorise")
-public class AuthorisationController {
+public class AuthoriseController {
 
-  private final PreAuthoriseService preAuthoriseService;
-  private final ProAuthoriseService proAuthoriseService;
+  private final PreAuthoriseDomainService preAuthoriseDomainService;
+  private final ProAuthoriseDomainService proAuthoriseDomainService;
 
   @Autowired
-  public AuthorisationController(PreAuthoriseService preAuthoriseService, ProAuthoriseService proAuthoriseService) {
-    this.preAuthoriseService = preAuthoriseService;
-    this.proAuthoriseService = proAuthoriseService;
+  public AuthoriseController(PreAuthoriseDomainService preAuthoriseDomainService, ProAuthoriseDomainService proAuthoriseDomainService) {
+    this.preAuthoriseDomainService = preAuthoriseDomainService;
+    this.proAuthoriseDomainService = proAuthoriseDomainService;
   }
 
   @ModelAttribute("authorisationForm")
@@ -48,7 +48,7 @@ public class AuthorisationController {
         reqParams.get("redirectUri"), reqParams.get("state"), reqParams.get("codeChallenge"), reqParams.get("codeChallengeMethod")
     );
 
-    PreAuthoriseResponseDto dto = this.preAuthoriseService.execute(authReqParams);
+    PreAuthoriseResponseDto dto = this.preAuthoriseDomainService.execute(authReqParams);
 
     // todo: instead of rendering a view, return to clients a JS module to authenticate
     model.addAttribute("dto", dto);
@@ -64,7 +64,7 @@ public class AuthorisationController {
   @RequestMapping(method = RequestMethod.POST, consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE})
   public String proAuthorise(@Validated AuthorisationForm authorisationForm) {
 
-    URI redirectUri = this.proAuthoriseService.execute(authorisationForm);
+    URI redirectUri = this.proAuthoriseDomainService.execute(authorisationForm);
 
     return "redirect:" + redirectUri.toString();
   }

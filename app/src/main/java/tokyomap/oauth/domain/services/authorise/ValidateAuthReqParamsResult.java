@@ -1,4 +1,4 @@
-package tokyomap.oauth.domain.services.authorisation;
+package tokyomap.oauth.domain.services.authorise;
 
 import tokyomap.oauth.domain.entities.postgres.Client;
 

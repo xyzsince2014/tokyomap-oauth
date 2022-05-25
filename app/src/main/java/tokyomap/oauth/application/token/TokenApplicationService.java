@@ -22,7 +22,7 @@ public class TokenApplicationService {
    * execute token issuance for the given requestDto and authorization header
    * @return IssueTokensResponse
    */
-  @Transactional
+  @Transactional // todo: create a transaction in tokenDomainService
   public IssueTokensResponseDto execute(IssueTokensRequestDto requestDto, String authorization) {
     ValidationResultDto validationResultDto = tokenDomainService.execValidation(requestDto, authorization);
     IssueTokensResponseDto response = tokenDomainService.issueTokens(validationResultDto);

@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 import tokyomap.oauth.domain.entities.postgres.Usr;
 import tokyomap.oauth.domain.services.usr.UsrDominService;
+import tokyomap.oauth.dtos.userinfo.AccessTokenDto;
+import tokyomap.oauth.dtos.userinfo.UserInfoDto;
 import tokyomap.oauth.utils.JsonMapper;
 import tokyomap.oauth.utils.Logger;
 
@@ -98,7 +100,7 @@ public class UserInfoRestController {
   @ResponseStatus(HttpStatus.NO_CONTENT) // return "204 No Content"
   public void updateUser(
       @PathVariable String sub,
-      @Validated @RequestBody tokyomap.oauth.application.userInfo.UserInfoDto dto
+      @Validated @RequestBody UserInfoDto dto
   ) {
 
     // todo: refine usr
@@ -185,7 +187,7 @@ public class UserInfoRestController {
    * @return
    */
   @RequestMapping(method = RequestMethod.GET)
-  public tokyomap.oauth.application.userInfo.UserInfoDto getUserinfo(@RequestHeader("Authorization") String authorization) {
+  public UserInfoDto getUserinfo(@RequestHeader("Authorization") String authorization) {
 
     // todo: do the things below in the app service layer
     AccessTokenDto accessTokenDto = this.checkAccessToken(authorization);

@@ -1,4 +1,4 @@
-package tokyomap.oauth.domain.services.authorisation;
+package tokyomap.oauth.domain.services.authorise;
 
 public class InvalidRedirectUriException extends RuntimeException {
   public InvalidRedirectUriException() {

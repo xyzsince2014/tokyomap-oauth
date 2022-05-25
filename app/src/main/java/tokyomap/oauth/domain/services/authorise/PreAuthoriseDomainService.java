@@ -1,4 +1,4 @@
-package tokyomap.oauth.domain.services.authorisation;
+package tokyomap.oauth.domain.services.authorise;
 
 import java.util.Optional;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -11,13 +11,13 @@ import tokyomap.oauth.domain.repositories.postgres.ClientRepository;
 import tokyomap.oauth.dtos.userinfo.authorisation.PreAuthoriseResponseDto;
 
 @Service
-public class PreAuthoriseService {
+public class PreAuthoriseDomainService {
 
   private final RedisTemplate<String, AuthReqParams> authReqParamsRedisTemplate;
   private final ClientRepository clientRepository;
 
   @Autowired
-  public PreAuthoriseService(RedisTemplate<String, AuthReqParams> authReqParamsRedisTemplate, ClientRepository clientRepository) {
+  public PreAuthoriseDomainService(RedisTemplate<String, AuthReqParams> authReqParamsRedisTemplate, ClientRepository clientRepository) {
     this.authReqParamsRedisTemplate = authReqParamsRedisTemplate;
     this.clientRepository = clientRepository;
   }

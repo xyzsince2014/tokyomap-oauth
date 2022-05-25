@@ -1,4 +1,4 @@
-package tokyomap.oauth.application.authorisation;
+package tokyomap.oauth.application.authorise;
 
 import java.io.Serializable;
 import javax.validation.constraints.NotNull;

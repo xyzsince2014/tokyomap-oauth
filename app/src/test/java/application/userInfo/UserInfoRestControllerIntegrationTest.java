@@ -1,4 +1,4 @@
-package application.userinfo;
+package application.userInfo;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -22,7 +22,7 @@ import tokyomap.oauth.WebMvcConfig;
 @ContextConfiguration(classes = {WebMvcConfig.class})
 @WebAppConfiguration
 @ActiveProfiles("develop")
-public class UserinfoRestControllerIntegrationTest {
+public class UserInfoRestControllerIntegrationTest {
 
   @Autowired
   private WebApplicationContext context;
@@ -42,13 +42,14 @@ public class UserinfoRestControllerIntegrationTest {
         .andExpect(content().contentType(MediaType.APPLICATION_JSON));
   }
 
-  @Test
-  public void testGetAllUsers() throws Exception {
-    this.mockMvc
-        .perform(get("/userinfo").accept(MediaType.APPLICATION_JSON))
-        .andExpect(status().isOk())
-        .andExpect(content().contentType(MediaType.APPLICATION_JSON));
-  }
+  // todo:
+//  @Test
+//  public void testGetAllUsers() throws Exception {
+//    this.mockMvc
+//        .perform(get("/userinfo").accept(MediaType.APPLICATION_JSON))
+//        .andExpect(status().isOk())
+//        .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+//  }
 
 // todo:
 //  @Test
