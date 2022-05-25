@@ -121,10 +121,12 @@ public class TokenDomainService {
     return new ClientCredentialsDto(clientId, clientSecret, dummyScope);
   }
 
+  // todo: Decorder.decodeCredentials()
   /**
    * decode an authorization header to client credentials
    * @param authorization
    * @return ClientCredentials
+   * @see tokyomap.oauth.utils.Decorder#decodeCredentials(String)
    */
   private ClientCredentialsDto decodeClientCredentials(String authorization) {
     if(authorization == null) {
@@ -139,7 +141,7 @@ public class TokenDomainService {
     ClientCredentialsDto clientCredentials = new ClientCredentialsDto(splitString[0], splitString[1]);
 
     return clientCredentials;
-  };
+  }
 
   /**
    * issue tokens

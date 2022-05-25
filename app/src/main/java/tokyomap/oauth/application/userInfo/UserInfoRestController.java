@@ -121,7 +121,6 @@ public class UserInfoRestController {
     this.usrDominService.deleteUsrBySub(sub);
   }
 
-
   private Function<Map<String, Object>, Map<String, Object>> createUserInfo(String scope) {
     switch(scope) {
         // cases here are standardised OAuth Scopes

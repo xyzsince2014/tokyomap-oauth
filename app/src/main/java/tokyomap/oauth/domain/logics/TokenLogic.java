@@ -15,6 +15,7 @@ import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.time.LocalDateTime;
+import java.util.Optional;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -37,10 +38,7 @@ public class TokenLogic {
   private RSAPrivateKey rsaPrivateKey;
 
   @Autowired
-  public TokenLogic(
-      AccessTokenRepository accessTokenRepository,
-      RefreshTokenRepository refreshTokenRepository
-  ) {
+  public TokenLogic(AccessTokenRepository accessTokenRepository, RefreshTokenRepository refreshTokenRepository) {
     this.accessTokenRepository = accessTokenRepository;
     this.refreshTokenRepository = refreshTokenRepository;
 
@@ -55,6 +53,16 @@ public class TokenLogic {
     } catch (Exception e) {
       }
     }
+
+  /**
+   * get the AccessToken entity for the given access token
+   * @param accessToken
+   * @return AccessToken
+   */
+  public AccessToken getAccessToken(String accessToken) {
+    Optional<AccessToken> optionalAccessToken = this.accessTokenRepository.findById(accessToken);
+    return optionalAccessToken.orElse(null);
+  }
 
   /**
    * generate JWT and signing them with RSA private key
