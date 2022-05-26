@@ -1,4 +1,4 @@
-package tokyomap.oauth.dtos.userinfo.authorisation;
+package tokyomap.oauth.dtos;
 
 import java.io.Serializable;
 import tokyomap.oauth.domain.entities.postgres.Client;

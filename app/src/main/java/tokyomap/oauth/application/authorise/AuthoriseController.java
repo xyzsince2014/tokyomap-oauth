@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import tokyomap.oauth.domain.entities.redis.AuthReqParams;
 import tokyomap.oauth.domain.services.authorise.PreAuthoriseDomainService;
 import tokyomap.oauth.domain.services.authorise.ProAuthoriseDomainService;
-import tokyomap.oauth.dtos.userinfo.authorisation.PreAuthoriseResponseDto;
+import tokyomap.oauth.dtos.PreAuthoriseResponseDto;
 
 @Controller
 @RequestMapping("/authorise")

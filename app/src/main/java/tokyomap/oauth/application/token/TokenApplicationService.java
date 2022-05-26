@@ -4,9 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tokyomap.oauth.domain.services.token.TokenDomainService;
-import tokyomap.oauth.dtos.userinfo.token.IssueTokensRequestDto;
-import tokyomap.oauth.dtos.userinfo.token.IssueTokensResponseDto;
-import tokyomap.oauth.dtos.userinfo.token.ValidationResultDto;
+import tokyomap.oauth.dtos.GenerateTokensRequestDto;
+import tokyomap.oauth.dtos.GenerateTokensResponseDto;
+import tokyomap.oauth.dtos.ValidationResultDto;
 
 @Service
 public class TokenApplicationService {
@@ -23,9 +23,9 @@ public class TokenApplicationService {
    * @return IssueTokensResponse
    */
   @Transactional // todo: create a transaction in tokenDomainService
-  public IssueTokensResponseDto execute(IssueTokensRequestDto requestDto, String authorization) {
+  public GenerateTokensResponseDto execute(GenerateTokensRequestDto requestDto, String authorization) {
     ValidationResultDto validationResultDto = tokenDomainService.execValidation(requestDto, authorization);
-    IssueTokensResponseDto response = tokenDomainService.issueTokens(validationResultDto);
+    GenerateTokensResponseDto response = tokenDomainService.generateTokens(validationResultDto);
     return response;
   }
 }

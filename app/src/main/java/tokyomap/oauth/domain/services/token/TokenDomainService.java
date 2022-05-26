@@ -11,10 +11,10 @@ import tokyomap.oauth.domain.logics.AuthCodeLogic;
 import tokyomap.oauth.domain.logics.ClientLogic;
 import tokyomap.oauth.domain.logics.TokenLogic;
 import tokyomap.oauth.domain.logics.UsrLogic;
-import tokyomap.oauth.dtos.userinfo.token.ClientCredentialsDto;
-import tokyomap.oauth.dtos.userinfo.token.IssueTokensRequestDto;
-import tokyomap.oauth.dtos.userinfo.token.IssueTokensResponseDto;
-import tokyomap.oauth.dtos.userinfo.token.ValidationResultDto;
+import tokyomap.oauth.dtos.ClientCredentialsDto;
+import tokyomap.oauth.dtos.GenerateTokensRequestDto;
+import tokyomap.oauth.dtos.GenerateTokensResponseDto;
+import tokyomap.oauth.dtos.ValidationResultDto;
 import tokyomap.oauth.utils.Logger;
 
 @Component
@@ -39,7 +39,7 @@ public class TokenDomainService {
    * execute validation of request to the token endpoint
    * @return ValidationResultDto
    */
-  public ValidationResultDto execValidation(IssueTokensRequestDto requestDto, String authorization) {
+  public ValidationResultDto execValidation(GenerateTokensRequestDto requestDto, String authorization) {
 
     ClientCredentialsDto clientCredentialsDto = this.validateClient(requestDto, authorization);
     AuthCache authCache = this.authCodeLogic.getCacheByCode(requestDto.getCode());
@@ -86,7 +86,7 @@ public class TokenDomainService {
    * @param authorization
    * @return
    */
-  private ClientCredentialsDto validateClient(IssueTokensRequestDto requestDto, String authorization) {
+  private ClientCredentialsDto validateClient(GenerateTokensRequestDto requestDto, String authorization) {
 
     String clientId = "";
     String clientSecret = "";
@@ -146,9 +146,9 @@ public class TokenDomainService {
   /**
    * issue tokens
    * @param validationResultDto
-   * @return IssueTokensResponseDto
+   * @return GenerateTokensResponseDto
    */
-  public IssueTokensResponseDto issueTokens(ValidationResultDto validationResultDto) {
+  public GenerateTokensResponseDto generateTokens(ValidationResultDto validationResultDto) {
 
     Optional<Usr> optionalUsr = this.usrLogic.getUsrBySub(validationResultDto.getAuthCache().getSub());
     if(optionalUsr == null) {
@@ -156,7 +156,7 @@ public class TokenDomainService {
     }
 
     try {
-      IssueTokensResponseDto responseDto = this.tokenLogic.generateTokens(
+      GenerateTokensResponseDto responseDto = this.tokenLogic.generateTokens(
           validationResultDto.getClientId(), optionalUsr.get().getSub(),
           validationResultDto.getAuthCache().getScopeRequested(),true, null
       );

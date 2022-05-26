@@ -1,8 +1,8 @@
-package tokyomap.oauth.dtos.userinfo.token;
+package tokyomap.oauth.dtos;
 
 import java.io.Serializable;
 
-public class IssueTokensResponseDto implements Serializable {
+public class GenerateTokensResponseDto implements Serializable {
 
   private static final long serialVersionUID = 8788792708297075355L;
 
@@ -12,7 +12,7 @@ public class IssueTokensResponseDto implements Serializable {
   private String idToken;
   private String scope;
 
-  public IssueTokensResponseDto(String tokenType, String accessToken, String refreshToken, String idToken, String scope) {
+  public GenerateTokensResponseDto(String tokenType, String accessToken, String refreshToken, String idToken, String scope) {
     this.tokenType = tokenType;
     this.accessToken = accessToken;
     this.refreshToken = refreshToken;

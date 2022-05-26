@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import tokyomap.oauth.dtos.userinfo.token.IssueTokensRequestDto;
-import tokyomap.oauth.dtos.userinfo.token.IssueTokensResponseDto;
+import tokyomap.oauth.dtos.GenerateTokensRequestDto;
+import tokyomap.oauth.dtos.GenerateTokensResponseDto;
 
 @RestController
 @RequestMapping("/token")
@@ -21,8 +21,8 @@ public class TokenRestController {
   }
 
   @RequestMapping(method = RequestMethod.POST, consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE})
-  public IssueTokensResponseDto issueTokens(IssueTokensRequestDto requestDto, @RequestHeader("Authorization") String authorization) {
-    IssueTokensResponseDto responseDto = tokenApplicationService.execute(requestDto, authorization);
+  public GenerateTokensResponseDto generateTokens(GenerateTokensRequestDto requestDto, @RequestHeader("Authorization") String authorization) {
+    GenerateTokensResponseDto responseDto = tokenApplicationService.execute(requestDto, authorization);
     return responseDto;
   }
 }

@@ -21,8 +21,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 import tokyomap.oauth.domain.entities.postgres.Usr;
 import tokyomap.oauth.domain.services.usr.UsrDominService;
-import tokyomap.oauth.dtos.userinfo.AccessTokenDto;
-import tokyomap.oauth.dtos.userinfo.UserInfoDto;
+import tokyomap.oauth.dtos.AccessTokenDto;
+import tokyomap.oauth.dtos.UserInfoDto;
 import tokyomap.oauth.utils.JsonMapper;
 import tokyomap.oauth.utils.Logger;
 

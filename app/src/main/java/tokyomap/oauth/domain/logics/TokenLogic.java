@@ -23,7 +23,7 @@ import tokyomap.oauth.domain.entities.postgres.AccessToken;
 import tokyomap.oauth.domain.entities.postgres.RefreshToken;
 import tokyomap.oauth.domain.repositories.postgres.AccessTokenRepository;
 import tokyomap.oauth.domain.repositories.postgres.RefreshTokenRepository;
-import tokyomap.oauth.dtos.userinfo.token.IssueTokensResponseDto;
+import tokyomap.oauth.dtos.GenerateTokensResponseDto;
 
 @Component
 public class TokenLogic {
@@ -71,12 +71,12 @@ public class TokenLogic {
    * @param scope
    * @param isRefreshTokenGenerated
    * @param nonce
-   * @return IssueTokensResponseDto
+   * @return GenerateTokensResponseDto
    * @throws IOException
    * @throws NoSuchAlgorithmException
    * @throws InvalidKeySpecException
    */
-  public IssueTokensResponseDto generateTokens(String clientId, String sub,String[] scope, Boolean isRefreshTokenGenerated, String nonce) throws Exception {
+  public GenerateTokensResponseDto generateTokens(String clientId, String sub,String[] scope, Boolean isRefreshTokenGenerated, String nonce) throws Exception {
 
     SignedJWT accessJWT = this.createSignedJWT(sub, this.AUDIENCE, RandomStringUtils.random(8, true, true), scope, clientId);
 
@@ -87,7 +87,7 @@ public class TokenLogic {
       // todo: registration error handling
       AccessToken accessTokenRegistered = this.accessTokenRepository.saveAndFlush(new AccessToken(accessJWT.serialize()));
       // scope must not be sent back to the client in production
-      IssueTokensResponseDto responseDto = new IssueTokensResponseDto("Bearer",accessTokenRegistered.getAccessToken(), null, idJWT.serialize(), String.join(" ", scope));
+      GenerateTokensResponseDto responseDto = new GenerateTokensResponseDto("Bearer",accessTokenRegistered.getAccessToken(), null, idJWT.serialize(), String.join(" ", scope));
       return responseDto;
     }
 
@@ -98,7 +98,7 @@ public class TokenLogic {
     RefreshToken refreshTokenRegistered = this.refreshTokenRepository.saveAndFlush(new RefreshToken(refreshJWT.serialize()));
 
     // scope must not be sent back to the client in production
-    IssueTokensResponseDto responseDto = new IssueTokensResponseDto(
+    GenerateTokensResponseDto responseDto = new GenerateTokensResponseDto(
         "Bearer",
         accessTokenRegistered.getAccessToken(),
         refreshTokenRegistered.getRefreshToken(),

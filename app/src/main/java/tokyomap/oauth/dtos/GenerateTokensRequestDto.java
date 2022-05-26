@@ -1,9 +1,9 @@
-package tokyomap.oauth.dtos.userinfo.token;
+package tokyomap.oauth.dtos;
 
 import java.io.Serializable;
 import javax.annotation.Nullable;
 
-public class IssueTokensRequestDto implements Serializable {
+public class GenerateTokensRequestDto implements Serializable {
 
   private static final long serialVersionUID = 8971927453438048026L;
 
