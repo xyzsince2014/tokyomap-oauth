@@ -1,0 +1,108 @@
+package tokyomap.oauth.domain.services.token;
+
+import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import tokyomap.oauth.domain.entities.postgres.Usr;
+import tokyomap.oauth.domain.entities.redis.AuthCache;
+import tokyomap.oauth.domain.logics.AuthCodeLogic;
+import tokyomap.oauth.domain.logics.ClientLogic;
+import tokyomap.oauth.domain.logics.TokenLogic;
+import tokyomap.oauth.domain.logics.UsrLogic;
+import tokyomap.oauth.dtos.CredentialsDto;
+import tokyomap.oauth.dtos.GenerateTokensRequestDto;
+import tokyomap.oauth.dtos.GenerateTokensResponseDto;
+import tokyomap.oauth.dtos.ValidationResultDto;
+import tokyomap.oauth.utils.Decorder;
+import tokyomap.oauth.utils.Logger;
+
+@Component
+public class AuthorisationCodeFlowDomainSerivice extends TokenDomainService<AuthCache> {
+
+  private final AuthCodeLogic authCodeLogic;
+  private final TokenLogic tokenLogic;
+  private final UsrLogic usrLogic;
+  private final Logger logger;
+
+  @Autowired
+  public AuthorisationCodeFlowDomainSerivice(ClientLogic clientLogic, Decorder decorder, AuthCodeLogic authCodeLogic, TokenLogic tokenLogic, UsrLogic usrLogic, Logger logger) {
+    super(clientLogic, decorder);
+    this.authCodeLogic = authCodeLogic;
+    this.tokenLogic = tokenLogic;
+    this.usrLogic = usrLogic;
+    this.logger = logger;
+  }
+
+  /**
+   * execute validation of request to the token endpoint
+   * @return ValidationResultDto
+   */
+  @Override
+  public ValidationResultDto<AuthCache> execValidation(GenerateTokensRequestDto requestDto, String authorization) {
+
+    CredentialsDto credentialsDto = this.validateClient(requestDto, authorization);
+    AuthCache authCache = this.authCodeLogic.getCacheByCode(requestDto.getCode());
+
+    //  check the expiry date of the auth code here
+    if (!credentialsDto.getId().equals(authCache.getAuthReqParams().getClientId())) {
+      this.logger.log(
+          "AuthorisationCodeFlowDomainSerivice",
+          "invalid client id: authCache.getAuthReqParams().getClientId() = " + authCache.getAuthReqParams().getClientId() + ", credentialsDto.getClientId() = " + credentialsDto.getId()
+      );
+      // todo: throw new Error('invalid client id');
+    }
+
+    // todo: check PKCE values by a private function
+    // cf. https://auth0.com/docs/authorization/flows/authorization-code-flow-with-proof-key-for-code-exchange-pkce
+    if (authCache.getAuthReqParams().getCodeChallenge() == null) {
+      this.logger.log("AuthorisationCodeFlowDomainSerivice", "invalid codeChallenge");
+      // todo: throw new Error('invalid codeChallenge');
+    }
+    String codeChallengeMethod = authCache.getAuthReqParams().getCodeChallengeMethod();
+    if (!codeChallengeMethod.equals("plain") && !codeChallengeMethod.equals("SHA256")) {
+      this.logger.log(
+          "AuthorisationCodeFlowDomainSerivice",
+          "invalid codeChallengeMethod: codeChallengeMethod = " + codeChallengeMethod);
+      // todo: throw new Error('invalid codeChallengeMethod');
+    }
+    // todo: use `SHA256` only
+    //    String codeChallenge = codeChallengeMethod.equals("SHA256") ? base64url.fromBase64(crypto.createHash('sha256').update(requestDto.getCodeVerifier()).digest('base64')) : requestDto.getCodeVerifier();
+    String codeChallenge = requestDto.getCodeVerifier();
+    if (!authCache.getAuthReqParams().getCodeChallenge().equals(codeChallenge)) {
+      // todo: throw new Error(`codeChallenge is expected to be ${codeChallenge}, but ${authCache.authReqParams.codeChallenge} is given`);
+      this.logger.log(
+          "AuthorisationCodeFlowDomainSerivice",
+          "codeChallenge = " + codeChallenge + ", authCache.getAuthReqParams().getCodeChallenge() = " + authCache.getAuthReqParams().getCodeChallenge()
+      );
+    }
+
+    return new ValidationResultDto(credentialsDto.getId(), authCache);
+  }
+
+  /**
+   * generate tokens
+   * @param validationResultDto
+   * @return GenerateTokensResponseDto
+   */
+  @Override
+  public GenerateTokensResponseDto generateTokens(ValidationResultDto<AuthCache> validationResultDto) {
+
+    Optional<Usr> optionalUsr = this.usrLogic.getUsrBySub(validationResultDto.getPayload().getSub());
+    if(optionalUsr == null) {
+      // todo: error handling
+    }
+
+    try {
+      GenerateTokensResponseDto responseDto = this.tokenLogic.generateTokens(
+          validationResultDto.getClientId(), optionalUsr.get().getSub(),
+          validationResultDto.getPayload().getScopeRequested(),true, null
+      );
+      return responseDto;
+
+    } catch (Exception e) {
+      // todo: error handling
+      e.printStackTrace();
+      return null;
+    }
+  }
+}

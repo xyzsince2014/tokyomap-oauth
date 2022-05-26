@@ -1,14 +1,12 @@
 package tokyomap.oauth.dtos;
 
-import tokyomap.oauth.domain.entities.redis.AuthCache;
-
-public class ValidationResultDto {
+public class ValidationResultDto<T> {
   private String clientId;
-  private AuthCache authCache;
+  private T payload;
 
-  public ValidationResultDto(String clientId, AuthCache authCache) {
+  public ValidationResultDto(String clientId, T payload) {
     this.clientId = clientId;
-    this.authCache = authCache;
+    this.payload = payload;
   }
 
   public String getClientId() {
@@ -19,11 +17,7 @@ public class ValidationResultDto {
     this.clientId = clientId;
   }
 
-  public AuthCache getAuthCache() {
-    return authCache;
-  }
+  public T getPayload() { return payload; }
 
-  public void setAuthCache(AuthCache authCache) {
-    this.authCache = authCache;
-  }
+  public void setPayload(T payload) { this.payload = payload; }
 }

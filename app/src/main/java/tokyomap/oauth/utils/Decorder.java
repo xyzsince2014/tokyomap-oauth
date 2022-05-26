@@ -14,7 +14,7 @@ public class Decorder {
    */
   public CredentialsDto decodeCredentials(String authorization) {
     if(authorization == null) {
-      return new CredentialsDto();
+      return null;
     }
 
     Base64 base64 = new Base64();

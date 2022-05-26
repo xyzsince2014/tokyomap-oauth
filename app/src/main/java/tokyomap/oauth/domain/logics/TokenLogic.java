@@ -65,6 +65,16 @@ public class TokenLogic {
   }
 
   /**
+   * get the RefreshToken entity for the given refresh token
+   * @param refreshToken
+   * @return RefreshToken
+   */
+  public RefreshToken getRefreshToken(String refreshToken) {
+    Optional<RefreshToken> optionalRefreshToken = this.refreshTokenRepository.findById(refreshToken);
+    return optionalRefreshToken.orElse(null);
+  }
+
+  /**
    * generate JWT and signing them with RSA private key
    * @param clientId
    * @param sub
