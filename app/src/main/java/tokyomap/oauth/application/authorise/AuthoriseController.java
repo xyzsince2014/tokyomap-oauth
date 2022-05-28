@@ -15,6 +15,7 @@ import tokyomap.oauth.domain.entities.redis.AuthReqParams;
 import tokyomap.oauth.domain.services.authorise.PreAuthoriseDomainService;
 import tokyomap.oauth.domain.services.authorise.ProAuthoriseDomainService;
 import tokyomap.oauth.dtos.PreAuthoriseResponseDto;
+import tokyomap.oauth.utils.Logger;
 
 @Controller
 @RequestMapping("/authorise")
@@ -22,11 +23,13 @@ public class AuthoriseController {
 
   private final PreAuthoriseDomainService preAuthoriseDomainService;
   private final ProAuthoriseDomainService proAuthoriseDomainService;
+  private final Logger logger;
 
   @Autowired
-  public AuthoriseController(PreAuthoriseDomainService preAuthoriseDomainService, ProAuthoriseDomainService proAuthoriseDomainService) {
+  public AuthoriseController(PreAuthoriseDomainService preAuthoriseDomainService, ProAuthoriseDomainService proAuthoriseDomainService, Logger logger) {
     this.preAuthoriseDomainService = preAuthoriseDomainService;
     this.proAuthoriseDomainService = proAuthoriseDomainService;
+    this.logger = logger;
   }
 
   @ModelAttribute("authorisationForm")

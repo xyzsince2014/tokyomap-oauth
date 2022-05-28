@@ -88,4 +88,11 @@ public class GenerateTokensRequestDto implements Serializable {
   public void setRefreshToken(@Nullable String refreshToken) {
     this.refreshToken = refreshToken;
   }
+
+  @Override
+  public String toString() {
+    return "grantType = " + this.grantType + ", code = " + this.code + ", redirectUri = " + this.redirectUri
+        + ", codeVerifier = " + this.codeVerifier + ", clientId = " + this.clientId + ", clientSecret = " + this.clientSecret
+        + ", refreshToken = " + this.refreshToken;
+  }
 }

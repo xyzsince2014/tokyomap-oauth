@@ -5,7 +5,7 @@ import tokyomap.oauth.domain.logics.ClientLogic;
 import tokyomap.oauth.dtos.CredentialsDto;
 import tokyomap.oauth.dtos.GenerateTokensRequestDto;
 import tokyomap.oauth.dtos.GenerateTokensResponseDto;
-import tokyomap.oauth.dtos.ValidationResultDto;
+import tokyomap.oauth.dtos.TokenValidationResultDto;
 import tokyomap.oauth.utils.Decorder;
 
 public abstract class TokenDomainService<T> {
@@ -20,16 +20,16 @@ public abstract class TokenDomainService<T> {
 
   /**
    * execute validation of request to the token endpoint
-   * @return ValidationResultDto
+   * @return TokenValidationResultDto
    */
-  public abstract ValidationResultDto<T> execValidation(GenerateTokensRequestDto requestDto, String authorization);
+  public abstract TokenValidationResultDto<T> execValidation(GenerateTokensRequestDto requestDto, String authorization);
 
   /**
    * generate tokens
-   * @param validationResultDto
+   * @param tokenValidationResultDto
    * @return GenerateTokensResponseDto
    */
-  public abstract GenerateTokensResponseDto generateTokens(ValidationResultDto<T> validationResultDto);
+  public abstract GenerateTokensResponseDto generateTokens(TokenValidationResultDto<T> tokenValidationResultDto);
 
   /**
    * validate client

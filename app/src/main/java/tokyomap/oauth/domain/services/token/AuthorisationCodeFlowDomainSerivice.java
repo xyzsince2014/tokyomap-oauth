@@ -12,7 +12,7 @@ import tokyomap.oauth.domain.logics.UsrLogic;
 import tokyomap.oauth.dtos.CredentialsDto;
 import tokyomap.oauth.dtos.GenerateTokensRequestDto;
 import tokyomap.oauth.dtos.GenerateTokensResponseDto;
-import tokyomap.oauth.dtos.ValidationResultDto;
+import tokyomap.oauth.dtos.TokenValidationResultDto;
 import tokyomap.oauth.utils.Decorder;
 import tokyomap.oauth.utils.Logger;
 
@@ -35,10 +35,10 @@ public class AuthorisationCodeFlowDomainSerivice extends TokenDomainService<Auth
 
   /**
    * execute validation of request to the token endpoint
-   * @return ValidationResultDto
+   * @return TokenValidationResultDto
    */
   @Override
-  public ValidationResultDto<AuthCache> execValidation(GenerateTokensRequestDto requestDto, String authorization) {
+  public TokenValidationResultDto<AuthCache> execValidation(GenerateTokensRequestDto requestDto, String authorization) {
 
     CredentialsDto credentialsDto = this.validateClient(requestDto, authorization);
     AuthCache authCache = this.authCodeLogic.getCacheByCode(requestDto.getCode());
@@ -76,26 +76,26 @@ public class AuthorisationCodeFlowDomainSerivice extends TokenDomainService<Auth
       );
     }
 
-    return new ValidationResultDto(credentialsDto.getId(), authCache);
+    return new TokenValidationResultDto(credentialsDto.getId(), authCache);
   }
 
   /**
    * generate tokens
-   * @param validationResultDto
+   * @param tokenValidationResultDto
    * @return GenerateTokensResponseDto
    */
   @Override
-  public GenerateTokensResponseDto generateTokens(ValidationResultDto<AuthCache> validationResultDto) {
+  public GenerateTokensResponseDto generateTokens(TokenValidationResultDto<AuthCache> tokenValidationResultDto) {
 
-    Optional<Usr> optionalUsr = this.usrLogic.getUsrBySub(validationResultDto.getPayload().getSub());
+    Optional<Usr> optionalUsr = this.usrLogic.getUsrBySub(tokenValidationResultDto.getPayload().getSub());
     if(optionalUsr == null) {
       // todo: error handling
     }
 
     try {
       GenerateTokensResponseDto responseDto = this.tokenLogic.generateTokens(
-          validationResultDto.getClientId(), optionalUsr.get().getSub(),
-          validationResultDto.getPayload().getScopeRequested(),true, null
+          tokenValidationResultDto.getClientId(), optionalUsr.get().getSub(),
+          tokenValidationResultDto.getPayload().getScopeRequested(),true, null
       );
       return responseDto;
 

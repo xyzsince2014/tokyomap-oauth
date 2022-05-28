@@ -14,7 +14,7 @@ import tokyomap.oauth.dtos.CredentialsDto;
 import tokyomap.oauth.dtos.GenerateTokensRequestDto;
 import tokyomap.oauth.dtos.GenerateTokensResponseDto;
 import tokyomap.oauth.dtos.TokenPayloadDto;
-import tokyomap.oauth.dtos.ValidationResultDto;
+import tokyomap.oauth.dtos.TokenValidationResultDto;
 import tokyomap.oauth.utils.Decorder;
 import tokyomap.oauth.utils.Logger;
 
@@ -35,10 +35,10 @@ public class RefreshTokenDomainService extends TokenDomainService<TokenPayloadDt
 
   /**
    * execute validation of request to the token endpoint with a refresh token
-   * @return ValidationResultDto
+   * @return TokenValidationResultDto
    */
   @Override
-  public ValidationResultDto<TokenPayloadDto> execValidation(GenerateTokensRequestDto requestDto, String authorization) {
+  public TokenValidationResultDto<TokenPayloadDto> execValidation(GenerateTokensRequestDto requestDto, String authorization) {
 
     CredentialsDto credentialsDto = this.validateClient(requestDto, authorization);
 
@@ -77,7 +77,7 @@ public class RefreshTokenDomainService extends TokenDomainService<TokenPayloadDt
 //      throw new Error(`${util.fetchCurrentDatetimeJst()} [refreshTokenLogic.execValidation] invalid clientId: payload.cliendId = ${payload.clientId}, actual clientId = ${clientId}`);
 //    }
 
-      return new ValidationResultDto(credentialsDto.getId(), tokenPayloadDto);
+      return new TokenValidationResultDto(credentialsDto.getId(), tokenPayloadDto);
 
     } catch (Exception e) {
       // todo: handle exception properly
@@ -88,20 +88,20 @@ public class RefreshTokenDomainService extends TokenDomainService<TokenPayloadDt
 
   /**
    * generate tokens to refresh old ones
-   * @param validationResultDto
+   * @param tokenValidationResultDto
    * @return GenerateTokensResponseDto
    */
   @Override
-  public GenerateTokensResponseDto generateTokens(ValidationResultDto<TokenPayloadDto> validationResultDto) {
+  public GenerateTokensResponseDto generateTokens(TokenValidationResultDto<TokenPayloadDto> tokenValidationResultDto) {
 
-    Optional<Usr> optionalUsr = this.usrLogic.getUsrBySub(validationResultDto.getPayload().getSub());
+    Optional<Usr> optionalUsr = this.usrLogic.getUsrBySub(tokenValidationResultDto.getPayload().getSub());
     if(optionalUsr == null) {
       // todo: error handling
     }
 
     try {
       return this.tokenLogic.generateTokens(
-          validationResultDto.getPayload().getClientId(), optionalUsr.get().getSub(), validationResultDto.getPayload().getScope(),true, null
+          tokenValidationResultDto.getPayload().getClientId(), optionalUsr.get().getSub(), tokenValidationResultDto.getPayload().getScope(),true, null
       );
 
     } catch (Exception e) {

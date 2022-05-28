@@ -9,7 +9,7 @@ import tokyomap.oauth.domain.services.token.RefreshTokenDomainService;
 import tokyomap.oauth.dtos.GenerateTokensRequestDto;
 import tokyomap.oauth.dtos.GenerateTokensResponseDto;
 import tokyomap.oauth.dtos.TokenPayloadDto;
-import tokyomap.oauth.dtos.ValidationResultDto;
+import tokyomap.oauth.dtos.TokenValidationResultDto;
 
 @Service
 public class TokenApplicationService {
@@ -31,13 +31,13 @@ public class TokenApplicationService {
   public GenerateTokensResponseDto execute(GenerateTokensRequestDto requestDto, String authorization) {
     switch (requestDto.getGrantType()) {
       case "AUTHORISATION_CODE": { // todo: use a Constant
-        ValidationResultDto<AuthCache> validationResultDto = this.authorisationCodeFlowDomainSerivce.execValidation(requestDto, authorization);
-        GenerateTokensResponseDto response = this.authorisationCodeFlowDomainSerivce.generateTokens(validationResultDto);
+        TokenValidationResultDto<AuthCache> tokenValidationResultDto = this.authorisationCodeFlowDomainSerivce.execValidation(requestDto, authorization);
+        GenerateTokensResponseDto response = this.authorisationCodeFlowDomainSerivce.generateTokens(tokenValidationResultDto);
         return response;
       }
       case "REFRESH_TOKEN": { // todo: use a Constant
-        ValidationResultDto<TokenPayloadDto> validationResultDto = this.refreshTokenDomainService.execValidation(requestDto, authorization);
-        GenerateTokensResponseDto response = this.refreshTokenDomainService.generateTokens(validationResultDto);
+        TokenValidationResultDto<TokenPayloadDto> tokenValidationResultDto = this.refreshTokenDomainService.execValidation(requestDto, authorization);
+        GenerateTokensResponseDto response = this.refreshTokenDomainService.generateTokens(tokenValidationResultDto);
         return response;
       }
       // todo:

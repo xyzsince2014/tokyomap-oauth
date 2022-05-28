@@ -56,6 +56,29 @@ public class Client implements Serializable {
   @Column(name = "updated_at")
   private LocalDateTime updatedAt;
 
+  public Client() {}
+
+  public Client(
+      String clientId, String clientSecret, String clientName, String tokenEndpointAuthMethod, String clientUri,
+      String redirectUris, String grantTypes, String responseTypes, String scope, String registrationAccessToken, String registrationClientUri
+  ) {
+    this.clientId = clientId;
+    this.clientSecret = clientSecret;
+    this.clientName = clientName;
+    this.tokenEndpointAuthMethod = tokenEndpointAuthMethod;
+    this.clientUri = clientUri;
+    this.redirectUris = redirectUris;
+    this.grantTypes = grantTypes;
+    this.responseTypes = responseTypes;
+    this.scope = scope;
+    this.registrationAccessToken = registrationAccessToken;
+    this.registrationClientUri = registrationClientUri;
+    LocalDateTime ldt = LocalDateTime.now(); // todo: use JST
+    this.expiresAt = ldt; // todo: set properly
+    this.createdAt = ldt;
+    this.updatedAt = ldt;
+  }
+
   public String getClientId() {
     return clientId;
   }
@@ -166,5 +189,15 @@ public class Client implements Serializable {
 
   public void setUpdatedAt(LocalDateTime updatedAt) {
     this.updatedAt = updatedAt;
+  }
+
+  @Override
+  public String toString() {
+    return "clientId = " + this.clientId + ", cilentSecret = " + this.clientSecret
+        + ", clientName = " + this.clientName + ", tokenEndpointAuthMethod = " + this.tokenEndpointAuthMethod
+        + ", clientUri = " + this.clientUri + ", redirectUris = " + this.redirectUris
+        + ", responseTypes = " + this.responseTypes + ", scope = " + this.scope
+        + ", registrationAccessToken = " + this.registrationAccessToken
+        + ", registrationClientUri = " + this.registrationClientUri;
   }
 }

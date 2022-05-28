@@ -20,11 +20,7 @@ public class ProAuthoriseDomainService {
   private final UsrRepository usrRepository;
 
   @Autowired
-  public ProAuthoriseDomainService(
-      RedisTemplate<String, AuthReqParams> authReqParamsRedisTemplate,
-      RedisTemplate<String, AuthCache> authCodeRedisTemplate,
-      UsrRepository usrRepository
-  ) {
+  public ProAuthoriseDomainService(RedisTemplate<String, AuthReqParams> authReqParamsRedisTemplate, RedisTemplate<String, AuthCache> authCodeRedisTemplate, UsrRepository usrRepository) {
     this.authReqParamsRedisTemplate = authReqParamsRedisTemplate;
     this.authCodeRedisTemplate = authCodeRedisTemplate;
     this.usrRepository = usrRepository;

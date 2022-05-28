@@ -26,7 +26,6 @@ import tokyomap.oauth.dtos.UserInfoDto;
 import tokyomap.oauth.utils.JsonMapper;
 import tokyomap.oauth.utils.Logger;
 
-// todo: @CrossOrigin
 @RestController
 @RequestMapping("/userinfo")
 public class UserInfoRestController {
