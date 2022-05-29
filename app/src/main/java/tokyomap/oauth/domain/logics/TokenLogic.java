@@ -75,6 +75,16 @@ public class TokenLogic {
   }
 
   /**
+   * delete the AccessToken and the RefreshToken
+   * @param accessToken
+   * @param refreshToken
+   */
+  public void revokeTokens(String accessToken, String refreshToken) {
+    this.accessTokenRepository.deleteById(accessToken);
+    this.refreshTokenRepository.deleteById(refreshToken);
+  }
+
+  /**
    * generate JWT and signing them with RSA private key
    * @param clientId
    * @param sub
