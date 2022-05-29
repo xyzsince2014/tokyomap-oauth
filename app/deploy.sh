@@ -7,23 +7,29 @@ fi
 
 echo "execute $(pwd)/$0"
 
+clean() {
+  mvn --settings .mvn/settings.xml -P develop clean test
+  rm -rf ./tomcat/webapps
+  mkdir -p ./tomcat/webapps
+  echo "clean() completed."
+}
+
 report() {
   mvn help:effective-pom -Doutput=.mvn/effective-pom.xml
   mvn help:effective-settings -Doutput=.mvn/effective-settings.xml
+  echo "report() completed."
 }
 
 # todo: build and deploy should be done by Jenkins or something
 build() {
   # todo: mvn --settings .mvn/settings.xml -P production -Dmaven.test.skip=true package
   mvn --settings .mvn/settings.xml -P $1 -Dmaven.test.skip=true package
-  echo "build completed."
+  echo "build() completed."
 }
 
 deploy() {
-  rm -rf ./tomcat/webapps
-  mkdir -p ./tomcat/webapps
   cp ./target/ROOT.war ./tomcat/webapps
-  echo "deploy completed."
+  echo "deploy() completed."
 }
 
 # todo
@@ -39,6 +45,7 @@ for PROFILE in ${PROFILES[@]}; do
     continue;
   fi
 
+  clean
   report
   build $1
   deploy
