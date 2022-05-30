@@ -53,7 +53,15 @@ public class AuthoriseController {
 
     PreAuthoriseResponseDto dto = this.preAuthoriseDomainService.execute(authReqParams);
 
-    // todo: instead of rendering a view, return to clients a JS module to authenticate
+    /**
+     * todo: OAuth Authentication with Modal
+     * * distribute a js beforehand
+     * * clients use the js
+     * * authentication actions trigger a function of the js
+     * * the function display an Authentication form in a modal
+     * * use Multi-Factor Authentication
+     * * submit the form request to the pro-authorisaton endpoint
+     */
     model.addAttribute("dto", dto);
 
     return "authorise";
