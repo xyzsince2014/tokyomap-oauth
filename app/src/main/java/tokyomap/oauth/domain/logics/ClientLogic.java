@@ -35,4 +35,12 @@ public class ClientLogic {
     Client clientRegistered = this.clientRepository.saveAndFlush(client);
     return clientRegistered;
   }
+
+  /**
+   * unregister the client for the given clientId
+   * @param clientId
+   */
+  public void unregisterClient(String clientId) {
+    this.clientRepository.deleteById(clientId);
+  }
 }
