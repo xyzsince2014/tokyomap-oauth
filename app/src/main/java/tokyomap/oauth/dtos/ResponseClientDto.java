@@ -20,7 +20,7 @@ public class ResponseClientDto implements Serializable {
   /** the URI that indicates the client’s homepage. */
   private String clientUri;
 
-  private String redirectUris;
+  private String[] redirectUris;
 
   /** a URI for a graphical logo for the client. The authorisation server can use this URL to display a logo for the client to the user. */
   @Nullable
@@ -28,7 +28,7 @@ public class ResponseClientDto implements Serializable {
 
   /** a list of ways to contact the people responsible for a client, usually email addresses, but they could be phone numbers, instant messaging addresses, or other contact mechanisms. */
   @Nullable
-  private String contacts;
+  private String[] contacts;
 
   /** a URI for a human-readable page which lists the terms of service for the client. */
   @Nullable
@@ -50,13 +50,13 @@ public class ResponseClientDto implements Serializable {
   @Nullable
   private String softwareVersion;
 
-  private String grantTypes;
+  private String[] grantTypes;
 
-  private String responseTypes;
+  private String[] responseTypes;
 
   private String tokenEndpointAuthMethod;
 
-  private String scope;
+  private String[] scope;
 
   @Nullable
   private String registrationAccessToken;
@@ -101,11 +101,11 @@ public class ResponseClientDto implements Serializable {
     this.clientUri = clientUri;
   }
 
-  public String getRedirectUris() {
+  public String[] getRedirectUris() {
     return redirectUris;
   }
 
-  public void setRedirectUris(String redirectUris) {
+  public void setRedirectUris(String[] redirectUris) {
     this.redirectUris = redirectUris;
   }
 
@@ -119,11 +119,11 @@ public class ResponseClientDto implements Serializable {
   }
 
   @Nullable
-  public String getContacts() {
+  public String[] getContacts() {
     return contacts;
   }
 
-  public void setContacts(@Nullable String contacts) {
+  public void setContacts(@Nullable String[] contacts) {
     this.contacts = contacts;
   }
 
@@ -172,19 +172,19 @@ public class ResponseClientDto implements Serializable {
     this.softwareVersion = softwareVersion;
   }
 
-  public String getGrantTypes() {
+  public String[] getGrantTypes() {
     return grantTypes;
   }
 
-  public void setGrantTypes(String grantTypes) {
+  public void setGrantTypes(String[] grantTypes) {
     this.grantTypes = grantTypes;
   }
 
-  public String getResponseTypes() {
+  public String[] getResponseTypes() {
     return responseTypes;
   }
 
-  public void setResponseTypes(String responseTypes) {
+  public void setResponseTypes(String[] responseTypes) {
     this.responseTypes = responseTypes;
   }
 
@@ -196,11 +196,11 @@ public class ResponseClientDto implements Serializable {
     this.tokenEndpointAuthMethod = tokenEndpointAuthMethod;
   }
 
-  public String getScope() {
+  public String[] getScope() {
     return scope;
   }
 
-  public void setScope(String scope) {
+  public void setScope(String[] scope) {
     this.scope = scope;
   }
 

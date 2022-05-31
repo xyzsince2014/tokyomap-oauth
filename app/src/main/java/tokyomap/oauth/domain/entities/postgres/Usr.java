@@ -273,4 +273,12 @@ public class Usr implements Serializable {
     usrMap.put("scope", this.scope);
     return usrMap;
   }
+
+  @Override
+  public String toString() {
+    return "sun = " + this.sub + ", name = " + this.name + ", familyName = " + this.familyName
+        + ", givenName = " + this.givenName + ", middleName = " + this.middleName + ", nickname = " + this.nickname
+        + ", preferredUsername = " + this.preferredUsername + ", profile = " + this.profile + ", picture = " + this.picture
+        + ", website = " + this.website + ", zoneinfo = " + this.zoneinfo + ", locale = " + this.locale + ", email = " + this.email;
+  }
 }

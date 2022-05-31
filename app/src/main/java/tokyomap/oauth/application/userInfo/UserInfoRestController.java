@@ -1,6 +1,5 @@
 package tokyomap.oauth.application.userInfo;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -8,17 +7,10 @@ import java.util.Map;
 import java.util.function.Function;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.util.UriComponentsBuilder;
 import tokyomap.oauth.domain.entities.postgres.Usr;
 import tokyomap.oauth.domain.services.usr.UsrDominService;
 import tokyomap.oauth.dtos.AccessTokenDto;
@@ -41,84 +33,74 @@ public class UserInfoRestController {
     this.jsonMapper = jsonMapper;
   }
 
-  /**
-   * curl -v -X GET "http://localhost:80/userinfo/{sub}"
-   * @param sub
-   * @return UserInfoDto
-   */
-  @RequestMapping(path = "/{sub}", method = RequestMethod.GET)
-  public UserInfoDto getUser(@PathVariable String sub) {
-    Usr usr = this.usrDominService.findUsrBySub(sub);
-    UserInfoDto dto = new UserInfoDto(usr);
-    return dto;
-  }
-
 //  /**
-//   * curl -v -X GET "http://localhost:80/userinfo"
-//   * @return List<UserInfoDto>
+//   * curl -v -X GET "http://localhost:80/userinfo/{sub}"
+//   * @param sub
+//   * @return UserInfoDto
 //   */
-//  @RequestMapping(method = RequestMethod.GET)
-//  public List<UserInfoDto> getAllUsers() {
-//    List<Usr> usrList = this.usrDominService.findAll();
-//    return usrList.stream().map(UserInfoDto::new).collect(Collectors.toList());
+//  @RequestMapping(path = "/{sub}", method = RequestMethod.GET)
+//  public UserInfoDto getUser(@PathVariable String sub) {
+//    Usr usr = this.usrDominService.findUsrBySub(sub);
+//    UserInfoDto dto = new UserInfoDto(usr);
+//    return dto;
 //  }
 
-  /**
-   * curl -v -X POST "http://localhost:80/user" -H "Content-Type: application/json" -d '{"userId":"fuga","givenName":"ueno","familyName":"tokyo"}'
-   * @param dto
-   * @return ResponseEntity<Void>
-   */
-  @RequestMapping(method = RequestMethod.POST)
-  public ResponseEntity<Void> createUser(
-      @Validated @RequestBody UserInfoDto dto,
-      UriComponentsBuilder uriBuilder
-  ) {
+//  /**
+//   * curl -v -X POST "http://localhost:80/user" -H "Content-Type: application/json" -d '{"userId":"fuga","givenName":"ueno","familyName":"tokyo"}'
+//   * @param dto
+//   * @return ResponseEntity<Void>
+//   */
+//  @RequestMapping(method = RequestMethod.POST)
+//  public ResponseEntity<Void> createUser(
+//      @Validated @RequestBody UserInfoDto dto,
+//      UriComponentsBuilder uriBuilder
+//  ) {
+//
+//    // todo: refine usr
+//    Usr usr = new Usr();
+//    usr.setSub(dto.getSub());
+//    usr.setFamilyName(dto.getFamilyName());
+//    usr.setScope(dto.getScope());
+//    Usr usrCreated = this.usrDominService.save(usr);
+//
+//    URI resourceUri = uriBuilder
+//        .path("/userinfo/{sub}")
+//        .buildAndExpand(usrCreated.getSub()) // build a UriComponents instance and replaces URI template variables with the values from an array
+//        .encode()
+//        .toUri();
+//
+//    return ResponseEntity.created(resourceUri).build();
+//  }
 
-    // todo: refine usr
-    Usr usr = new Usr();
-    usr.setSub(dto.getSub());
-    usr.setFamilyName(dto.getFamilyName());
-    usr.setScope(dto.getScope());
-    Usr usrCreated = this.usrDominService.save(usr);
+//  /**
+//   * curl -i -X PUT "http://localhost:80/userinfo/hoge" -H "Content-Type: application/json" -d '{"userId":"fuga","givenName":"foo","familyName":"boo"}'
+//   * @param sub
+//   * @param dto
+//   */
+//  @RequestMapping(path = "/{sub}", method = RequestMethod.PUT)
+//  @ResponseStatus(HttpStatus.NO_CONTENT) // return "204 No Content"
+//  public void updateUser(
+//      @PathVariable String sub,
+//      @Validated @RequestBody UserInfoDto dto
+//  ) {
+//
+//    // todo: refine usr
+//    Usr usr = this.usrDominService.findUsrBySub(sub);
+//    usr.setFamilyName(dto.getFamilyName());
+//    usr.setGivenName(dto.getGivenName());
+//
+//    this.usrDominService.save(usr);
+//  }
 
-    URI resourceUri = uriBuilder
-        .path("/userinfo/{sub}")
-        .buildAndExpand(usrCreated.getSub()) // build a UriComponents instance and replaces URI template variables with the values from an array
-        .encode()
-        .toUri();
-
-    return ResponseEntity.created(resourceUri).build();
-  }
-
-  /**
-   * curl -i -X PUT "http://localhost:80/userinfo/hoge" -H "Content-Type: application/json" -d '{"userId":"fuga","givenName":"foo","familyName":"boo"}'
-   * @param sub
-   * @param dto
-   */
-  @RequestMapping(path = "/{sub}", method = RequestMethod.PUT)
-  @ResponseStatus(HttpStatus.NO_CONTENT) // return "204 No Content"
-  public void updateUser(
-      @PathVariable String sub,
-      @Validated @RequestBody UserInfoDto dto
-  ) {
-
-    // todo: refine usr
-    Usr usr = this.usrDominService.findUsrBySub(sub);
-    usr.setFamilyName(dto.getFamilyName());
-    usr.setGivenName(dto.getGivenName());
-
-    this.usrDominService.save(usr);
-  }
-
-  /**
-   * curl -v -X DELETE "http://localhost:80/userinfo/{sub}"
-   * @param sub
-   */
-  @RequestMapping(path = "/{sub}", method = RequestMethod.DELETE)
-  @ResponseStatus(HttpStatus.NO_CONTENT)
-  public void deleteUser(@PathVariable String sub) {
-    this.usrDominService.deleteUsrBySub(sub);
-  }
+//  /**
+//   * curl -v -X DELETE "http://localhost:80/userinfo/{sub}"
+//   * @param sub
+//   */
+//  @RequestMapping(path = "/{sub}", method = RequestMethod.DELETE)
+//  @ResponseStatus(HttpStatus.NO_CONTENT)
+//  public void deleteUser(@PathVariable String sub) {
+//    this.usrDominService.deleteUsrBySub(sub);
+//  }
 
   private Function<Map<String, Object>, Map<String, Object>> createUserInfo(String scope) {
     switch(scope) {
@@ -184,6 +166,7 @@ public class UserInfoRestController {
    * get UserInfoDto
    * @return
    */
+  // todo: return GetUserInfoDto containing UserInfoDto
   @RequestMapping(method = RequestMethod.GET)
   public UserInfoDto getUserinfo(@RequestHeader("Authorization") String authorization) {
 
@@ -197,6 +180,8 @@ public class UserInfoRestController {
 
     // todo: return NOT_FOUND in case user is not found
     Usr usr = this.usrDominService.findUsrBySub(accessTokenDto.getSub());
+
+    this.logger.log("UserInfoRestContorller", "usr = " + usr.toString());
 
     Map<String, Object> usrMap = usr.convertToMap();
 

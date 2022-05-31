@@ -70,7 +70,7 @@ public class ProAuthoriseDomainService {
 
     AuthReqParams authReqParams = authReqParamsRedisTemplate.opsForValue().get(requestId);
 
-    String[] scopeRequested = authReqParams.getScope().split(" ");
+    String[] scopeRequested = authReqParams.getScope();
     // todo:
     //    if (!util.isObjectlncluded(scopeRequested, user.scope)) { // the requested scope must be included by the user's scope
     //      throw new Error(`invalid scope requested: scopeRequested = ${JSON.stringify(scopeRequested)}, user.scope = ${JSON.stringify(user.scope)}`);

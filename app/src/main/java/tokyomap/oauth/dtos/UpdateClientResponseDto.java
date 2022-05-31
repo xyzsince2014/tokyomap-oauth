@@ -2,13 +2,13 @@ package tokyomap.oauth.dtos;
 
 import java.io.Serializable;
 
-public class ReadClientResponseDto implements Serializable {
+public class UpdateClientResponseDto implements Serializable {
 
-  private static final long serialVersionUID = 966095348686127071L;
+  private static final long serialVersionUID = -2214581005531947697L;
 
   private ResponseClientDto client;
 
-  public ReadClientResponseDto(ResponseClientDto responseClientDto) {
+  public UpdateClientResponseDto(ResponseClientDto responseClientDto) {
     this.client = responseClientDto;
   }
 

@@ -31,11 +31,11 @@ public class RegisterClientApplicationService {
     responseClientDto.setClientSecret(client.getClientSecret());
     responseClientDto.setClientName(client.getClientName());
     responseClientDto.setClientUri(client.getClientUri());
-    responseClientDto.setRedirectUris(client.getRedirectUris());
-    responseClientDto.setGrantTypes(client.getGrantTypes());
-    responseClientDto.setResponseTypes(client.getResponseTypes());
+    responseClientDto.setRedirectUris(client.getRedirectUris().split(" "));
+    responseClientDto.setGrantTypes(client.getGrantTypes().split(" "));
+    responseClientDto.setResponseTypes(client.getResponseTypes().split(" "));
     responseClientDto.setTokenEndpointAuthMethod(client.getTokenEndpointAuthMethod());
-    responseClientDto.setScope(client.getScope());
+    responseClientDto.setScope(client.getScope().split(" "));
     responseClientDto.setRegistrationAccessToken(client.getRegistrationAccessToken());
     responseClientDto.setRegistrationClientUri(client.getRegistrationClientUri());
     responseClientDto.setExpiresAt(client.getExpiresAt());

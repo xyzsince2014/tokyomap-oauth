@@ -34,13 +34,13 @@ public class UserInfoRestControllerIntegrationTest {
     this.mockMvc = MockMvcBuilders.webAppContextSetup(this.context).build();
   }
 
-  @Test
-  public void testGetUser() throws Exception {
-    this.mockMvc
-        .perform(get("/userinfo/9XE3-JI34-99999A").accept(MediaType.APPLICATION_JSON))
-        .andExpect(status().isOk())
-        .andExpect(content().contentType(MediaType.APPLICATION_JSON));
-  }
+//  @Test
+//  public void testGetUser() throws Exception {
+//    this.mockMvc
+//        .perform(get("/userinfo/9XE3-JI34-99999A").accept(MediaType.APPLICATION_JSON))
+//        .andExpect(status().isOk())
+//        .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+//  }
 
   // todo:
 //  @Test

@@ -1,6 +1,8 @@
 package tokyomap.oauth.domain.entities.redis;
 
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 public class AuthCache implements Serializable {
 
@@ -41,5 +43,12 @@ public class AuthCache implements Serializable {
 
   public void setAuthReqParams(AuthReqParams authReqParams) {
     this.authReqParams = authReqParams;
+  }
+
+  @Override
+  public String toString() {
+    return "sub = " + this.sub
+        + ", scopeRequested = " + Arrays.stream(this.scopeRequested).collect(Collectors.joining (","))
+        + ", authReqParams = " + this.authReqParams.toString();
   }
 }

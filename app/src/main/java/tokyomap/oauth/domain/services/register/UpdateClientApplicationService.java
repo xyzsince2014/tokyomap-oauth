@@ -1,29 +1,31 @@
-package tokyomap.oauth.application.register;
+package tokyomap.oauth.domain.services.register;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tokyomap.oauth.domain.entities.postgres.Client;
-import tokyomap.oauth.domain.services.register.CheckRegistrationAccessTokenDomainService;
+import tokyomap.oauth.dtos.ClientValidationResultDto;
 import tokyomap.oauth.dtos.ResponseClientDto;
+import tokyomap.oauth.dtos.UpdateClientRequestDto;
+import tokyomap.oauth.dtos.UpdateClientResponseDto;
 
-// todo: rename the class or merge the class to another one
 @Service
-public class CheckRegistrationAccessTokenApplicationService {
+public class UpdateClientApplicationService {
 
-  private final CheckRegistrationAccessTokenDomainService checkRegistrationAccessTokenDomainService;
+  private final UpdateClientDomainService updateClientDomainService;
 
   @Autowired
-  public CheckRegistrationAccessTokenApplicationService(CheckRegistrationAccessTokenDomainService checkRegistrationAccessTokenDomainService) {
-    this.checkRegistrationAccessTokenDomainService = checkRegistrationAccessTokenDomainService;
+  public UpdateClientApplicationService(UpdateClientDomainService updateClientDomainService) {
+    this.updateClientDomainService = updateClientDomainService;
   }
 
-  public ResponseClientDto execute(String clientId, String authorization) throws Exception {
-    Client clientRegistered = this.checkRegistrationAccessTokenDomainService.checkRegistration(clientId, authorization);
-    ResponseClientDto responseClientDto = convertClientEntityToResponseClientDto(clientRegistered);
-    return responseClientDto;
+  public UpdateClientResponseDto execute(ResponseClientDto responseClientDto, UpdateClientRequestDto requestDto) {
+    // todo: rename to ValidateRequestClientDtoResultDto
+    ClientValidationResultDto validationResultDto = this.updateClientDomainService.execValidation(requestDto.getClient());
+    Client clientUpdated = this.updateClientDomainService.update(requestDto.getClient(), responseClientDto, validationResultDto);
+    return this.convertClientEntityToResponseDto(clientUpdated);
   }
 
-  private ResponseClientDto convertClientEntityToResponseClientDto(Client client) {
+  private UpdateClientResponseDto convertClientEntityToResponseDto(Client client) {
     ResponseClientDto responseClientDto = new ResponseClientDto();
     responseClientDto.setClientId(client.getClientId());
     responseClientDto.setClientSecret(client.getClientSecret());
@@ -37,6 +39,7 @@ public class CheckRegistrationAccessTokenApplicationService {
     responseClientDto.setRegistrationAccessToken(client.getRegistrationAccessToken());
     responseClientDto.setRegistrationClientUri(client.getRegistrationClientUri());
     responseClientDto.setExpiresAt(client.getExpiresAt());
-    return responseClientDto;
+
+    return new UpdateClientResponseDto(responseClientDto);
   }
 }

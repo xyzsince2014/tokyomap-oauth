@@ -11,11 +11,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
+import tokyomap.oauth.domain.services.register.UpdateClientApplicationService;
 import tokyomap.oauth.dtos.ReadClientResponseDto;
 import tokyomap.oauth.dtos.RegisterClientRequestDto;
 import tokyomap.oauth.dtos.RegisterClientResponseDto;
 import tokyomap.oauth.dtos.ResponseClientDto;
 import tokyomap.oauth.dtos.UnregisterClientRequestDto;
+import tokyomap.oauth.dtos.UpdateClientRequestDto;
+import tokyomap.oauth.dtos.UpdateClientResponseDto;
 import tokyomap.oauth.utils.Logger;
 
 @RestController
@@ -24,6 +27,7 @@ public class RegisterRestController {
 
   private final RegisterClientApplicationService registerClientApplicationService;
   private final CheckRegistrationAccessTokenApplicationService checkRegistrationAccessTokenApplicationService;
+  private final UpdateClientApplicationService updateClientApplicationService;
   private final UnregisterClientApplicationService unregisterClientApplicationService;
   private final Logger logger;
 
@@ -31,16 +35,18 @@ public class RegisterRestController {
   public RegisterRestController(
       RegisterClientApplicationService registerClientApplicationService,
       CheckRegistrationAccessTokenApplicationService checkRegistrationAccessTokenApplicationService,
+      UpdateClientApplicationService updateClientApplicationService,
       UnregisterClientApplicationService unregisterClientApplicationService,
       Logger logger
   ) {
     this.registerClientApplicationService = registerClientApplicationService;
     this.checkRegistrationAccessTokenApplicationService = checkRegistrationAccessTokenApplicationService;
+    this.updateClientApplicationService = updateClientApplicationService;
     this.unregisterClientApplicationService = unregisterClientApplicationService;
     this.logger = logger;
   }
 
-  @RequestMapping(method = RequestMethod.POST, consumes = {MediaType.APPLICATION_JSON_VALUE}) // todo: use headers = {"Accept=application/json", "Content-Type=application/json"}
+  @RequestMapping(method = RequestMethod.POST, headers = {"Accept=application/json", "Content-Type=application/json"})
   public RegisterClientResponseDto registerClient(@RequestBody RegisterClientRequestDto requestDto) {
     this.logger.log("RegisterRestController", "clientDto.client = " + requestDto.getClient().toString());
     RegisterClientResponseDto responseDto = this.registerClientApplicationService.execute(requestDto);
@@ -62,6 +68,25 @@ public class RegisterRestController {
   }
 
   /**
+   * update the registered client
+   * @param clientId
+   * @param authorization
+   * @param requestDto
+   * @return UpdateClientResponseDto
+   */
+  @RequestMapping(path = "/{clientId}", method = RequestMethod.PUT, headers = {"Accept=application/json", "Content-Type=application/json"})
+  public UpdateClientResponseDto updateClient(
+      @PathVariable String clientId,
+      @RequestHeader("Authorization") String authorization,
+      @RequestBody UpdateClientRequestDto requestDto
+  ) {
+    ResponseClientDto responseClientDto = this.checkRegistrationAccessToken(clientId, authorization, RequestMethod.PUT);
+    UpdateClientResponseDto responseDto = this.updateClientApplicationService.execute(responseClientDto, requestDto);
+    this.logger.log("RegisterRestController", "clientUpdated = " + responseDto.getClient().toString());
+    return responseDto;
+  }
+
+  /**
    * unregister the client for the given clientId
    * @param clientId
    * @param authorization
@@ -73,8 +98,8 @@ public class RegisterRestController {
       @RequestHeader("Authorization") String authorization,
       @RequestBody UnregisterClientRequestDto requestDto
       ) {
-    this.checkRegistrationAccessToken(clientId, authorization, RequestMethod.DELETE);
-    this.unregisterClientApplicationService.execute(clientId, requestDto);
+    ResponseClientDto responseClientDto = this.checkRegistrationAccessToken(clientId, authorization, RequestMethod.DELETE);
+    this.unregisterClientApplicationService.execute(responseClientDto.getClientId(), requestDto);
     this.logger.log("RegisterRestController", "unregistered the client: clientId = " + clientId);
   }
 

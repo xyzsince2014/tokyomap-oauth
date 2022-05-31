@@ -92,6 +92,8 @@ public class AuthorisationCodeFlowDomainSerivice extends TokenDomainService<Auth
       // todo: error handling
     }
 
+    this.logger.log("AuthorisationCodeFlowDomainSerivice", "tokenValidationResultDto.payload = " + tokenValidationResultDto.getPayload().toString());
+
     try {
       GenerateTokensResponseDto responseDto = this.tokenLogic.generateTokens(
           tokenValidationResultDto.getClientId(), optionalUsr.get().getSub(),

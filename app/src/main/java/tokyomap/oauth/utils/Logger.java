@@ -23,7 +23,6 @@ public class Logger {
       System.setOut(new PrintStream(fos));
       SimpleDateFormat sdfForLog = new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss");
       System.out.println(sdfForLog.format(date) + " INFO [" + module + "] " + message);
-
     }
 
     catch(FileNotFoundException e) {

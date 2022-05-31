@@ -56,7 +56,7 @@ public class PreAuthoriseDomainService {
       throw new InvalidRedirectUriException();
     }
 
-    String[] requestedScope = authReqParams.getScope().split(" ");
+    String[] requestedScope = authReqParams.getScope();
     // todo: String[] scope = client.getScope().split(" ");
     // todo: throw new Error('invalid scope requested'); if requestedScope is not included by scope
 

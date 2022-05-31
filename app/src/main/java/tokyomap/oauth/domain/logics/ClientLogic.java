@@ -17,16 +17,6 @@ public class ClientLogic {
   }
 
   /**
-   * get the client for the given sub
-   * @param clientId
-   * @return Optional<Client>
-   */
-  public Client getClientByClientId(String clientId) {
-    Optional<Client> optionalClient = this.clientRepository.findById(clientId);
-    return optionalClient.orElse(null);
-  }
-
-  /**
    * register the client given
    * @param client
    * @return clientRegistered
@@ -34,6 +24,16 @@ public class ClientLogic {
   public Client registerClient(Client client) {
     Client clientRegistered = this.clientRepository.saveAndFlush(client);
     return clientRegistered;
+  }
+
+  /**
+   * get the client for the given sub
+   * @param clientId
+   * @return Optional<Client>
+   */
+  public Client getClientByClientId(String clientId) {
+    Optional<Client> optionalClient = this.clientRepository.findById(clientId);
+    return optionalClient.orElse(null);
   }
 
   /**

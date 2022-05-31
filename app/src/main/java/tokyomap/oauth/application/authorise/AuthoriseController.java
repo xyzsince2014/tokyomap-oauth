@@ -44,12 +44,14 @@ public class AuthoriseController {
    * @return String
    */
   @RequestMapping(method = RequestMethod.GET)
-  public String preAuthorise(Model model, @RequestParam Map<String,String> reqParams) {
+  public String preAuthorise(Model model, @RequestParam Map<String, String> reqParams) {
 
     AuthReqParams authReqParams = new AuthReqParams(
-        reqParams.get("responseType"), reqParams.get("scope"), reqParams.get("clientId"),
+        reqParams.get("responseType"), reqParams.get("scope").split(" "), reqParams.get("clientId"),
         reqParams.get("redirectUri"), reqParams.get("state"), reqParams.get("codeChallenge"), reqParams.get("codeChallengeMethod")
     );
+
+    this.logger.log("AuthoriseController", "authReqParams = " + authReqParams.toString());
 
     PreAuthoriseResponseDto dto = this.preAuthoriseDomainService.execute(authReqParams);
 

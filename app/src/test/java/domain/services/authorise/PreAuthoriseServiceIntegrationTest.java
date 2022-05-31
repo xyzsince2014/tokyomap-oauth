@@ -28,7 +28,7 @@ public class PreAuthoriseServiceIntegrationTest {
   public void testExecute() {
     AuthReqParams authReqParams = new AuthReqParams(
         "AUTHORISATION_CODE",
-        "read write delete openid profile email address phone",
+        "read write delete openid profile email address phone".split(" "),
         "sLoBOeuIkRtEH7rXmQeCjeuc8Iz4ub1t",
         "http://localhost:9000/callback",
         "Dxyd94mc0D4GvbC5m6pxjpqnKIwuzHn3",
