@@ -3,29 +3,27 @@ package tokyomap.oauth.application.register;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tokyomap.oauth.domain.entities.postgres.Client;
-import tokyomap.oauth.domain.services.register.RegisterClientDomainService;
-import tokyomap.oauth.dtos.ClientValidationResultDto;
-import tokyomap.oauth.dtos.RegisterClientRequestDto;
-import tokyomap.oauth.dtos.RegisterClientResponseDto;
+import tokyomap.oauth.domain.services.register.CheckRegistrationAccessTokenDomainService;
 import tokyomap.oauth.dtos.ResponseClientDto;
 
+// todo: rename the class or merge the class to another one
 @Service
-public class RegisterClientApplicationService {
+public class CheckRegistrationAccessTokenApplicationService {
 
-  private final RegisterClientDomainService registerClientDomainService;
+  private final CheckRegistrationAccessTokenDomainService checkRegistrationAccessTokenDomainService;
 
   @Autowired
-  public RegisterClientApplicationService(RegisterClientDomainService registerClientDomainService) {
-    this.registerClientDomainService = registerClientDomainService;
+  public CheckRegistrationAccessTokenApplicationService(CheckRegistrationAccessTokenDomainService checkRegistrationAccessTokenDomainService) {
+    this.checkRegistrationAccessTokenDomainService = checkRegistrationAccessTokenDomainService;
   }
 
-  public RegisterClientResponseDto execute(RegisterClientRequestDto requestDto) {
-    ClientValidationResultDto resultDto = this.registerClientDomainService.execValidation(requestDto.getClient());
-    Client clientRegistered = this.registerClientDomainService.register(requestDto.getClient(), resultDto);
-    return this.convertClientEntityToResponseDto(clientRegistered);
+  public ResponseClientDto execute(String clientId, String authorization) throws Exception {
+    Client clientRegistered = this.checkRegistrationAccessTokenDomainService.checkRegistration(clientId, authorization);
+    ResponseClientDto responseClientDto = convertClientEntityToResponseClientDto(clientRegistered);
+    return responseClientDto;
   }
 
-  private RegisterClientResponseDto convertClientEntityToResponseDto(Client client) {
+  private ResponseClientDto convertClientEntityToResponseClientDto(Client client) {
     ResponseClientDto responseClientDto = new ResponseClientDto();
     responseClientDto.setClientId(client.getClientId());
     responseClientDto.setClientSecret(client.getClientSecret());
@@ -39,6 +37,6 @@ public class RegisterClientApplicationService {
     responseClientDto.setRegistrationAccessToken(client.getRegistrationAccessToken());
     responseClientDto.setRegistrationClientUri(client.getRegistrationClientUri());
     responseClientDto.setExpiresAt(client.getExpiresAt());
-    return new RegisterClientResponseDto(responseClientDto);
+    return responseClientDto;
   }
 }
