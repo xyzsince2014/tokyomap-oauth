@@ -1,7 +1,6 @@
 package tokyomap.oauth.domain.services.token;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.Optional;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -94,14 +93,14 @@ public class RefreshTokenDomainService extends TokenDomainService<TokenPayloadDt
   @Override
   public GenerateTokensResponseDto generateTokens(TokenValidationResultDto<TokenPayloadDto> tokenValidationResultDto) {
 
-    Optional<Usr> optionalUsr = this.usrLogic.getUsrBySub(tokenValidationResultDto.getPayload().getSub());
-    if(optionalUsr == null) {
+    Usr usr = this.usrLogic.getUsrBySub(tokenValidationResultDto.getPayload().getSub());
+    if(usr == null) {
       // todo: error handling
     }
 
     try {
       return this.tokenLogic.generateTokens(
-          tokenValidationResultDto.getPayload().getClientId(), optionalUsr.get().getSub(), tokenValidationResultDto.getPayload().getScope(),true, null
+          tokenValidationResultDto.getPayload().getClientId(), usr.getSub(), tokenValidationResultDto.getPayload().getScope(),true, null
       );
 
     } catch (Exception e) {

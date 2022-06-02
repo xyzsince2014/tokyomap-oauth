@@ -19,7 +19,7 @@ import tokyomap.oauth.dtos.PreAuthoriseResponseDto;
 @ContextConfiguration(classes = {WebMvcConfig.class, RedisClientConfig.class})
 @WebAppConfiguration
 @ActiveProfiles("develop")
-public class PreAuthoriseServiceIntegrationTest {
+public class PreAuthoriseDomainServiceIntegrationTest {
 
   @Autowired
   private PreAuthoriseDomainService preAuthoriseDomainService;

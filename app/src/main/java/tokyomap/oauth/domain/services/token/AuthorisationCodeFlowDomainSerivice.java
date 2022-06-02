@@ -1,6 +1,5 @@
 package tokyomap.oauth.domain.services.token;
 
-import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import tokyomap.oauth.domain.entities.postgres.Usr;
@@ -87,8 +86,8 @@ public class AuthorisationCodeFlowDomainSerivice extends TokenDomainService<Auth
   @Override
   public GenerateTokensResponseDto generateTokens(TokenValidationResultDto<AuthCache> tokenValidationResultDto) {
 
-    Optional<Usr> optionalUsr = this.usrLogic.getUsrBySub(tokenValidationResultDto.getPayload().getSub());
-    if(optionalUsr == null) {
+    Usr usr = this.usrLogic.getUsrBySub(tokenValidationResultDto.getPayload().getSub());
+    if(usr == null) {
       // todo: error handling
     }
 
@@ -96,7 +95,7 @@ public class AuthorisationCodeFlowDomainSerivice extends TokenDomainService<Auth
 
     try {
       GenerateTokensResponseDto responseDto = this.tokenLogic.generateTokens(
-          tokenValidationResultDto.getClientId(), optionalUsr.get().getSub(),
+          tokenValidationResultDto.getClientId(), usr.getSub(),
           tokenValidationResultDto.getPayload().getScopeRequested(),true, null
       );
       return responseDto;
