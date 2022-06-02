@@ -1,7 +1,7 @@
 package tokyomap.oauth.domain.services.token;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import tokyomap.oauth.domain.entities.postgres.Usr;
 import tokyomap.oauth.domain.entities.redis.AuthCache;
 import tokyomap.oauth.domain.logics.AuthCodeLogic;
@@ -15,7 +15,7 @@ import tokyomap.oauth.dtos.TokenValidationResultDto;
 import tokyomap.oauth.utils.Decorder;
 import tokyomap.oauth.utils.Logger;
 
-@Component
+@Service
 public class AuthorisationCodeFlowDomainSerivice extends TokenDomainService<AuthCache> {
 
   private final AuthCodeLogic authCodeLogic;

@@ -3,7 +3,7 @@ package tokyomap.oauth.domain.services.token;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import tokyomap.oauth.domain.entities.postgres.RefreshToken;
 import tokyomap.oauth.domain.entities.postgres.Usr;
 import tokyomap.oauth.domain.logics.ClientLogic;
@@ -17,7 +17,7 @@ import tokyomap.oauth.dtos.TokenValidationResultDto;
 import tokyomap.oauth.utils.Decorder;
 import tokyomap.oauth.utils.Logger;
 
-@Component
+@Service
 public class RefreshTokenDomainService extends TokenDomainService<TokenPayloadDto> {
 
   private final TokenLogic tokenLogic;
