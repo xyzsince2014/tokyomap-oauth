@@ -2,7 +2,6 @@ package tokyomap.oauth.application.register;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -21,7 +20,6 @@ import tokyomap.oauth.dtos.UpdateClientRequestDto;
 import tokyomap.oauth.dtos.UpdateClientResponseDto;
 import tokyomap.oauth.utils.Logger;
 
-@CrossOrigin // todo: handle preflight requests by private void handleCrossDomainRequest()
 @RestController
 @RequestMapping("/register")
 public class RegisterRestController {
@@ -47,14 +45,6 @@ public class RegisterRestController {
     this.logger = logger;
   }
 
-  @RequestMapping(method = RequestMethod.POST, headers = {"Accept=application/json", "Content-Type=application/json"})
-  public RegisterClientResponseDto registerClient(@RequestBody RegisterClientRequestDto requestDto) {
-    this.logger.log("RegisterRestController", "clientDto.client = " + requestDto.getClient().toString());
-    RegisterClientResponseDto responseDto = this.registerClientApplicationService.execute(requestDto);
-    this.logger.log("RegisterRestController", "responseDto = " + responseDto.getClient().toString());
-    return responseDto;
-  }
-
   /**
    * get a registered client
    * @param clientId
@@ -64,7 +54,6 @@ public class RegisterRestController {
   @RequestMapping(path = "/{clientId}", method = RequestMethod.GET, headers = "Accept=application/json")
   public ReadClientResponseDto readClient(@PathVariable String clientId, @RequestHeader("Authorization") String authorization) {
     ResponseClientDto responseClientDto = this.checkRegistrationAccessToken(clientId, authorization, RequestMethod.GET);
-    this.logger.log("RegisterRestController", "clientRead = " + responseClientDto.toString());
     return new ReadClientResponseDto(responseClientDto);
   }
 
@@ -83,7 +72,6 @@ public class RegisterRestController {
   ) {
     ResponseClientDto responseClientDto = this.checkRegistrationAccessToken(clientId, authorization, RequestMethod.PUT);
     UpdateClientResponseDto responseDto = this.updateClientApplicationService.execute(responseClientDto, requestDto);
-    this.logger.log("RegisterRestController", "clientUpdated = " + responseDto.getClient().toString());
     return responseDto;
   }
 
@@ -101,7 +89,6 @@ public class RegisterRestController {
       ) {
     ResponseClientDto responseClientDto = this.checkRegistrationAccessToken(clientId, authorization, RequestMethod.DELETE);
     this.unregisterClientApplicationService.execute(responseClientDto.getClientId(), requestDto);
-    this.logger.log("RegisterRestController", "unregistered the client: clientId = " + clientId);
   }
 
   /**
@@ -125,5 +112,16 @@ public class RegisterRestController {
       // todo: res.status(e.getStat(e.length, 3)).end();
       return null;
     }
+  }
+
+  /**
+   * register the given client
+   * @param requestDto
+   * @return RegisterClientResponseDto
+   */
+  @RequestMapping(method = RequestMethod.POST, headers = {"Accept=application/json", "Content-Type=application/json"})
+  public RegisterClientResponseDto registerClient(@RequestBody RegisterClientRequestDto requestDto) {
+    RegisterClientResponseDto responseDto = this.registerClientApplicationService.execute(requestDto);
+    return responseDto;
   }
 }

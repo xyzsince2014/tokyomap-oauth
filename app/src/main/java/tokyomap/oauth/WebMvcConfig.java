@@ -1,7 +1,6 @@
 package tokyomap.oauth;
 
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
@@ -14,8 +13,8 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.AsyncSupportConfigurer;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
@@ -60,14 +59,20 @@ public class WebMvcConfig implements WebMvcConfigurer {
     converters.add(0, mappingJackson2HttpMessageConverter());
   }
 
-//  /**
-//   * allow CORS for requests
-//   * @param registry
-//   */
-//  @Override
-//  public void addCorsMappings(CorsRegistry registry) {
-//    registry.addMapping("/api/**");
-//  }
+  /**
+   * allow CORS
+   * @param registry
+   */
+  @Override
+  public void addCorsMappings(CorsRegistry registry) {
+    registry.addMapping("/register")
+        .allowedOrigins("http://localhost:9005", "http://127.0.0.1:9005") // Access-Control-Allow-Origin
+        .allowedMethods("GET", "PUT", "POST", "DELETE", "HEAD" , "OPTIONS") // Access-Control-Allow-Methods
+        .allowedHeaders("Content-Type", "Authorization", "Accept") // Access-Control-Allow-Headers
+        // .exposedHeaders("header1", "header2") // Access-Control-Expose-Headers
+        .allowCredentials(true) // Access-Control-Allow-Credentials
+        .maxAge(3600); // Access-Control-Max-Age
+  }
 
   /**
    * configure async communications
