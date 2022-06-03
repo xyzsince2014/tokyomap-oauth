@@ -27,6 +27,10 @@ public class UsrLogic {
     return optionalUsr.orElse(null);
   }
 
+  public Usr getUsrByName(String name) {
+    return this.usrRepository.findByName(name);
+  }
+
   /**
    * get all usrs
    * @return usrList

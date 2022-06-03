@@ -9,17 +9,24 @@ import tokyomap.oauth.domain.entities.postgres.Client;
 import tokyomap.oauth.domain.entities.redis.AuthReqParams;
 import tokyomap.oauth.domain.repositories.postgres.ClientRepository;
 import tokyomap.oauth.dtos.PreAuthoriseResponseDto;
+import tokyomap.oauth.utils.Logger;
 
 @Service
 public class PreAuthoriseDomainService {
 
   private final RedisTemplate<String, AuthReqParams> authReqParamsRedisTemplate;
   private final ClientRepository clientRepository;
+  private final Logger logger;
 
   @Autowired
-  public PreAuthoriseDomainService(RedisTemplate<String, AuthReqParams> authReqParamsRedisTemplate, ClientRepository clientRepository) {
+  public PreAuthoriseDomainService(
+      RedisTemplate<String, AuthReqParams> authReqParamsRedisTemplate,
+      ClientRepository clientRepository,
+      Logger logger
+  ) {
     this.authReqParamsRedisTemplate = authReqParamsRedisTemplate;
     this.clientRepository = clientRepository;
+    this.logger = logger;
   }
 
   /**

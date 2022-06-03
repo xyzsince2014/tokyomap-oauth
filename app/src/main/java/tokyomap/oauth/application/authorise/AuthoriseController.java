@@ -51,8 +51,6 @@ public class AuthoriseController {
         reqParams.get("redirectUri"), reqParams.get("state"), reqParams.get("codeChallenge"), reqParams.get("codeChallengeMethod")
     );
 
-    this.logger.log("AuthoriseController", "authReqParams = " + authReqParams.toString());
-
     PreAuthoriseResponseDto dto = this.preAuthoriseDomainService.execute(authReqParams);
 
     /**

@@ -2,7 +2,7 @@ package tokyomap.oauth.application.register;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -21,6 +21,7 @@ import tokyomap.oauth.dtos.UpdateClientRequestDto;
 import tokyomap.oauth.dtos.UpdateClientResponseDto;
 import tokyomap.oauth.utils.Logger;
 
+@CrossOrigin // todo: handle preflight requests by private void handleCrossDomainRequest()
 @RestController
 @RequestMapping("/register")
 public class RegisterRestController {

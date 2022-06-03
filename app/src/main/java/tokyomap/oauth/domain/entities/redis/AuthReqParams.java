@@ -88,7 +88,7 @@ public class AuthReqParams implements Serializable {
 
   @Override
   public String toString() {
-    return "responseType = " + this.responseType + ", scope = " + this.scope + ", clientId = " + this.clientId
+    return "responseType = " + this.responseType + ", scope = " + String.join(" ", this.scope) + ", clientId = " + this.clientId
         + ", redirectUri = " + this.redirectUri + ", state = " + this.state + ", codeChallenge = " + this.codeChallenge
         + ", codeChallengeMethod = " + this.codeChallengeMethod;
   }
