@@ -26,7 +26,7 @@ public class RefreshTokenDomainService extends TokenDomainService<TokenPayloadDt
 
   @Autowired
   public RefreshTokenDomainService(ClientLogic clientLogic, Decorder decorder, TokenLogic tokenLogic, UsrLogic usrLogic, Logger logger) {
-    super(clientLogic, decorder);
+    super(clientLogic, decorder, logger);
     this.tokenLogic = tokenLogic;
     this.usrLogic = usrLogic;
     this.logger = logger;

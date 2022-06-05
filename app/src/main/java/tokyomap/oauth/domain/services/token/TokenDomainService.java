@@ -7,15 +7,18 @@ import tokyomap.oauth.dtos.GenerateTokensRequestDto;
 import tokyomap.oauth.dtos.GenerateTokensResponseDto;
 import tokyomap.oauth.dtos.TokenValidationResultDto;
 import tokyomap.oauth.utils.Decorder;
+import tokyomap.oauth.utils.Logger;
 
 public abstract class TokenDomainService<T> {
 
   private final ClientLogic clientLogic;
   private final Decorder decorder;
+  private final Logger logger;
 
-  public TokenDomainService(ClientLogic clientLogic, Decorder decorder) {
+  public TokenDomainService(ClientLogic clientLogic, Decorder decorder, Logger logger) {
     this.clientLogic = clientLogic;
     this.decorder = decorder;
+    this.logger = logger;
   }
 
   /**
@@ -58,16 +61,15 @@ public abstract class TokenDomainService<T> {
     }
 
     Client client = this.clientLogic.getClientByClientId(clientId);
-
     // todo: validate client
     //  if (client == null || client.get().getClientSecret() != clientSecret) {
     //    throw new Error('invalid client');
     //  }
+    // todo: validation for scope is needed ?
 
-    // todo: malfunctioning, fix
-    //  String[] clientScope = client.getScope().split(" ");
-    String[] dummyScope = new String[] {"read", "write", "delete", "openid", "profile", "email", "address", "phone"};
 
-    return new CredentialsDto(clientId, clientSecret, dummyScope);
+    String[] clientScope = client.getScope().split(" ");
+
+    return new CredentialsDto(clientId, clientSecret, clientScope);
   }
 }

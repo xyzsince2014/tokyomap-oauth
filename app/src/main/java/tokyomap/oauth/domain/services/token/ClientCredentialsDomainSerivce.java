@@ -2,10 +2,8 @@ package tokyomap.oauth.domain.services.token;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import tokyomap.oauth.domain.logics.AuthCodeLogic;
 import tokyomap.oauth.domain.logics.ClientLogic;
 import tokyomap.oauth.domain.logics.TokenLogic;
-import tokyomap.oauth.domain.logics.UsrLogic;
 import tokyomap.oauth.dtos.CredentialsDto;
 import tokyomap.oauth.dtos.GenerateTokensRequestDto;
 import tokyomap.oauth.dtos.GenerateTokensResponseDto;
@@ -21,7 +19,7 @@ public class ClientCredentialsDomainSerivce extends TokenDomainService<Credentia
 
   @Autowired
   public ClientCredentialsDomainSerivce(ClientLogic clientLogic, Decorder decorder, TokenLogic tokenLogic, Logger logger) {
-    super(clientLogic, decorder);
+    super(clientLogic, decorder, logger);
     this.tokenLogic = tokenLogic;
     this.logger = logger;
   }

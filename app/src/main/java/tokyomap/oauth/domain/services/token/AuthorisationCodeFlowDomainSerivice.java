@@ -25,7 +25,7 @@ public class AuthorisationCodeFlowDomainSerivice extends TokenDomainService<Auth
 
   @Autowired
   public AuthorisationCodeFlowDomainSerivice(ClientLogic clientLogic, Decorder decorder, AuthCodeLogic authCodeLogic, TokenLogic tokenLogic, UsrLogic usrLogic, Logger logger) {
-    super(clientLogic, decorder);
+    super(clientLogic, decorder, logger);
     this.authCodeLogic = authCodeLogic;
     this.tokenLogic = tokenLogic;
     this.usrLogic = usrLogic;
