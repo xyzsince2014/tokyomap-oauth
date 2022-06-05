@@ -1,6 +1,7 @@
 package tokyomap.oauth.dtos;
 
 import java.io.Serializable;
+import java.lang.reflect.Array;
 import javax.annotation.Nullable;
 
 public class GenerateTokensRequestDto implements Serializable {
@@ -26,6 +27,9 @@ public class GenerateTokensRequestDto implements Serializable {
 
   @Nullable
   private String refreshToken;
+
+  @Nullable
+  private String[] scope;
 
   public String getGrantType() {
     return grantType;
@@ -89,10 +93,19 @@ public class GenerateTokensRequestDto implements Serializable {
     this.refreshToken = refreshToken;
   }
 
+  @Nullable
+  public String[] getScope() {
+    return scope;
+  }
+
+  public void setScope(@Nullable String[] scope) {
+    this.scope = scope;
+  }
+
   @Override
   public String toString() {
     return "grantType = " + this.grantType + ", code = " + this.code + ", redirectUri = " + this.redirectUri
         + ", codeVerifier = " + this.codeVerifier + ", clientId = " + this.clientId + ", clientSecret = " + this.clientSecret
-        + ", refreshToken = " + this.refreshToken;
+        + ", refreshToken = " + this.refreshToken + ", String.join(\" \", this.scope) = " + String.join(" ", this.scope);
   }
 }

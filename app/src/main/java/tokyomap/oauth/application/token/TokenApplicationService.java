@@ -5,7 +5,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tokyomap.oauth.domain.entities.redis.AuthCache;
 import tokyomap.oauth.domain.services.token.AuthorisationCodeFlowDomainSerivice;
+import tokyomap.oauth.domain.services.token.ClientCredentialsDomainSerivce;
 import tokyomap.oauth.domain.services.token.RefreshTokenDomainService;
+import tokyomap.oauth.dtos.CredentialsDto;
 import tokyomap.oauth.dtos.GenerateTokensRequestDto;
 import tokyomap.oauth.dtos.GenerateTokensResponseDto;
 import tokyomap.oauth.dtos.TokenPayloadDto;
@@ -16,11 +18,17 @@ public class TokenApplicationService {
 
   private final AuthorisationCodeFlowDomainSerivice authorisationCodeFlowDomainSerivce;
   private final RefreshTokenDomainService refreshTokenDomainService;
+  private final ClientCredentialsDomainSerivce clientCredentialsDomainSerivce;
 
   @Autowired
-  public TokenApplicationService(AuthorisationCodeFlowDomainSerivice authorisationCodeFlowDomainSerivce, RefreshTokenDomainService refreshTokenDomainService) {
+  public TokenApplicationService(
+      AuthorisationCodeFlowDomainSerivice authorisationCodeFlowDomainSerivce,
+      RefreshTokenDomainService refreshTokenDomainService,
+      ClientCredentialsDomainSerivce clientCredentialsDomainSerivce
+  ) {
     this.authorisationCodeFlowDomainSerivce = authorisationCodeFlowDomainSerivce;
     this.refreshTokenDomainService = refreshTokenDomainService;
+    this.clientCredentialsDomainSerivce = clientCredentialsDomainSerivce;
   }
 
   /**
@@ -40,10 +48,11 @@ public class TokenApplicationService {
         GenerateTokensResponseDto response = this.refreshTokenDomainService.generateTokens(tokenValidationResultDto);
         return response;
       }
-      // todo:
-//      case "CLIENT_CREDENTIALS": {
-//        return this.clientCredentialsDomainSerivce;
-//      }
+      case "CLIENT_CREDENTIALS": { // todo: use a Constant
+        TokenValidationResultDto<CredentialsDto> tokenValidationResultDto = this.clientCredentialsDomainSerivce.execValidation(requestDto, authorization);
+        GenerateTokensResponseDto response = this.clientCredentialsDomainSerivce.generateTokens(tokenValidationResultDto);
+        return response;
+      }
       default: {
         // todo: res.status(statusCodes.BAD_REQUEST).json({error: "unsupported grantType"});
         return null;
