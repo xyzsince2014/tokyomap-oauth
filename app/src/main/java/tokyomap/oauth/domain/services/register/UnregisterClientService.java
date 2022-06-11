@@ -6,13 +6,13 @@ import tokyomap.oauth.domain.logics.ClientLogic;
 import tokyomap.oauth.domain.logics.TokenLogic;
 
 @Service
-public class UnregisterClientDomainService {
+public class UnregisterClientService {
 
   private final TokenLogic tokenLogic;
   private final ClientLogic clientLogic;
 
   @Autowired
-  public UnregisterClientDomainService(TokenLogic tokenLogic, ClientLogic clientLogic) {
+  public UnregisterClientService(TokenLogic tokenLogic, ClientLogic clientLogic) {
     this.tokenLogic = tokenLogic;
     this.clientLogic = clientLogic;
   }

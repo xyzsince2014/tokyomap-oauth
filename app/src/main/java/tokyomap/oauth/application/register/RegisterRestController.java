@@ -13,6 +13,7 @@ import org.springframework.web.server.ResponseStatusException;
 import tokyomap.oauth.domain.entities.postgres.Client;
 import tokyomap.oauth.domain.services.register.CheckRegistrationAccessTokenService;
 import tokyomap.oauth.domain.services.register.RegisterClientService;
+import tokyomap.oauth.domain.services.register.UnregisterClientService;
 import tokyomap.oauth.domain.services.register.UpdateClientService;
 import tokyomap.oauth.dtos.ClientValidationResultDto;
 import tokyomap.oauth.dtos.ReadClientResponseDto;
@@ -31,7 +32,7 @@ public class RegisterRestController {
   private final RegisterClientService registerClientService;
   private final CheckRegistrationAccessTokenService checkRegistrationAccessTokenService;
   private final UpdateClientService updateClientService;
-  private final UnregisterClientApplicationService unregisterClientApplicationService;
+  private final UnregisterClientService unregisterClientService;
   private final Logger logger;
 
   @Autowired
@@ -39,13 +40,13 @@ public class RegisterRestController {
       RegisterClientService registerClientService,
       CheckRegistrationAccessTokenService checkRegistrationAccessTokenService,
       UpdateClientService updateClientService,
-      UnregisterClientApplicationService unregisterClientApplicationService,
+      UnregisterClientService unregisterClientService,
       Logger logger
   ) {
     this.registerClientService = registerClientService;
     this.checkRegistrationAccessTokenService = checkRegistrationAccessTokenService;
     this.updateClientService = updateClientService;
-    this.unregisterClientApplicationService = unregisterClientApplicationService;
+    this.unregisterClientService = unregisterClientService;
     this.logger = logger;
   }
 
@@ -102,12 +103,10 @@ public class RegisterRestController {
   @RequestMapping(path = "/{clientId}", method = RequestMethod.DELETE, headers = "Accept=application/json")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void unregisterClient(
-      @PathVariable String clientId,
-      @RequestHeader("Authorization") String authorization,
-      @RequestBody UnregisterClientRequestDto requestDto
+      @PathVariable String clientId, @RequestHeader("Authorization") String authorization, @RequestBody UnregisterClientRequestDto requestDto
       ) {
     ResponseClientDto responseClientDto = this.checkAccessTokenRegistration(clientId, authorization, RequestMethod.DELETE);
-    this.unregisterClientApplicationService.execute(responseClientDto.getClientId(), requestDto);
+    this.unregisterClientService.unregister(clientId, requestDto.getAccessToken(), requestDto.getRefreshToken());
   }
 
   /**
@@ -119,10 +118,9 @@ public class RegisterRestController {
    * @throws ResponseStatusException
    */
   private ResponseClientDto checkAccessTokenRegistration(String clientId, String authorization, RequestMethod requestMethod) throws ResponseStatusException {
-
     try {
       Client clientRegistered = this.checkRegistrationAccessTokenService.checkRegistration(clientId, authorization);
-      
+
       ResponseClientDto responseClientDto = new ResponseClientDto();
       responseClientDto.setClientId(clientRegistered.getClientId());
       responseClientDto.setClientSecret(clientRegistered.getClientSecret());
@@ -136,6 +134,7 @@ public class RegisterRestController {
       responseClientDto.setRegistrationAccessToken(clientRegistered.getRegistrationAccessToken());
       responseClientDto.setRegistrationClientUri(clientRegistered.getRegistrationClientUri());
       responseClientDto.setExpiresAt(clientRegistered.getExpiresAt());
+
       return responseClientDto;
 
     }catch(Exception e) {
@@ -151,10 +150,9 @@ public class RegisterRestController {
    */
   @RequestMapping(method = RequestMethod.POST, headers = {"Accept=application/json", "Content-Type=application/json"})
   public RegisterClientResponseDto registerClient(@RequestBody RegisterClientRequestDto requestDto) {
-
     ClientValidationResultDto resultDto = this.registerClientService.execValidation(requestDto.getClient());
     Client clientRegistered = this.registerClientService.register(requestDto.getClient(), resultDto);
-    
+
     ResponseClientDto responseClientDto = new ResponseClientDto();
     responseClientDto.setClientId(clientRegistered.getClientId());
     responseClientDto.setClientSecret(clientRegistered.getClientSecret());
@@ -170,5 +168,28 @@ public class RegisterRestController {
     responseClientDto.setExpiresAt(clientRegistered.getExpiresAt());
 
     return new RegisterClientResponseDto(responseClientDto);
+  }
+
+  // todo:
+  /**
+   * convert Client to ResponseClientDto
+   * @param client
+   * @return ResponseClientDto
+   */
+  private ResponseClientDto convertClientToResponseClientDto(Client client) {
+    ResponseClientDto responseClientDto = new ResponseClientDto();
+    responseClientDto.setClientId(client.getClientId());
+    responseClientDto.setClientSecret(client.getClientSecret());
+    responseClientDto.setClientName(client.getClientName());
+    responseClientDto.setClientUri(client.getClientUri());
+    responseClientDto.setRedirectUris(client.getRedirectUris().split(" "));
+    responseClientDto.setGrantTypes(client.getGrantTypes().split(" "));
+    responseClientDto.setResponseTypes(client.getResponseTypes().split(" "));
+    responseClientDto.setTokenEndpointAuthMethod(client.getTokenEndpointAuthMethod());
+    responseClientDto.setScopes(client.getScopes().split(" "));
+    responseClientDto.setRegistrationAccessToken(client.getRegistrationAccessToken());
+    responseClientDto.setRegistrationClientUri(client.getRegistrationClientUri());
+    responseClientDto.setExpiresAt(client.getExpiresAt());
+    return responseClientDto;
   }
 }
