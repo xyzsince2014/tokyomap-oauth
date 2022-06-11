@@ -2,12 +2,12 @@ package tokyomap.oauth.domain.entities.redis;
 
 import java.io.Serializable;
 
-public class AuthReqParams implements Serializable {
+public class PreAuthoriseCache implements Serializable {
 
   private static final long serialVersionUID = -2333688999379632926L;
 
   private String responseType;
-  private String[] scope;
+  private String[] scopes;
   private String clientId;
   private String redirectUri;
   private String state;
@@ -15,14 +15,14 @@ public class AuthReqParams implements Serializable {
   private String codeChallengeMethod;
 
   // used to deserialise values by authReqParamsRedisTemplate
-  AuthReqParams() {}
+  PreAuthoriseCache() {}
 
-  public AuthReqParams(
-      String responseType, String[] scope, String clientId, String redirectUri,
+  public PreAuthoriseCache(
+      String responseType, String[] scopes, String clientId, String redirectUri,
       String state, String codeChallenge, String codeChallengeMethod
   ) {
     this.responseType = responseType;
-    this.scope = scope;
+    this.scopes = scopes;
     this.clientId = clientId;
     this.redirectUri = redirectUri;
     this.state = state;
@@ -38,12 +38,12 @@ public class AuthReqParams implements Serializable {
     this.responseType = responseType;
   }
 
-  public String[] getScope() {
-    return scope;
+  public String[] getScopes() {
+    return scopes;
   }
 
-  public void setScope(String[] scope) {
-    this.scope = scope;
+  public void setScopes(String[] scopes) {
+    this.scopes = scopes;
   }
 
   public String getClientId() {
@@ -88,7 +88,7 @@ public class AuthReqParams implements Serializable {
 
   @Override
   public String toString() {
-    return "responseType = " + this.responseType + ", scope = " + String.join(" ", this.scope) + ", clientId = " + this.clientId
+    return "responseType = " + this.responseType + ", scopes = " + String.join(" ", this.scopes) + ", clientId = " + this.clientId
         + ", redirectUri = " + this.redirectUri + ", state = " + this.state + ", codeChallenge = " + this.codeChallenge
         + ", codeChallengeMethod = " + this.codeChallengeMethod;
   }

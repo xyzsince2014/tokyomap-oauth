@@ -38,8 +38,8 @@ public class Client implements Serializable {
   @Column(name = "response_types")
   private String responseTypes;
 
-  @Column(name = "scope")
-  private String scope;
+  @Column(name = "scopes")
+  private String scopes;
 
   @Column(name = "registration_access_token")
   private String registrationAccessToken;
@@ -60,7 +60,7 @@ public class Client implements Serializable {
 
   public Client(
       String clientId, String clientSecret, String clientName, String tokenEndpointAuthMethod, String clientUri,
-      String redirectUris, String grantTypes, String responseTypes, String scope, String registrationAccessToken, String registrationClientUri
+      String redirectUris, String grantTypes, String responseTypes, String scopes, String registrationAccessToken, String registrationClientUri
   ) {
     this.clientId = clientId;
     this.clientSecret = clientSecret;
@@ -70,7 +70,7 @@ public class Client implements Serializable {
     this.redirectUris = redirectUris;
     this.grantTypes = grantTypes;
     this.responseTypes = responseTypes;
-    this.scope = scope;
+    this.scopes = scopes;
     this.registrationAccessToken = registrationAccessToken;
     this.registrationClientUri = registrationClientUri;
     LocalDateTime ldt = LocalDateTime.now(); // todo: use JST
@@ -143,12 +143,12 @@ public class Client implements Serializable {
     this.responseTypes = responseTypes;
   }
 
-  public String getScope() {
-    return scope;
+  public String getScopes() {
+    return scopes;
   }
 
-  public void setScope(String scope) {
-    this.scope = scope;
+  public void setScopes(String scopes) {
+    this.scopes = scopes;
   }
 
   public String getRegistrationAccessToken() {
@@ -196,7 +196,7 @@ public class Client implements Serializable {
     return "clientId = " + this.clientId + ", cilentSecret = " + this.clientSecret
         + ", clientName = " + this.clientName + ", tokenEndpointAuthMethod = " + this.tokenEndpointAuthMethod
         + ", clientUri = " + this.clientUri + ", redirectUris = " + this.redirectUris
-        + ", responseTypes = " + this.responseTypes + ", scope = " + this.scope
+        + ", responseTypes = " + this.responseTypes + ", scopes = " + this.scopes
         + ", registrationAccessToken = " + this.registrationAccessToken
         + ", registrationClientUri = " + this.registrationClientUri;
   }

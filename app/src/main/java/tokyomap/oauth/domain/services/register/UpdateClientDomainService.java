@@ -33,37 +33,37 @@ public class UpdateClientDomainService {
     this.logger = logger;
   }
 
-  // todo: merge with RegisterClientDomainService#execValidation(RequestClientDto requestClientDto)
+  // todo: merge with RegisterClientService#execValidation(RequestClientDto requestClientDto)
   // todo: rename to validateRequestClientDto(RequestClientDto requestClientDto)
   public ClientValidationResultDto execValidation(RequestClientDto requestClientDto) {
 
     // make sure that the client has registered at least one redirect URI
     if (requestClientDto.getRedirectUris() == null || requestClientDto.getRedirectUris().length == 0) {
-      this.logger.log("RegisterClientDomainService", "invalid redirectUris");
+      this.logger.log("RegisterClientService", "invalid redirectUris");
       // todo: throw new Error(`[registerClientLogic.execValidation] invalid redirectUris`);
     }
 
     String tokenEndpointAuthMethod = requestClientDto.getTokenEndpointAuthMethod() != null ? requestClientDto.getTokenEndpointAuthMethod() : "CLIENT_SECRET_BASIC";
 
     if (!Arrays.stream(TOKEN_ENDPOINT_AUTH_METHODS).anyMatch(authMethod -> authMethod.equals(requestClientDto.getTokenEndpointAuthMethod()))) {
-      this.logger.log("RegisterClientDomainService", "invalid tokenEndpointAuthMethod");
+      this.logger.log("RegisterClientService", "invalid tokenEndpointAuthMethod");
       // todo: throw new Error(`[registerService] validateClientMetadata invalid tokenEndpointAuthMethod ${tokenEndpointAuthMethod}`);
     }
 
     // if the client specify neither the grantTypes nor responseTypes, we default them to the authorisation code grant
     if(requestClientDto.getGrantTypes() == null && requestClientDto.getResponseTypes() == null) {
-      this.logger.log("RegisterClientDomainService", "requestClientDto.getGrantTypes() == null && requestClientDto.getResponseTypes() == null");
+      this.logger.log("RegisterClientService", "requestClientDto.getGrantTypes() == null && requestClientDto.getResponseTypes() == null");
       return new ClientValidationResultDto(new String[] {"AUTHORISATION_CODE"}, new String[] {"CODE"}, tokenEndpointAuthMethod);
     }
 
     // if the client requests with specified grantTypes but not corresponding responseTypes or vice versa, we fill in the missing value for them
     if (requestClientDto.getGrantTypes() == null) {
-      this.logger.log("RegisterClientDomainService", "requestClientDto.getGrantTypes() == null");
+      this.logger.log("RegisterClientService", "requestClientDto.getGrantTypes() == null");
       String[] grantTypes = (Arrays.stream(requestClientDto.getResponseTypes()).anyMatch(responseType -> responseType.equals("CODE"))) ? new String[] {"AUTHORISATION_CODE"} : new String[] {};
       return new ClientValidationResultDto(grantTypes, requestClientDto.getResponseTypes(), tokenEndpointAuthMethod);
     }
     if (requestClientDto.getResponseTypes() == null) {
-      this.logger.log("RegisterClientDomainService", "requestClientDto.getResponseTypes() == null");
+      this.logger.log("RegisterClientService", "requestClientDto.getResponseTypes() == null");
       String[] responseTypes = (Arrays.stream(requestClientDto.getGrantTypes()).anyMatch(grantType -> grantType.equals("AUTHORISATION_CODE"))) ? new String[] {"CODE"} : new String[] {};
       return new ClientValidationResultDto(requestClientDto.getGrantTypes(), responseTypes, tokenEndpointAuthMethod);
     }
@@ -73,7 +73,7 @@ public class UpdateClientDomainService {
     if (Arrays.stream(requestClientDto.getGrantTypes()).anyMatch(grantType -> grantType.equals("AUTHORISATION_CODE"))
         && !Arrays.stream(requestClientDto.getResponseTypes()).anyMatch(responseType -> responseType.equals("CODE"))
     ) {
-      this.logger.log("RegisterClientDomainService", "Arrays.stream(requestClientDto.getGrantTypes()).anyMatch(grantType -> grantType.equals(\"AUTHORISATION_CODE\")) && !Arrays.stream(requestClientDto.getResponseTypes()).anyMatch(responseType -> responseType.equals(\"CODE\"))");
+      this.logger.log("RegisterClientService", "Arrays.stream(requestClientDto.getGrantTypes()).anyMatch(grantType -> grantType.equals(\"AUTHORISATION_CODE\")) && !Arrays.stream(requestClientDto.getResponseTypes()).anyMatch(responseType -> responseType.equals(\"CODE\"))");
       List<String> responseTypeList = Arrays.asList(validationResultDto.getResponseTypes());
       responseTypeList.add("CODE");
       String[] responseTypes = new String[responseTypeList.size()];
@@ -84,7 +84,7 @@ public class UpdateClientDomainService {
     if (!Arrays.stream(requestClientDto.getGrantTypes()).anyMatch(grantType -> grantType.equals("AUTHORISATION_CODE"))
         && Arrays.stream(requestClientDto.getResponseTypes()).anyMatch(responseType -> responseType.equals("CODE"))
     ) {
-      this.logger.log("RegisterClientDomainService", "!Arrays.stream(requestClientDto.getGrantTypes()).anyMatch(grantType -> grantType.equals(\"AUTHORISATION_CODE\")) && Arrays.stream(requestClientDto.getResponseTypes()).anyMatch(responseType -> responseType.equals(\"CODE\"))");
+      this.logger.log("RegisterClientService", "!Arrays.stream(requestClientDto.getGrantTypes()).anyMatch(grantType -> grantType.equals(\"AUTHORISATION_CODE\")) && Arrays.stream(requestClientDto.getResponseTypes()).anyMatch(responseType -> responseType.equals(\"CODE\"))");
       List<String> grantTypeList = Arrays.asList(validationResultDto.getGrantTypes());
       grantTypeList.add("AUTHORISATION_CODE");
       String[] grantTypes = new String[grantTypeList.size()];
@@ -122,14 +122,14 @@ public class UpdateClientDomainService {
         String.join(" ", requestClientDto.getRedirectUris()),
         validationResultDto.getGrantTypes() != null ? String.join(" ", validationResultDto.getGrantTypes()) : String.join(" ", requestClientDto.getGrantTypes()),
         validationResultDto.getResponseTypes() != null ? String.join(" ", validationResultDto.getResponseTypes()) : String.join(" ", requestClientDto.getResponseTypes()),
-        String.join(" ", requestClientDto.getScope()),
+        String.join(" ", requestClientDto.getScopes()),
         RandomStringUtils.random(8, true, true),
         requestClientDto.getRegistrationClientUri()
     );
 
     Client clientUpdated = this.clientLogic.registerClient(clientToBeUpdated);
 
-    this.logger.log("RegisterClientDomainService", "clientUpdated = " + clientUpdated.toString());
+    this.logger.log("RegisterClientService", "clientUpdated = " + clientUpdated.toString());
 
     return clientUpdated;
   }

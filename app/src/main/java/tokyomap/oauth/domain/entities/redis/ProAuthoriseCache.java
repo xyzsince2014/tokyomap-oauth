@@ -4,21 +4,21 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-public class AuthCache implements Serializable {
+public class ProAuthoriseCache implements Serializable {
 
   private static final long serialVersionUID = -5514415646648723349L;
 
   private String sub;
   private String[] scopeRequested;
-  private AuthReqParams authReqParams;
+  private PreAuthoriseCache preAuthoriseCache;
 
-  // used to deserialisation by authCodeRedisTemplate
-  public AuthCache() {}
+  // used to deserialisation by RedisTemplate
+  public ProAuthoriseCache() {}
 
-  public AuthCache(String sub, String[] scopeRequested, AuthReqParams authReqParams) {
+  public ProAuthoriseCache(String sub, String[] scopeRequested, PreAuthoriseCache preAuthoriseCache) {
     this.sub = sub;
     this.scopeRequested = scopeRequested;
-    this.authReqParams = authReqParams;
+    this.preAuthoriseCache = preAuthoriseCache;
   }
 
   public String getSub() {
@@ -37,18 +37,18 @@ public class AuthCache implements Serializable {
     this.scopeRequested = scopeRequested;
   }
 
-  public AuthReqParams getAuthReqParams() {
-    return authReqParams;
+  public PreAuthoriseCache getAuthReqParams() {
+    return preAuthoriseCache;
   }
 
-  public void setAuthReqParams(AuthReqParams authReqParams) {
-    this.authReqParams = authReqParams;
+  public void setAuthReqParams(PreAuthoriseCache preAuthoriseCache) {
+    this.preAuthoriseCache = preAuthoriseCache;
   }
 
   @Override
   public String toString() {
     return "sub = " + this.sub
         + ", scopeRequested = " + Arrays.stream(this.scopeRequested).collect(Collectors.joining (","))
-        + ", authReqParams = " + this.authReqParams.toString();
+        + ", preAuthoriseCache = " + this.preAuthoriseCache.toString();
   }
 }

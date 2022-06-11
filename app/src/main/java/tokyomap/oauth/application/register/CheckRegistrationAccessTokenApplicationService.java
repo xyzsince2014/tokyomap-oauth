@@ -33,7 +33,7 @@ public class CheckRegistrationAccessTokenApplicationService {
     responseClientDto.setGrantTypes(client.getGrantTypes().split(" "));
     responseClientDto.setResponseTypes(client.getResponseTypes().split(" "));
     responseClientDto.setTokenEndpointAuthMethod(client.getTokenEndpointAuthMethod());
-    responseClientDto.setScope(client.getScope().split(" "));
+    responseClientDto.setScopes(client.getScopes().split(" "));
     responseClientDto.setRegistrationAccessToken(client.getRegistrationAccessToken());
     responseClientDto.setRegistrationClientUri(client.getRegistrationClientUri());
     responseClientDto.setExpiresAt(client.getExpiresAt());

@@ -9,8 +9,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
-import tokyomap.oauth.domain.entities.redis.AuthCache;
-import tokyomap.oauth.domain.entities.redis.AuthReqParams;
+import tokyomap.oauth.domain.entities.redis.ProAuthoriseCache;
+import tokyomap.oauth.domain.entities.redis.PreAuthoriseCache;
 
 @Configuration
 @PropertySource("classpath:conf/redisClient.properties")
@@ -35,30 +35,30 @@ public class RedisClientConfig {
   }
 
   /**
-   * the RedisTemplate<String, AuthReqParams> bean with Jackson2JsonRedisSerializer
+   * the RedisTemplate<String, PreAuthoriseCache> bean with Jackson2JsonRedisSerializer
    * @param jedisConnectionFactory
    * @return redisTemplate
    */
   @Bean
-  public RedisTemplate<String, AuthReqParams> authReqParamsRedisTemplate(JedisConnectionFactory jedisConnectionFactory) {
-    RedisTemplate<String, AuthReqParams> redisTemplate = new RedisTemplate();
+  public RedisTemplate<String, PreAuthoriseCache> authReqParamsRedisTemplate(JedisConnectionFactory jedisConnectionFactory) {
+    RedisTemplate<String, PreAuthoriseCache> redisTemplate = new RedisTemplate();
     redisTemplate.setConnectionFactory(jedisConnectionFactory);
     redisTemplate.setKeySerializer(new StringRedisSerializer());
-    redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer(AuthReqParams.class));
+    redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer(PreAuthoriseCache.class));
     return redisTemplate;
   }
 
   /**
-   * the RedisTemplate<String, AuthCache> bean with Jackson2JsonRedisSerializer
+   * the RedisTemplate<String, ProAuthoriseCache> bean with Jackson2JsonRedisSerializer
    * @param jedisConnectionFactory
    * @return redisTemplate
    */
   @Bean
-  public RedisTemplate<String, AuthCache> authCodeRedisTemplate(JedisConnectionFactory jedisConnectionFactory) {
-    RedisTemplate<String, AuthCache> redisTemplate = new RedisTemplate();
+  public RedisTemplate<String, ProAuthoriseCache> authCodeRedisTemplate(JedisConnectionFactory jedisConnectionFactory) {
+    RedisTemplate<String, ProAuthoriseCache> redisTemplate = new RedisTemplate();
     redisTemplate.setConnectionFactory(jedisConnectionFactory);
     redisTemplate.setKeySerializer(new StringRedisSerializer());
-    redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer(AuthCache.class));
+    redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer(ProAuthoriseCache.class));
     return redisTemplate;
   }
 }

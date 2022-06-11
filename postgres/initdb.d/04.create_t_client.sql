@@ -7,7 +7,7 @@ create table if not exists t_client (
   , redirect_uris character varying(256) not null
   , grant_types character varying(256) not null
   , response_types character varying(256) not null
-  , scope character varying(256) not null
+  , scopes character varying(256) not null
   , registration_access_token character varying(256) not null
   , registration_client_uri character varying(256) not null
   , expires_at timestamp not null
@@ -26,7 +26,7 @@ insert into
     , redirect_uris
     , grant_types
     , response_types
-    , scope
+    , scopes
     , registration_access_token
     , registration_client_uri
     , expires_at

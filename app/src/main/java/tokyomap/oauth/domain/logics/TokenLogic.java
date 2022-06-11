@@ -28,7 +28,11 @@ import tokyomap.oauth.dtos.GenerateTokensResponseDto;
 @Component
 public class TokenLogic {
 
+  // the authorisation server
+  // todo: define in a properties file
   private static final String ISSUER = "http://localhost:80";
+
+  // registered resource servers
   private static final String[] AUDIENCE = new String[] {"http://localhost:9002"};
 
   private final AccessTokenRepository accessTokenRepository;
@@ -88,7 +92,7 @@ public class TokenLogic {
    * generate JWT and signing them with RSA private key
    * @param clientId
    * @param sub
-   * @param scope
+   * @param scopes
    * @param isRefreshTokenGenerated
    * @param nonce
    * @return GenerateTokensResponseDto
@@ -96,9 +100,9 @@ public class TokenLogic {
    * @throws NoSuchAlgorithmException
    * @throws InvalidKeySpecException
    */
-  public GenerateTokensResponseDto generateTokens(String clientId, String sub,String[] scope, Boolean isRefreshTokenGenerated, String nonce) throws Exception {
+  public GenerateTokensResponseDto generateTokens(String clientId, String sub,String[] scopes, Boolean isRefreshTokenGenerated, String nonce) throws Exception {
 
-    SignedJWT accessJWT = this.createSignedJWT(sub, this.AUDIENCE, RandomStringUtils.random(8, true, true), scope, clientId);
+    SignedJWT accessJWT = this.createSignedJWT(sub, this.AUDIENCE, RandomStringUtils.random(8, true, true), scopes, clientId);
 
     // Open ID Connect ID token
     SignedJWT idJWT = this.createIdJWT(sub, clientId, nonce);
@@ -106,12 +110,12 @@ public class TokenLogic {
     if(!isRefreshTokenGenerated) {
       // todo: registration error handling
       AccessToken accessTokenRegistered = this.accessTokenRepository.saveAndFlush(new AccessToken(accessJWT.serialize()));
-      // scope must not be sent back to the client in production
-      GenerateTokensResponseDto responseDto = new GenerateTokensResponseDto("Bearer",accessTokenRegistered.getAccessToken(), null, idJWT.serialize(), String.join(" ", scope));
+      // scopes must not be sent back to the client in production
+      GenerateTokensResponseDto responseDto = new GenerateTokensResponseDto("Bearer",accessTokenRegistered.getAccessToken(), null, idJWT.serialize(), String.join(" ", scopes));
       return responseDto;
     }
 
-    SignedJWT refreshJWT = this.createSignedJWT(sub, this.AUDIENCE, RandomStringUtils.random(8, true, true), scope, clientId);
+    SignedJWT refreshJWT = this.createSignedJWT(sub, this.AUDIENCE, RandomStringUtils.random(8, true, true), scopes, clientId);
 
     // todo: registration error handling
     AccessToken accessTokenRegistered = this.accessTokenRepository.saveAndFlush(new AccessToken(accessJWT.serialize()));
@@ -123,7 +127,7 @@ public class TokenLogic {
         accessTokenRegistered.getAccessToken(),
         refreshTokenRegistered.getRefreshToken(),
         idJWT.serialize(),
-        String.join(" ", scope)
+        String.join(" ", scopes)
     );
 
     return responseDto;
@@ -151,12 +155,12 @@ public class TokenLogic {
    * create a signed JWT
    * @param sub
    * @param aud
-   * @param scope
+   * @param scopes
    * @param clientId
    * @return SignedJWT
    * @throws Exception
    */
-  private SignedJWT createSignedJWT(String sub, String[] aud, String jti, String[] scope, String clientId) throws Exception {
+  private SignedJWT createSignedJWT(String sub, String[] aud, String jti, String[] scopes, String clientId) throws Exception {
 
     LocalDateTime ldt = LocalDateTime.now();
 
@@ -171,7 +175,7 @@ public class TokenLogic {
         // todo: fix exp
         .claim("exp", ldt.toString()) // the expiration time, the token expires in 5 min later in this case
         .claim("jti", jti) // the unique identifier of the token, that is a value unique to each token created by the issuer, and it’s often a cryptographically random value
-        .claim("scope", scope) // String[] scope
+        .claim("scopes", scopes)
         .claim("clientId", clientId)
         .build();
 

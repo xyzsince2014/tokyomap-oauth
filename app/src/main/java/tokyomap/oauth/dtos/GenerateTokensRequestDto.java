@@ -29,7 +29,7 @@ public class GenerateTokensRequestDto implements Serializable {
   private String refreshToken;
 
   @Nullable
-  private String[] scope;
+  private String[] scopes;
 
   public String getGrantType() {
     return grantType;
@@ -94,18 +94,18 @@ public class GenerateTokensRequestDto implements Serializable {
   }
 
   @Nullable
-  public String[] getScope() {
-    return scope;
+  public String[] getScopes() {
+    return scopes;
   }
 
-  public void setScope(@Nullable String[] scope) {
-    this.scope = scope;
+  public void setScopes(@Nullable String[] scopes) {
+    this.scopes = scopes;
   }
 
   @Override
   public String toString() {
     return "grantType = " + this.grantType + ", code = " + this.code + ", redirectUri = " + this.redirectUri
         + ", codeVerifier = " + this.codeVerifier + ", clientId = " + this.clientId + ", clientSecret = " + this.clientSecret
-        + ", refreshToken = " + this.refreshToken + ", String.join(\" \", this.scope) = " + String.join(" ", this.scope);
+        + ", refreshToken = " + this.refreshToken + ", String.join(\" \", this.scopes) = " + String.join(" ", this.scopes);
   }
 }

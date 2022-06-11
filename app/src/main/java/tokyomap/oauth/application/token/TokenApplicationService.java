@@ -3,7 +3,7 @@ package tokyomap.oauth.application.token;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import tokyomap.oauth.domain.entities.redis.AuthCache;
+import tokyomap.oauth.domain.entities.redis.ProAuthoriseCache;
 import tokyomap.oauth.domain.services.token.AuthorisationCodeFlowDomainSerivice;
 import tokyomap.oauth.domain.services.token.ClientCredentialsDomainSerivce;
 import tokyomap.oauth.domain.services.token.RefreshTokenDomainService;
@@ -39,7 +39,7 @@ public class TokenApplicationService {
   public GenerateTokensResponseDto execute(GenerateTokensRequestDto requestDto, String authorization) {
     switch (requestDto.getGrantType()) {
       case "AUTHORISATION_CODE": { // todo: use a Constant
-        TokenValidationResultDto<AuthCache> tokenValidationResultDto = this.authorisationCodeFlowDomainSerivce.execValidation(requestDto, authorization);
+        TokenValidationResultDto<ProAuthoriseCache> tokenValidationResultDto = this.authorisationCodeFlowDomainSerivce.execValidation(requestDto, authorization);
         GenerateTokensResponseDto response = this.authorisationCodeFlowDomainSerivce.generateTokens(tokenValidationResultDto);
         return response;
       }

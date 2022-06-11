@@ -68,7 +68,7 @@ public abstract class TokenDomainService<T> {
     // todo: validation for scope is needed ?
 
 
-    String[] clientScope = client.getScope().split(" ");
+    String[] clientScope = client.getScopes().split(" ");
 
     return new CredentialsDto(clientId, clientSecret, clientScope);
   }

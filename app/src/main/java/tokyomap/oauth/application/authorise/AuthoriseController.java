@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import tokyomap.oauth.domain.entities.redis.AuthReqParams;
-import tokyomap.oauth.domain.services.authorise.PreAuthoriseDomainService;
-import tokyomap.oauth.domain.services.authorise.ProAuthoriseDomainService;
+import tokyomap.oauth.domain.entities.redis.PreAuthoriseCache;
+import tokyomap.oauth.domain.services.authorise.PreAuthoriseService;
+import tokyomap.oauth.domain.services.authorise.ProAuthoriseService;
 import tokyomap.oauth.dtos.PreAuthoriseResponseDto;
 import tokyomap.oauth.utils.Logger;
 
@@ -21,14 +21,14 @@ import tokyomap.oauth.utils.Logger;
 @RequestMapping("/authorise")
 public class AuthoriseController {
 
-  private final PreAuthoriseDomainService preAuthoriseDomainService;
-  private final ProAuthoriseDomainService proAuthoriseDomainService;
+  private final PreAuthoriseService preAuthoriseService;
+  private final ProAuthoriseService proAuthoriseService;
   private final Logger logger;
 
   @Autowired
-  public AuthoriseController(PreAuthoriseDomainService preAuthoriseDomainService, ProAuthoriseDomainService proAuthoriseDomainService, Logger logger) {
-    this.preAuthoriseDomainService = preAuthoriseDomainService;
-    this.proAuthoriseDomainService = proAuthoriseDomainService;
+  public AuthoriseController(PreAuthoriseService preAuthoriseService, ProAuthoriseService proAuthoriseService, Logger logger) {
+    this.preAuthoriseService = preAuthoriseService;
+    this.proAuthoriseService = proAuthoriseService;
     this.logger = logger;
   }
 
@@ -38,20 +38,20 @@ public class AuthoriseController {
   }
 
   /**
-   * http://localhost/authorise?responseType=AUTHORISATION_CODE&scope=read%20write%20delete%20openid%20profile%20email%20address%20phone&clientId=sLoBOeuIkRtEH7rXmQeCjeuc8Iz4ub1t&redirectUri=http%3A%2F%2Flocalhost%3A9000%2Fcallback&state=QFqFnUqlmEZZOPiFqymQ08tPXUiS2DuG&codeChallenge=xBENteFcVZvujKNgFJ7k9E8WLKrdUoZ16OdyB4axOmk&codeChallengeMethod=SHA256
+   * validate the authorisation request, and return the authorisation page
    * @param model
-   * @param reqParams
+   * @param queryParams
    * @return String
    */
   @RequestMapping(method = RequestMethod.GET)
-  public String preAuthorise(Model model, @RequestParam Map<String, String> reqParams) {
+  public String preAuthorise(Model model, @RequestParam Map<String, String> queryParams) {
 
-    AuthReqParams authReqParams = new AuthReqParams(
-        reqParams.get("responseType"), reqParams.get("scope").split(" "), reqParams.get("clientId"),
-        reqParams.get("redirectUri"), reqParams.get("state"), reqParams.get("codeChallenge"), reqParams.get("codeChallengeMethod")
+    PreAuthoriseCache preAuthoriseCache = new PreAuthoriseCache(
+        queryParams.get("responseType"), queryParams.get("scopes").split(" "), queryParams.get("clientId"),
+        queryParams.get("redirectUri"), queryParams.get("state"), queryParams.get("codeChallenge"), queryParams.get("codeChallengeMethod")
     );
 
-    PreAuthoriseResponseDto dto = this.preAuthoriseDomainService.execute(authReqParams);
+    PreAuthoriseResponseDto responseDto = this.preAuthoriseService.execute(preAuthoriseCache);
 
     /**
      * todo: OAuth Authentication with Modal
@@ -62,7 +62,7 @@ public class AuthoriseController {
      * * use Multi-Factor Authentication
      * * submit the form request to the pro-authorisaton endpoint
      */
-    model.addAttribute("dto", dto);
+    model.addAttribute("dto", responseDto);
 
     return "authorise";
   }
@@ -74,9 +74,7 @@ public class AuthoriseController {
    */
   @RequestMapping(method = RequestMethod.POST, consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE})
   public String proAuthorise(@Validated AuthorisationForm authorisationForm) {
-
-    URI redirectUri = this.proAuthoriseDomainService.execute(authorisationForm);
-
+    URI redirectUri = this.proAuthoriseService.execute(authorisationForm);
     return "redirect:" + redirectUri.toString();
   }
 }

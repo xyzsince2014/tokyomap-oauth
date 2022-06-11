@@ -12,7 +12,7 @@ public class TokenPayloadDto implements Serializable {
   private String iat;
   private String exp;
   private String jti;
-  private String[] scope;
+  private String[] scopes;
   private String clientId;
 
   public String getIss() {
@@ -63,12 +63,12 @@ public class TokenPayloadDto implements Serializable {
     this.jti = jti;
   }
 
-  public String[] getScope() {
-    return scope;
+  public String[] getScopes() {
+    return scopes;
   }
 
-  public void setScope(String[] scope) {
-    this.scope = scope;
+  public void setScopes(String[] scopes) {
+    this.scopes = scopes;
   }
 
   public String getClientId() {

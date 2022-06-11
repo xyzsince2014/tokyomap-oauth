@@ -100,7 +100,11 @@ public class RefreshTokenDomainService extends TokenDomainService<TokenPayloadDt
 
     try {
       return this.tokenLogic.generateTokens(
-          tokenValidationResultDto.getPayload().getClientId(), usr.getSub(), tokenValidationResultDto.getPayload().getScope(),true, null
+          tokenValidationResultDto.getPayload().getClientId(),
+          usr.getSub(),
+          tokenValidationResultDto.getPayload().getScopes(),
+          true,
+          null
       );
 
     } catch (Exception e) {

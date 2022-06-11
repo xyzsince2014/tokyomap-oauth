@@ -33,7 +33,7 @@ public class ClientCredentialsDomainSerivce extends TokenDomainService<Credentia
 
     CredentialsDto credentialsDto = this.validateClient(requestDto, authorization);
 
-    String[] requestedScope = requestDto.getScope();
+    String[] requestedScopes = requestDto.getScopes();
     // todo:
     //    if (!util.isObjectlncluded(requestedScope, clientScope)) {
     //      throw new Error('invalid scope');
@@ -52,7 +52,12 @@ public class ClientCredentialsDomainSerivce extends TokenDomainService<Credentia
 
     try {
       // the Client Credentials Flow should not have a user it's on behalf of
-      GenerateTokensResponseDto responseDto = this.tokenLogic.generateTokens(tokenValidationResultDto.getClientId(), null, tokenValidationResultDto.getPayload().getScope(),false, null);
+      GenerateTokensResponseDto responseDto = this.tokenLogic.generateTokens(
+          tokenValidationResultDto.getClientId(),
+          null, tokenValidationResultDto.getPayload().getScopes(),
+          false,
+          null
+      );
 
       // todo:
       //      if(!responseDto) {

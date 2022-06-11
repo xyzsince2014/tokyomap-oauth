@@ -71,8 +71,8 @@ public class Usr implements Serializable {
   @Column(name = "phone_number_verified")
   private Boolean phoneNumberVerified;
 
-  @Column(name = "scope")
-  private String scope;
+  @Column(name = "scopes")
+  private String scopes;
 
   @Column(name = "created_at")
   private LocalDateTime createdAt;
@@ -226,12 +226,12 @@ public class Usr implements Serializable {
     this.phoneNumberVerified = phoneNumberVerified;
   }
 
-  public String getScope() {
-    return scope;
+  public String getScopes() {
+    return scopes;
   }
 
-  public void setScope(String scope) {
-    this.scope = scope;
+  public void setScopes(String scopes) {
+    this.scopes = scopes;
   }
 
   public LocalDateTime getCreatedAt() {
@@ -270,7 +270,7 @@ public class Usr implements Serializable {
     usrMap.put("address", this.address);
     usrMap.put("phone", this.phone);
     usrMap.put("phoneNumberVerified", this.phoneNumberVerified);
-    usrMap.put("scope", this.scope);
+    usrMap.put("scope", this.scopes);
     return usrMap;
   }
 

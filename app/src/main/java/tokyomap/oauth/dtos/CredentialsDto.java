@@ -14,7 +14,7 @@ public class CredentialsDto implements Serializable {
   private String secret;
 
   @Nullable
-  private String[] scope;
+  private String[] scopes;
 
   public CredentialsDto() {}
 
@@ -23,10 +23,10 @@ public class CredentialsDto implements Serializable {
     this.secret = secret;
   }
 
-  public CredentialsDto(@Nullable String id, @Nullable String secret, @Nullable String[] scope) {
+  public CredentialsDto(@Nullable String id, @Nullable String secret, @Nullable String[] scopes) {
     this.id = id;
     this.secret = secret;
-    this.scope = scope;
+    this.scopes = scopes;
   }
 
   @Nullable
@@ -48,11 +48,11 @@ public class CredentialsDto implements Serializable {
   }
 
   @Nullable
-  public String[] getScope() {
-    return scope;
+  public String[] getScopes() {
+    return scopes;
   }
 
-  public void setScope(@Nullable String[] scope) {
-    this.scope = scope;
+  public void setScopes(@Nullable String[] scopes) {
+    this.scopes = scopes;
   }
 }

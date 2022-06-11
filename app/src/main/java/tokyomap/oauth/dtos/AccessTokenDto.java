@@ -12,17 +12,17 @@ public class AccessTokenDto implements Serializable {
   private String lat;
   private String exp;
   private String jti;
-  private String[] scope;
+  private String[] scopes;
   private String clientId;
 
-  public AccessTokenDto(String iss, String sub, String[] aud, String lat, String exp, String jti, String[] scope, String clientId) {
+  public AccessTokenDto(String iss, String sub, String[] aud, String lat, String exp, String jti, String[] scopes, String clientId) {
     this.iss = iss;
     this.sub = sub;
     this.aud = aud;
     this.lat = lat;
     this.exp = exp;
     this.jti = jti;
-    this.scope = scope;
+    this.scopes = scopes;
     this.clientId = clientId;
   }
 
@@ -74,12 +74,12 @@ public class AccessTokenDto implements Serializable {
     this.jti = jti;
   }
 
-  public String[] getScope() {
-    return scope;
+  public String[] getScopes() {
+    return scopes;
   }
 
-  public void setScope(String[] scope) {
-    this.scope = scope;
+  public void setScopes(String[] scopes) {
+    this.scopes = scopes;
   }
 
   public String getClientId() {

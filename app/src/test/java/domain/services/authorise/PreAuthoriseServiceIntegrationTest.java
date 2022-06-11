@@ -11,22 +11,22 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import tokyomap.oauth.RedisClientConfig;
 import tokyomap.oauth.WebMvcConfig;
-import tokyomap.oauth.domain.entities.redis.AuthReqParams;
-import tokyomap.oauth.domain.services.authorise.PreAuthoriseDomainService;
+import tokyomap.oauth.domain.entities.redis.PreAuthoriseCache;
+import tokyomap.oauth.domain.services.authorise.PreAuthoriseService;
 import tokyomap.oauth.dtos.PreAuthoriseResponseDto;
 
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = {WebMvcConfig.class, RedisClientConfig.class})
 @WebAppConfiguration
 @ActiveProfiles("develop")
-public class PreAuthoriseDomainServiceIntegrationTest {
+public class PreAuthoriseServiceIntegrationTest {
 
   @Autowired
-  private PreAuthoriseDomainService preAuthoriseDomainService;
+  private PreAuthoriseService preAuthoriseService;
 
   @Test
   public void testExecute() {
-    AuthReqParams authReqParams = new AuthReqParams(
+    PreAuthoriseCache preAuthoriseCache = new PreAuthoriseCache(
         "AUTHORISATION_CODE",
         "read write delete openid profile email address phone".split(" "),
         "sLoBOeuIkRtEH7rXmQeCjeuc8Iz4ub1t",
@@ -36,7 +36,7 @@ public class PreAuthoriseDomainServiceIntegrationTest {
         "SHA256"
     );
 
-    PreAuthoriseResponseDto actualDto = this.preAuthoriseDomainService.execute(authReqParams);
+    PreAuthoriseResponseDto actualDto = this.preAuthoriseService.execute(preAuthoriseCache);
 
     assertThat(actualDto.getClient().getClientId()).isEqualTo("sLoBOeuIkRtEH7rXmQeCjeuc8Iz4ub1t");
     assertThat(actualDto.getRequestId()).isNotNull();
