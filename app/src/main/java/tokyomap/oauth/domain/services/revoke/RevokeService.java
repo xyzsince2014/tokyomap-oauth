@@ -12,7 +12,7 @@ import tokyomap.oauth.utils.Decorder;
 import tokyomap.oauth.utils.Logger;
 
 @Service
-public class RevokeDomainService {
+public class RevokeService {
 
   private final ClientLogic clientLogic;
   private final TokenLogic tokenLogic;
@@ -20,7 +20,7 @@ public class RevokeDomainService {
   private final Decorder decorder;
 
   @Autowired
-  public RevokeDomainService(ClientLogic clientLogic, TokenLogic tokenLogic, Logger logger, Decorder decorder) {
+  public RevokeService(ClientLogic clientLogic, TokenLogic tokenLogic, Logger logger, Decorder decorder) {
     this.clientLogic = clientLogic;
     this.tokenLogic = tokenLogic;
     this.logger = logger;
@@ -33,8 +33,9 @@ public class RevokeDomainService {
     CredentialsDto credentialsDto = this.decorder.decodeCredentials(authorization);
 
     Client client = this.clientLogic.getClientByClientId(credentialsDto.getId());
+
     if (client == null || !client.getClientSecret().equals(credentialsDto.getSecret())) {
-      // todo: throw new Error('invalid client');
+      throw new RevocationFailureException("invalid client");
     }
 
     String accessToken = requestDto.getAccessToken();
