@@ -1,4 +1,4 @@
-package tokyomap.oauth.application.introspect;
+package tokyomap.oauth.dtos;
 
 import java.io.Serializable;
 

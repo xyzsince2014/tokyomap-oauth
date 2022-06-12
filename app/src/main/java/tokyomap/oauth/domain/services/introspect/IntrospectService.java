@@ -12,7 +12,7 @@ import tokyomap.oauth.utils.Decorder;
 import tokyomap.oauth.utils.Logger;
 
 @Service
-public class IntrospectDomainService {
+public class IntrospectService {
 
   private final Decorder decorder;
   private final ResourceLogic resourceLogic;
@@ -20,7 +20,7 @@ public class IntrospectDomainService {
   private final Logger logger;
 
   @Autowired
-  public IntrospectDomainService(Decorder decorder, ResourceLogic resourceLogic, TokenLogic tokenLogic, Logger logger) {
+  public IntrospectService(Decorder decorder, ResourceLogic resourceLogic, TokenLogic tokenLogic, Logger logger) {
     this.decorder = decorder;
     this.resourceLogic = resourceLogic;
     this.tokenLogic = tokenLogic;
@@ -31,8 +31,9 @@ public class IntrospectDomainService {
   public Boolean introspect(String incomingToken, String authorization) {
     CredentialsDto credentialsDto = this.decorder.decodeCredentials(authorization); // fetch resourceId, resourceSecret from the Authorization header
     Resource resource = this.resourceLogic.getResourceByResourceId(credentialsDto.getId());
+
     if (resource == null || !resource.getResourceSecret().equals(credentialsDto.getSecret())) {
-      this.logger.log("IntrospectDomainService", "resource.getResourceSecret() = " + resource.getResourceSecret() + ", credentialsDto.getSecret() = " + credentialsDto.getSecret());
+      this.logger.log("IntrospectService", "resource.getResourceSecret() = " + resource.getResourceSecret() + ", credentialsDto.getSecret() = " + credentialsDto.getSecret());
       return false;
     }
 
@@ -44,7 +45,7 @@ public class IntrospectDomainService {
     AccessToken accessToken = this.tokenLogic.getAccessToken(incomingToken);
 
     if (accessToken == null) {
-      this.logger.log("IntrospectDomainService", "accessToken is null");
+      this.logger.log("IntrospectService", "accessToken is null");
       return false;
     }
 
