@@ -37,7 +37,7 @@ public class TokenRestController {
     this.clientCredentialsSerivce = clientCredentialsSerivce;
   }
 
-  @RequestMapping(method = RequestMethod.POST, consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE})
+  @RequestMapping(method = RequestMethod.POST, headers = "Content-Type=application/x-www-form-urlencoded;charset=utf-8")
   public GenerateTokensResponseDto generateTokens(GenerateTokensRequestDto requestDto, @RequestHeader("Authorization") String authorization) {
     switch (requestDto.getGrantType()) {
       case "AUTHORISATION_CODE": { // todo: use a Constant

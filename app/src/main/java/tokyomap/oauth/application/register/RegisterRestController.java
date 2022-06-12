@@ -69,9 +69,15 @@ public class RegisterRestController {
    * @param requestDto
    * @return UpdateClientResponseDto
    */
-  @RequestMapping(path = "/{clientId}", method = RequestMethod.PUT, headers = {"Accept=application/json", "Content-Type=application/json"})
+  @RequestMapping(
+      path = "/{clientId}",
+      method = RequestMethod.PUT,
+      headers = {"Accept=application/json", "Content-Type=application/json"}
+  )
   public UpdateClientResponseDto updateClient(
-      @PathVariable String clientId, @RequestHeader("Authorization") String authorization, @RequestBody UpdateClientRequestDto requestDto
+      @PathVariable String clientId,
+      @RequestHeader("Authorization") String authorization,
+      @RequestBody UpdateClientRequestDto requestDto
   ) {
     ResponseClientDto responseClientDto = this.checkAccessTokenRegistration(clientId, authorization, RequestMethod.PUT);
 
@@ -118,6 +124,7 @@ public class RegisterRestController {
    * @throws ResponseStatusException
    */
   private ResponseClientDto checkAccessTokenRegistration(String clientId, String authorization, RequestMethod requestMethod) throws ResponseStatusException {
+
     try {
       Client clientRegistered = this.checkRegistrationAccessTokenService.checkRegistration(clientId, authorization);
 

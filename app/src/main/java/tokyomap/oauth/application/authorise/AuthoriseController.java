@@ -72,7 +72,7 @@ public class AuthoriseController {
    * @param authorisationForm
    * @return String
    */
-  @RequestMapping(method = RequestMethod.POST, consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE})
+  @RequestMapping(method = RequestMethod.POST, headers = "Content-Type=application/x-www-form-urlencoded;charset=utf-8")
   public String proAuthorise(@Validated AuthorisationForm authorisationForm) {
     URI redirectUri = this.proAuthoriseService.execute(authorisationForm);
     return "redirect:" + redirectUri.toString();

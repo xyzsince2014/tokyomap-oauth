@@ -88,7 +88,7 @@ public class ProAuthoriseService {
 
     if(!Arrays.asList(usr.getScopes().split(" ")).containsAll(Arrays.asList(requestedScopes))) {
       this.logger.log(
-          "ProAuthoriseService",
+          ProAuthoriseService.class.getName(),
           "Arrays.asList(usr.getScopes().split(\" \")) = " + Arrays.asList(usr.getScopes().split(" ")) + ", Arrays.asList(requestedScopes) = " + Arrays.asList(requestedScopes)
       );
       throw new InvalidProAuthoriseException("invalid scope requested.");
@@ -112,9 +112,12 @@ public class ProAuthoriseService {
     ProAuthoriseCache proAuthoriseCache = new ProAuthoriseCache(sub, requestedScopes, preAuthoriseCache);
     this.proAuthoriseCacheRedisTemplate.opsForValue().set(code, proAuthoriseCache);
 
-    URI redirectUri = UriComponentsBuilder.fromUriString(preAuthoriseCache.getRedirectUri())
-        .queryParam("code", code).queryParam("state", preAuthoriseCache.getState())
-        .build().toUri();
+    URI redirectUri = UriComponentsBuilder
+        .fromUriString(preAuthoriseCache.getRedirectUri())
+        .queryParam("code", code)
+        .queryParam("state", preAuthoriseCache.getState())
+        .build()
+        .toUri();
 
     return redirectUri;
   }
@@ -146,14 +149,17 @@ public class ProAuthoriseService {
     try {
       GenerateTokensResponseDto responseDto = this.tokenLogic.generateTokens(
           tokenValidationResultDto.getClientId(), tokenValidationResultDto.getPayload().getSub(),
-          tokenValidationResultDto.getPayload().getScopeRequested(),
-          true, null
+          tokenValidationResultDto.getPayload().getScopeRequested(), true, null
       );
 
       String fragment = "accessToken=" + responseDto.getAccessToken() + "&idToken=" + responseDto.getIdToken()
           + "&state=" + preAuthoriseCache.getState() + "&scope=" + String.join(" ", preAuthoriseCache.getScopes());
 
-      URI redirectUri = UriComponentsBuilder.fromUriString(preAuthoriseCache.getRedirectUri()).fragment(fragment).build().toUri();
+      URI redirectUri = UriComponentsBuilder
+          .fromUriString(preAuthoriseCache.getRedirectUri())
+          .fragment(fragment)
+          .build()
+          .toUri();
 
       return redirectUri;
 

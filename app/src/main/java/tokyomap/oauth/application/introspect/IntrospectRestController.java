@@ -20,7 +20,7 @@ public class IntrospectRestController {
     this.introspectService = introspectService;
   }
 
-  @RequestMapping(method = RequestMethod.POST, consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE})
+  @RequestMapping(method = RequestMethod.POST, headers = "Content-Type=application/x-www-form-urlencoded;charset=utf-8")
   public Boolean introspect(RequestIntrospectDto requestDto, @RequestHeader("Authorization") String authorization) {
     Boolean isActive = this.introspectService.introspect(requestDto.getToken(), authorization);
     return isActive;

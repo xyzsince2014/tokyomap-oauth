@@ -22,7 +22,7 @@ public class RevokeController {
     this.revokeService = revokeService;
   }
 
-  @RequestMapping(method = RequestMethod.POST, consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE})
+  @RequestMapping(method = RequestMethod.POST, headers = "Content-Type=application/x-www-form-urlencoded;charset=utf-8")
   @ResponseStatus(HttpStatus.NO_CONTENT) // return "204 No Content"
   public void revoke(RevokeRequestDto requestDto, @RequestHeader("Authorization") String authorization) {
     this.revokeService.revoke(requestDto, authorization);
