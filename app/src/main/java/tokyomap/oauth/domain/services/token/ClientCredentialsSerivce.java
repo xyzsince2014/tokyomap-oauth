@@ -1,5 +1,6 @@
 package tokyomap.oauth.domain.services.token;
 
+import java.util.Arrays;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tokyomap.oauth.domain.logics.ClientLogic;
@@ -12,13 +13,13 @@ import tokyomap.oauth.utils.Decorder;
 import tokyomap.oauth.utils.Logger;
 
 @Service
-public class ClientCredentialsDomainSerivce extends TokenDomainService<CredentialsDto> {
+public class ClientCredentialsSerivce extends TokenService<CredentialsDto> {
 
   private final TokenLogic tokenLogic;
   private final Logger logger;
 
   @Autowired
-  public ClientCredentialsDomainSerivce(ClientLogic clientLogic, Decorder decorder, TokenLogic tokenLogic, Logger logger) {
+  public ClientCredentialsSerivce(ClientLogic clientLogic, Decorder decorder, TokenLogic tokenLogic, Logger logger) {
     super(clientLogic, decorder, logger);
     this.tokenLogic = tokenLogic;
     this.logger = logger;
@@ -32,12 +33,11 @@ public class ClientCredentialsDomainSerivce extends TokenDomainService<Credentia
   public TokenValidationResultDto<CredentialsDto> execValidation(GenerateTokensRequestDto requestDto, String authorization) {
 
     CredentialsDto credentialsDto = this.validateClient(requestDto, authorization);
-
     String[] requestedScopes = requestDto.getScopes();
-    // todo:
-    //    if (!util.isObjectlncluded(requestedScope, clientScope)) {
-    //      throw new Error('invalid scope');
-    //    }
+
+    if (!Arrays.asList(credentialsDto.getScopes()).containsAll(Arrays.asList(requestedScopes))) {
+      throw new InvalidTokenRequestException("invalid scopes");
+    }
 
     return new TokenValidationResultDto(credentialsDto.getId(), credentialsDto);
   }
@@ -59,18 +59,14 @@ public class ClientCredentialsDomainSerivce extends TokenDomainService<Credentia
           null
       );
 
-      // todo:
-      //      if(!responseDto) {
-      //        console.log(`${util.fetchCurrentDatetimeJst()} [issueTokensForClientCredentialsLogic.issueTokens] failed to issue tokens`);
-      //        throw new Error('failed to issue tokens');
-      //      }
+      if(responseDto == null) {
+        throw new InvalidTokenRequestException("failed to issue tokens");
+      }
 
       return responseDto;
 
     } catch (Exception e) {
-      // todo: error handling
-      e.printStackTrace();
-      return null;
+      throw new InvalidTokenRequestException(e.getMessage());
     }
   }
 }

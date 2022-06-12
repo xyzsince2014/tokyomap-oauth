@@ -87,6 +87,10 @@ public class ProAuthoriseService {
     String[] requestedScopes = preAuthoriseCache.getScopes();
 
     if(!Arrays.asList(usr.getScopes().split(" ")).containsAll(Arrays.asList(requestedScopes))) {
+      this.logger.log(
+          "ProAuthoriseService",
+          "Arrays.asList(usr.getScopes().split(\" \")) = " + Arrays.asList(usr.getScopes().split(" ")) + ", Arrays.asList(requestedScopes) = " + Arrays.asList(requestedScopes)
+      );
       throw new InvalidProAuthoriseException("invalid scope requested.");
     }
 

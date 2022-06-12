@@ -37,11 +37,11 @@ public class ProAuthoriseCache implements Serializable {
     this.scopeRequested = scopeRequested;
   }
 
-  public PreAuthoriseCache getAuthReqParams() {
+  public PreAuthoriseCache getPreAuthoriseCache() {
     return preAuthoriseCache;
   }
 
-  public void setAuthReqParams(PreAuthoriseCache preAuthoriseCache) {
+  public void setPreAuthoriseCache(PreAuthoriseCache preAuthoriseCache) {
     this.preAuthoriseCache = preAuthoriseCache;
   }
 

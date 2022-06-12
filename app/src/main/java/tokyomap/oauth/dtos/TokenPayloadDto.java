@@ -78,4 +78,11 @@ public class TokenPayloadDto implements Serializable {
   public void setClientId(String clientId) {
     this.clientId = clientId;
   }
+
+  @Override
+  public String toString() {
+    return "iss = " + iss + ", sub = " + sub + ", String.join(\" \", aud) = " + String.join(" ", aud)
+        + ", iat = " + iat + ", exp = " + exp + ", jti = " + jti + ", String.join(\" \", scopes) = " + String.join(" ", scopes)
+        + ", clientId = " + clientId;
+  }
 }

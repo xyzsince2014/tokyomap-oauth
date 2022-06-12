@@ -9,13 +9,13 @@ import tokyomap.oauth.dtos.TokenValidationResultDto;
 import tokyomap.oauth.utils.Decorder;
 import tokyomap.oauth.utils.Logger;
 
-public abstract class TokenDomainService<T> {
+public abstract class TokenService<T> {
 
   private final ClientLogic clientLogic;
   private final Decorder decorder;
   private final Logger logger;
 
-  public TokenDomainService(ClientLogic clientLogic, Decorder decorder, Logger logger) {
+  public TokenService(ClientLogic clientLogic, Decorder decorder, Logger logger) {
     this.clientLogic = clientLogic;
     this.decorder = decorder;
     this.logger = logger;
@@ -38,7 +38,7 @@ public abstract class TokenDomainService<T> {
    * validate client
    * @param requestDto
    * @param authorization
-   * @return
+   * @return CredentialsDto
    */
   protected CredentialsDto validateClient(GenerateTokensRequestDto requestDto, String authorization) {
 
@@ -54,19 +54,19 @@ public abstract class TokenDomainService<T> {
     if (requestDto.getClientId() != null) {
       if (credentialsDto.getId() != null) {
         // return an error if we've already seen the client's credentials in the authorization header
-        // todo: throw new Error('invalid clientId');
+        throw new InvalidTokenRequestException("invalid clientId");
       }
       clientId = requestDto.getClientId();
       clientSecret = requestDto.getClientSecret();
     }
 
     Client client = this.clientLogic.getClientByClientId(clientId);
-    // todo: validate client
-    //  if (client == null || client.get().getClientSecret() != clientSecret) {
-    //    throw new Error('invalid client');
-    //  }
-    // todo: validation for scope is needed ?
-
+    if (client == null) {
+      throw new Error("no matching client.");
+    }
+    if (!client.getClientSecret().equals(clientSecret)) {
+      throw new Error("invalid clientSecret, client.getClientSecret() " + client.getClientSecret() + ", clientSecret = " + clientSecret);
+    }
 
     String[] clientScope = client.getScopes().split(" ");
 

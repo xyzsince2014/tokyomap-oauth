@@ -1,6 +1,7 @@
 package tokyomap.oauth.domain.services.token;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Arrays;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,14 +19,17 @@ import tokyomap.oauth.utils.Decorder;
 import tokyomap.oauth.utils.Logger;
 
 @Service
-public class RefreshTokenDomainService extends TokenDomainService<TokenPayloadDto> {
+public class RefreshTokenService extends TokenService<TokenPayloadDto> {
+
+  // todo: define in a config file
+  private static final String AUTH_SERVER_HOST = "http://localhost:80";
 
   private final TokenLogic tokenLogic;
   private final UsrLogic usrLogic;
   private final Logger logger;
 
   @Autowired
-  public RefreshTokenDomainService(ClientLogic clientLogic, Decorder decorder, TokenLogic tokenLogic, UsrLogic usrLogic, Logger logger) {
+  public RefreshTokenService(ClientLogic clientLogic, Decorder decorder, TokenLogic tokenLogic, UsrLogic usrLogic, Logger logger) {
     super(clientLogic, decorder, logger);
     this.tokenLogic = tokenLogic;
     this.usrLogic = usrLogic;
@@ -42,46 +46,50 @@ public class RefreshTokenDomainService extends TokenDomainService<TokenPayloadDt
     CredentialsDto credentialsDto = this.validateClient(requestDto, authorization);
 
     String incomingToken = requestDto.getRefreshToken();
+
     // todo:
     //    if (!jose.jws.JWS.verify(incomingToken, jose.KEYUTIL.getKey(config.rsaPublicKey), [config.rsaPublicKey.alg])) {
     //      throw new Error(`${util.fetchCurrentDatetimeJst()} [refreshTokenLogic.execValidation] incoming token invalid`);
     //    }
 
-  RefreshToken refreshToken = this.tokenLogic.getRefreshToken(incomingToken);
-  if(refreshToken == null) {
-    this.logger.log("RefreshTokenDomainService", "refreshToken is null");
-    // todo: throw new Error(`${util.fetchCurrentDatetimeJst()} [refreshTokenLogic.execValidation] no matching refreshToken`);
-  }
+    RefreshToken refreshToken = this.tokenLogic.getRefreshToken(incomingToken);
+
+    if(refreshToken == null) {
+      this.logger.log("RefreshTokenService", "refreshToken is null");
+      throw new InvalidTokenRequestException("no matching refreshToken");
+    }
 
     String[] refreshTokenSplit = refreshToken.getRefreshToken().split("\\.");
 
-    // todo: create a dto from a string
-
     try {
       String payload = new String((new Base64()).decode(refreshTokenSplit[1].getBytes()));
+      this.logger.log(RefreshTokenService.class.getName(), "payload = " + payload);
+
       TokenPayloadDto tokenPayloadDto = new ObjectMapper().readValue(payload, TokenPayloadDto.class);
 
+      if (!tokenPayloadDto.getIss().equals(AUTH_SERVER_HOST)) {
+        throw new InvalidTokenRequestException("invalid tokenPayloadDto.iss: payloadtokenPayloadDto.getIss() = " + tokenPayloadDto.getIss() + ", AUTH_SERVER_HOST " + AUTH_SERVER_HOST);
+      }
+
+      // todo: aud comes as null, fix
+//      if (Arrays.asList(tokenPayloadDto.getAud()).indexOf(credentialsDto.getId()) == -1) {
+//        throw new InvalidTokenRequestException("tokenPayloadDto.aud is invalid");
+//      }
+
       // todo:
-//    if (!tokenPayloadDto.getIss().equals(config.authServer.host)) {
-//      throw new Error(`[refreshTokenLogic.execValidation] payload.iss is expected to be ${config.authServer.host}, but ${payload.iss}`);
-//    }
-//    if ((!Array.isArray(tokenPayloadDto.getAud()) || !tokenPayloadDto.getAud().includes(client.clientId)) && !tokenPayloadDto.getAud().equals(client.clientId)) {
-//      throw new Error(`[refreshTokenLogic.execValidation] payload.aud is invalid`);
-//    }
-//    LocalDateTime now = LocalDateTime.now();
-//    if (payload.exp < now || now < payload.iat) {
-//      throw new Error('[refreshTokenLogic.execValidation] payload.exp is invalid');
-//    }
-//    if (payload.clientId !== clientId) {
-//      throw new Error(`${util.fetchCurrentDatetimeJst()} [refreshTokenLogic.execValidation] invalid clientId: payload.cliendId = ${payload.clientId}, actual clientId = ${clientId}`);
-//    }
+//      LocalDateTime now = LocalDateTime.now();
+//      if (now < tokenPayloadDto.getIat() || tokenPayloadDto.getExp() < now) {
+//        throw new InvalidTokenRequestException("tokenPayloadDto.iap or tokenPayloadDto.expis is invalid");
+//      }
+
+      if (!tokenPayloadDto.getClientId().equals(credentialsDto.getId())) {
+        throw new InvalidTokenRequestException("tokenPayloadDto.clientId is invalid");
+      }
 
       return new TokenValidationResultDto(credentialsDto.getId(), tokenPayloadDto);
 
     } catch (Exception e) {
-      // todo: handle exception properly
-      e.printStackTrace();
-      return null;
+      throw new InvalidTokenRequestException(e.getMessage());
     }
   }
 

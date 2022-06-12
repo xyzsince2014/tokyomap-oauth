@@ -102,22 +102,20 @@ public class TokenLogic {
    */
   public GenerateTokensResponseDto generateTokens(String clientId, String sub,String[] scopes, Boolean isRefreshTokenGenerated, String nonce) throws Exception {
 
-    SignedJWT accessJWT = this.createSignedJWT(sub, this.AUDIENCE, RandomStringUtils.random(8, true, true), scopes, clientId);
+    SignedJWT accessJWT = this.createSignedJWT(sub, RandomStringUtils.random(8, true, true), scopes, clientId);
 
     // Open ID Connect ID token
     SignedJWT idJWT = this.createIdJWT(sub, clientId, nonce);
 
     if(!isRefreshTokenGenerated) {
-      // todo: registration error handling
       AccessToken accessTokenRegistered = this.accessTokenRepository.saveAndFlush(new AccessToken(accessJWT.serialize()));
       // scopes must not be sent back to the client in production
       GenerateTokensResponseDto responseDto = new GenerateTokensResponseDto("Bearer",accessTokenRegistered.getAccessToken(), null, idJWT.serialize(), String.join(" ", scopes));
       return responseDto;
     }
 
-    SignedJWT refreshJWT = this.createSignedJWT(sub, this.AUDIENCE, RandomStringUtils.random(8, true, true), scopes, clientId);
+    SignedJWT refreshJWT = this.createSignedJWT(sub, RandomStringUtils.random(8, true, true), scopes, clientId);
 
-    // todo: registration error handling
     AccessToken accessTokenRegistered = this.accessTokenRepository.saveAndFlush(new AccessToken(accessJWT.serialize()));
     RefreshToken refreshTokenRegistered = this.refreshTokenRepository.saveAndFlush(new RefreshToken(refreshJWT.serialize()));
 
@@ -154,13 +152,12 @@ public class TokenLogic {
   /**
    * create a signed JWT
    * @param sub
-   * @param aud
    * @param scopes
    * @param clientId
    * @return SignedJWT
    * @throws Exception
    */
-  private SignedJWT createSignedJWT(String sub, String[] aud, String jti, String[] scopes, String clientId) throws Exception {
+  private SignedJWT createSignedJWT(String sub, String jti, String[] scopes, String clientId) throws Exception {
 
     LocalDateTime ldt = LocalDateTime.now();
 
@@ -168,11 +165,11 @@ public class TokenLogic {
 
     // payload
     JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
-        .claim("iss", this.ISSUER) // the issuer, normally the URI of the auth server
+        .claim("iss", ISSUER) // the issuer, normally the URI of the auth server
         .claim("sub", sub) // the subject, normally the unique identifier for the resource owner
-        .claim("aud", this.AUDIENCE) // the audience, normally the URI(s) of the protected resource(s) the access token can be sent to
+        // todo: aud is set to null, fix
+        .claim("aud", AUDIENCE) // the audience, normally the URI(s) of the protected resource(s) the access token can be sent to
         .claim("iat", ldt.toString()) // the issued-at timestamp of the token in seconds from 1 Jan 1970 (GMT)
-        // todo: fix exp
         .claim("exp", ldt.toString()) // the expiration time, the token expires in 5 min later in this case
         .claim("jti", jti) // the unique identifier of the token, that is a value unique to each token created by the issuer, and it’s often a cryptographically random value
         .claim("scopes", scopes)
