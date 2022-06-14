@@ -60,7 +60,8 @@ public class Client implements Serializable {
 
   public Client(
       String clientId, String clientSecret, String clientName, String tokenEndpointAuthMethod, String clientUri,
-      String redirectUris, String grantTypes, String responseTypes, String scopes, String registrationAccessToken, String registrationClientUri
+      String redirectUris, String grantTypes, String responseTypes, String scopes, String registrationAccessToken,
+      String registrationClientUri, LocalDateTime expiresAt, LocalDateTime createdAt, LocalDateTime updatedAt
   ) {
     this.clientId = clientId;
     this.clientSecret = clientSecret;
@@ -73,10 +74,9 @@ public class Client implements Serializable {
     this.scopes = scopes;
     this.registrationAccessToken = registrationAccessToken;
     this.registrationClientUri = registrationClientUri;
-    LocalDateTime ldt = LocalDateTime.now(); // todo: use JST
-    this.expiresAt = ldt; // todo: set properly
-    this.createdAt = ldt;
-    this.updatedAt = ldt;
+    this.expiresAt = expiresAt;
+    this.createdAt = createdAt;
+    this.updatedAt = updatedAt;
   }
 
   public String getClientId() {

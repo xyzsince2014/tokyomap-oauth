@@ -1,6 +1,8 @@
 package tokyomap.oauth.domain.services.token;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,7 +67,7 @@ public class RefreshTokenService extends TokenService<TokenPayloadDto> {
       String payload = new String((new Base64()).decode(refreshTokenSplit[1].getBytes()));
       this.logger.log(RefreshTokenService.class.getName(), "payload = " + payload);
 
-      TokenPayloadDto tokenPayloadDto = new ObjectMapper().readValue(payload, TokenPayloadDto.class);
+      TokenPayloadDto tokenPayloadDto = new ObjectMapper().registerModule(new JavaTimeModule()).readValue(payload, TokenPayloadDto.class);
 
       if (!tokenPayloadDto.getIss().equals(AUTH_SERVER_HOST)) {
         throw new InvalidTokenRequestException("invalid tokenPayloadDto.iss: payloadtokenPayloadDto.getIss() = " + tokenPayloadDto.getIss() + ", AUTH_SERVER_HOST " + AUTH_SERVER_HOST);
@@ -76,13 +78,20 @@ public class RefreshTokenService extends TokenService<TokenPayloadDto> {
 //        throw new InvalidTokenRequestException("tokenPayloadDto.aud is invalid");
 //      }
 
-      // todo:
-//      LocalDateTime now = LocalDateTime.now();
-//      if (now < tokenPayloadDto.getIat() || tokenPayloadDto.getExp() < now) {
-//        throw new InvalidTokenRequestException("tokenPayloadDto.iap or tokenPayloadDto.expis is invalid");
-//      }
+      LocalDateTime now = LocalDateTime.now();
+      if (now.isBefore(tokenPayloadDto.getIat()) || now.isAfter(tokenPayloadDto.getExp())) {
+        this.logger.log(
+            RefreshTokenService.class.getName(),
+            "tokenPayloadDto.iap or tokenPayloadDto.exp is invalid: tokenPayloadDto.iat = " + tokenPayloadDto.getIat().toString() + ", tokenPayloadDto.exp = " + tokenPayloadDto.getExp().toString()
+        );
+        throw new InvalidTokenRequestException("tokenPayloadDto.iat or tokenPayloadDto.exp is invalid");
+      }
 
       if (!tokenPayloadDto.getClientId().equals(credentialsDto.getId())) {
+        this.logger.log(
+            RefreshTokenService.class.getName(),
+            "tokenPayloadDto.clientId is invalid: tokenPayloadDto.clientId is invalid = " + tokenPayloadDto.getClientId()
+        );
         throw new InvalidTokenRequestException("tokenPayloadDto.clientId is invalid");
       }
 

@@ -235,7 +235,6 @@ public class RequestClientDto implements Serializable {
         + ", clientUri = " + this.clientUri + ", redirectUris = " + this.redirectUris.toString()
         + ", grantTypes = " + this.grantTypes + ", responseTypes = " + this.responseTypes + ", tokenEndpointAuthMethod = " + this.tokenEndpointAuthMethod
         + ", scopes = " + this.scopes + ", registrationAccessToken = " + this.registrationAccessToken
-        + ", registrationClientUri = " + this.registrationClientUri;
-        // todo: fix NullPointException + ", expiresAt = " + this.expiresAt.toString();
+        + ", registrationClientUri = " + this.registrationClientUri + ", expiresAt = " + this.expiresAt.toString();
   }
 }

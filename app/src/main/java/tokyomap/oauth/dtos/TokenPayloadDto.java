@@ -1,18 +1,29 @@
 package tokyomap.oauth.dtos;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 public class TokenPayloadDto implements Serializable {
 
   private static final long serialVersionUID = -3799224498048917339L;
 
   private String iss;
+
   private String sub;
+
   private String[] aud;
-  private String iat;
-  private String exp;
+
+  @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.nnn")
+  private LocalDateTime iat;
+
+  @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.nnn")
+  private LocalDateTime exp;
+
   private String jti;
+
   private String[] scopes;
+
   private String clientId;
 
   public String getIss() {
@@ -39,19 +50,19 @@ public class TokenPayloadDto implements Serializable {
     this.aud = aud;
   }
 
-  public String getIat() {
+  public LocalDateTime getIat() {
     return iat;
   }
 
-  public void setIat(String iat) {
+  public void setIat(LocalDateTime iat) {
     this.iat = iat;
   }
 
-  public String getExp() {
+  public LocalDateTime getExp() {
     return exp;
   }
 
-  public void setExp(String exp) {
+  public void setExp(LocalDateTime exp) {
     this.exp = exp;
   }
 
@@ -81,8 +92,8 @@ public class TokenPayloadDto implements Serializable {
 
   @Override
   public String toString() {
-    return "iss = " + iss + ", sub = " + sub + ", String.join(\" \", aud) = " + String.join(" ", aud)
-        + ", iat = " + iat + ", exp = " + exp + ", jti = " + jti + ", String.join(\" \", scopes) = " + String.join(" ", scopes)
-        + ", clientId = " + clientId;
+    return "iss = " + this.iss + ", sub = " + this.sub + ", String.join(\" \", aud) = " + String.join(" ", this.aud)
+        + ", iat = " + this.iat.toString() + ", exp = " + this.exp.toString() + ", jti = " + this.jti
+        + ", String.join(\" \", scopes) = " + String.join(" ", this.scopes) + ", clientId = " + this.clientId;
   }
 }

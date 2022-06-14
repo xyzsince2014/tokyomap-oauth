@@ -1,5 +1,6 @@
 package tokyomap.oauth.domain.services.register;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,7 @@ public class RegisterClientService extends ClientService {
     String clientSecret = Arrays.stream(TOKEN_ENDPOINT_AUTH_METHODS).anyMatch(authMethod -> authMethod.equals(validationResultDto.getTokenEndpointAuthMethod())) ? RandomStringUtils.random(8, true, true) : null;
     String registrationAccessToken = RandomStringUtils.random(8, true, true);
     String registrationClientUri = REGISTRATION_ENDPOINT + "/"  + clientId;
+    LocalDateTime now = LocalDateTime.now();
 
     // merge with requestClientDto
     Client client = new Client(
@@ -45,7 +47,10 @@ public class RegisterClientService extends ClientService {
         validationResultDto.getResponseTypes() != null ? String.join(" ", validationResultDto.getResponseTypes()) : String.join(" ", requestClientDto.getResponseTypes()),
         String.join(" ", requestClientDto.getScopes()),
         registrationAccessToken,
-        registrationClientUri
+        registrationClientUri,
+        now.plusDays(90),
+        now,
+        now
     );
 
     // client should be the form of

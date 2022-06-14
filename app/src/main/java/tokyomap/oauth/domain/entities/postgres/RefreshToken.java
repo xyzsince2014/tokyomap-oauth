@@ -28,12 +28,10 @@ public class RefreshToken implements Serializable {
 
   public RefreshToken() {}
 
-  public RefreshToken(String refreshToken) {
+  public RefreshToken(String refreshToken, LocalDateTime createdAt, LocalDateTime updatedAt) {
     this.refreshToken = refreshToken;
-    // todo: use JST
-    LocalDateTime ldt = LocalDateTime.now();
-    this.createdAt = ldt;
-    this.updatedAt = ldt;
+    this.createdAt = createdAt;
+    this.updatedAt = updatedAt;
   }
 
   public String getRefreshToken() {

@@ -65,6 +65,9 @@ public class ResponseClientDto implements Serializable {
   private String registrationClientUri;
 
   @Nullable
+  private LocalDateTime createdAt;
+
+  @Nullable
   private LocalDateTime expiresAt;
 
   @Nullable
@@ -223,6 +226,11 @@ public class ResponseClientDto implements Serializable {
   }
 
   @Nullable
+  public LocalDateTime getCreatedAt() { return createdAt; }
+
+  public void setCreatedAt(@Nullable LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+  @Nullable
   public LocalDateTime getExpiresAt() {
     return expiresAt;
   }
@@ -237,7 +245,7 @@ public class ResponseClientDto implements Serializable {
         + ", clientUri = " + this.clientUri + ", redirectUris = " + this.redirectUris.toString()
         + ", grantTypes = " + this.grantTypes + ", responseTypes = " + this.responseTypes + ", tokenEndpointAuthMethod = " + this.tokenEndpointAuthMethod
         + ", scopes = " + this.scopes + ", registrationAccessToken = " + this.registrationAccessToken
-        + ", registrationClientUri = " + this.registrationClientUri;
-        // todo: fix NullPointException + ", expiresAt = " + this.expiresAt.toString();
+        + ", registrationClientUri = " + this.registrationClientUri + ", createdAt = " + this.createdAt
+        + ", expiresAt = " + this.expiresAt.toString();
   }
 }

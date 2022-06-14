@@ -102,22 +102,24 @@ public class TokenLogic {
    */
   public GenerateTokensResponseDto generateTokens(String clientId, String sub,String[] scopes, Boolean isRefreshTokenGenerated, String nonce) throws Exception {
 
-    SignedJWT accessJWT = this.createSignedJWT(sub, RandomStringUtils.random(8, true, true), scopes, clientId);
+    LocalDateTime now = LocalDateTime.now();
+
+    SignedJWT accessJWT = this.createSignedJWT(sub, RandomStringUtils.random(8, true, true), scopes, clientId, now, 30);
 
     // Open ID Connect ID token
-    SignedJWT idJWT = this.createIdJWT(sub, clientId, nonce);
+    SignedJWT idJWT = this.createIdJWT(sub, clientId, nonce, now, 60);
 
     if(!isRefreshTokenGenerated) {
-      AccessToken accessTokenRegistered = this.accessTokenRepository.saveAndFlush(new AccessToken(accessJWT.serialize()));
+      AccessToken accessTokenRegistered = this.accessTokenRepository.saveAndFlush(new AccessToken(accessJWT.serialize(), now, now));
       // scopes must not be sent back to the client in production
       GenerateTokensResponseDto responseDto = new GenerateTokensResponseDto("Bearer",accessTokenRegistered.getAccessToken(), null, idJWT.serialize(), String.join(" ", scopes));
       return responseDto;
     }
 
-    SignedJWT refreshJWT = this.createSignedJWT(sub, RandomStringUtils.random(8, true, true), scopes, clientId);
+    SignedJWT refreshJWT = this.createSignedJWT(sub, RandomStringUtils.random(8, true, true), scopes, clientId, now, 90);
 
-    AccessToken accessTokenRegistered = this.accessTokenRepository.saveAndFlush(new AccessToken(accessJWT.serialize()));
-    RefreshToken refreshTokenRegistered = this.refreshTokenRepository.saveAndFlush(new RefreshToken(refreshJWT.serialize()));
+    AccessToken accessTokenRegistered = this.accessTokenRepository.saveAndFlush(new AccessToken(accessJWT.serialize(), now, now));
+    RefreshToken refreshTokenRegistered = this.refreshTokenRepository.saveAndFlush(new RefreshToken(refreshJWT.serialize(), now, now));
 
     // scope must not be sent back to the client in production
     GenerateTokensResponseDto responseDto = new GenerateTokensResponseDto(
@@ -157,9 +159,7 @@ public class TokenLogic {
    * @return SignedJWT
    * @throws Exception
    */
-  private SignedJWT createSignedJWT(String sub, String jti, String[] scopes, String clientId) throws Exception {
-
-    LocalDateTime ldt = LocalDateTime.now();
+  private SignedJWT createSignedJWT(String sub, String jti, String[] scopes, String clientId, LocalDateTime iat, long days) throws Exception {
 
     JWSHeader jwsHeader = this.createJWSHeader();
 
@@ -169,8 +169,8 @@ public class TokenLogic {
         .claim("sub", sub) // the subject, normally the unique identifier for the resource owner
         // todo: aud is set to null, fix
         .claim("aud", AUDIENCE) // the audience, normally the URI(s) of the protected resource(s) the access token can be sent to
-        .claim("iat", ldt.toString()) // the issued-at timestamp of the token in seconds from 1 Jan 1970 (GMT)
-        .claim("exp", ldt.toString()) // the expiration time, the token expires in 5 min later in this case
+        .claim("iat", iat.toString()) // the issued-at timestamp of the token in seconds from 1 Jan 1970 (GMT)
+        .claim("exp", iat.plusDays(days).toString()) // the expiration time, the token expires in 5 min later in this case
         .claim("jti", jti) // the unique identifier of the token, that is a value unique to each token created by the issuer, and it’s often a cryptographically random value
         .claim("scopes", scopes)
         .claim("clientId", clientId)
@@ -191,18 +191,15 @@ public class TokenLogic {
    * @return SignedJWT
    * @throws Exception
    */
-  private SignedJWT createIdJWT(String sub, String clientId, String nonce) throws Exception {
-
-    LocalDateTime ldt = LocalDateTime.now();
+  private SignedJWT createIdJWT(String sub, String clientId, String nonce, LocalDateTime iat, long minutes) throws Exception {
 
     // payload
     JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
         .claim("iss", this.ISSUER) // the issuer of the token, i.e. the URL of the Id Provider
         .claim("sub", sub) // the subject of the token, a stable and unique identifier for the user at the Id Provider, which is usually a machine-readable string and shouldn’t be used as a username
         .claim("aud", clientId) // the audience of the token that must contain the client ID of the Relying Party
-        .claim("iat", ldt.toString()) // the timestamp at which the token is issued
-        // todo: fix exp
-        .claim("exp", ldt.toString()) // the expiration timestamp of the token at which all ID tokens expire and usually pretty quickly
+        .claim("iat", iat.toString()) // the timestamp at which the token is issued
+        .claim("exp", iat.plusMinutes(minutes).toString()) // the expiration timestamp of the token at which all ID tokens expire and usually pretty quickly
         .claim("nonce", nonce) // a string sent by the Relying Party during the authentication request, used to mitigate replay attacks similar to the state parameter. It must be included if the Relying Party sends it
         .build();
 

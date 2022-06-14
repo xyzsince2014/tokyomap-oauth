@@ -82,8 +82,8 @@ public class RegisterRestController {
     ResponseClientDto responseClientDto = this.checkAccessTokenRegistration(clientId, authorization, RequestMethod.PUT);
 
     ClientValidationResultDto validationResultDto = this.updateClientService.execValidation(requestDto.getClient());
-    this.updateClientService.execAdditionalValidation(requestDto.getClient(), responseClientDto);
-    Client clientUpdated = this.updateClientService.update(requestDto.getClient(), validationResultDto);
+    String clientNameToUpdate = this.updateClientService.execAdditionalValidation(requestDto.getClient(), responseClientDto);
+    Client clientUpdated = this.updateClientService.update(clientNameToUpdate, validationResultDto, responseClientDto);
 
     responseClientDto.setClientId(clientUpdated.getClientId());
     responseClientDto.setClientSecret(clientUpdated.getClientSecret());
@@ -96,6 +96,7 @@ public class RegisterRestController {
     responseClientDto.setScopes(clientUpdated.getScopes().split(" "));
     responseClientDto.setRegistrationAccessToken(clientUpdated.getRegistrationAccessToken());
     responseClientDto.setRegistrationClientUri(clientUpdated.getRegistrationClientUri());
+    responseClientDto.setCreatedAt(clientUpdated.getCreatedAt());
     responseClientDto.setExpiresAt(clientUpdated.getExpiresAt());
 
     return new UpdateClientResponseDto(responseClientDto);
@@ -140,6 +141,7 @@ public class RegisterRestController {
       responseClientDto.setScopes(clientRegistered.getScopes().split(" "));
       responseClientDto.setRegistrationAccessToken(clientRegistered.getRegistrationAccessToken());
       responseClientDto.setRegistrationClientUri(clientRegistered.getRegistrationClientUri());
+      responseClientDto.setCreatedAt(clientRegistered.getCreatedAt());
       responseClientDto.setExpiresAt(clientRegistered.getExpiresAt());
 
       return responseClientDto;
