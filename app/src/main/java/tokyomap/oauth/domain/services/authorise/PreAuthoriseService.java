@@ -3,29 +3,29 @@ package tokyomap.oauth.domain.services.authorise;
 import java.util.Arrays;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tokyomap.oauth.domain.entities.postgres.Client;
 import tokyomap.oauth.domain.entities.redis.PreAuthoriseCache;
 import tokyomap.oauth.domain.logics.ClientLogic;
+import tokyomap.oauth.domain.logics.RedisLogic;
 import tokyomap.oauth.dtos.PreAuthoriseResponseDto;
 import tokyomap.oauth.utils.Logger;
 
 @Service
 public class PreAuthoriseService {
 
-  private final RedisTemplate<String, PreAuthoriseCache> AuthorisationRequestRedisTemplate;
+  private final RedisLogic redisLogic;
   private final ClientLogic clientLogic;
   private final Logger logger;
 
   @Autowired
   public PreAuthoriseService(
-      RedisTemplate<String, PreAuthoriseCache> AuthorisationRequestRedisTemplate,
+      RedisLogic redisLogic,
       ClientLogic clientLogic,
       Logger logger
   ) {
-    this.AuthorisationRequestRedisTemplate = AuthorisationRequestRedisTemplate;
+    this.redisLogic = redisLogic;
     this.clientLogic = clientLogic;
     this.logger = logger;
   }
@@ -73,7 +73,7 @@ public class PreAuthoriseService {
    */
   private String cacheAuthorisationRequest(PreAuthoriseCache preAuthoriseCache) {
     String requestId = RandomStringUtils.random(8, true, true);
-    this.AuthorisationRequestRedisTemplate.opsForValue().set(requestId, preAuthoriseCache);
+    this.redisLogic.savePreAuthoriseCache(requestId, preAuthoriseCache);
     return requestId;
   }
 

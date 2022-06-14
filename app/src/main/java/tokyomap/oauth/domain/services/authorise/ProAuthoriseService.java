@@ -4,15 +4,15 @@ import java.net.URI;
 import java.util.Arrays;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
+import tokyomap.oauth.application.authorise.AuthorisationForm;
 import tokyomap.oauth.domain.entities.postgres.Usr;
-import tokyomap.oauth.domain.entities.redis.ProAuthoriseCache;
 import tokyomap.oauth.domain.entities.redis.PreAuthoriseCache;
+import tokyomap.oauth.domain.entities.redis.ProAuthoriseCache;
+import tokyomap.oauth.domain.logics.RedisLogic;
 import tokyomap.oauth.domain.logics.TokenLogic;
 import tokyomap.oauth.domain.logics.UsrLogic;
-import tokyomap.oauth.application.authorise.AuthorisationForm;
 import tokyomap.oauth.dtos.GenerateTokensResponseDto;
 import tokyomap.oauth.dtos.TokenValidationResultDto;
 import tokyomap.oauth.utils.Logger;
@@ -20,22 +20,19 @@ import tokyomap.oauth.utils.Logger;
 @Service
 public class ProAuthoriseService {
 
-  private final RedisTemplate<String, PreAuthoriseCache> preAuthoriseCacheRedisTemplate;
-  private final RedisTemplate<String, ProAuthoriseCache> proAuthoriseCacheRedisTemplate;
+  private final RedisLogic redisLogic;
   private final TokenLogic tokenLogic;
   private final UsrLogic usrLogic;
   private final Logger logger;
 
   @Autowired
   public ProAuthoriseService(
-      RedisTemplate<String, PreAuthoriseCache> preAuthoriseCacheRedisTemplate,
-      RedisTemplate<String, ProAuthoriseCache> proAuthoriseCacheRedisTemplate,
+      RedisLogic redisLogic,
       TokenLogic tokenLogic,
       UsrLogic usrLogic,
       Logger logger
   ) {
-    this.preAuthoriseCacheRedisTemplate = preAuthoriseCacheRedisTemplate;
-    this.proAuthoriseCacheRedisTemplate = proAuthoriseCacheRedisTemplate;
+    this.redisLogic = redisLogic;
     this.tokenLogic = tokenLogic;
     this.usrLogic = usrLogic;
     this.logger = logger;
@@ -82,7 +79,7 @@ public class ProAuthoriseService {
       throw new InvalidProAuthoriseException("authentication failed.");
     }
 
-    PreAuthoriseCache preAuthoriseCache = preAuthoriseCacheRedisTemplate.opsForValue().get(requestId);
+    PreAuthoriseCache preAuthoriseCache = this.redisLogic.getPreAuthoriseCache(requestId);
 
     String[] requestedScopes = preAuthoriseCache.getScopes();
 
@@ -110,7 +107,7 @@ public class ProAuthoriseService {
     String code = RandomStringUtils.random(8, true, true);
     
     ProAuthoriseCache proAuthoriseCache = new ProAuthoriseCache(sub, requestedScopes, preAuthoriseCache);
-    this.proAuthoriseCacheRedisTemplate.opsForValue().set(code, proAuthoriseCache);
+    this.redisLogic.saveProAuthoriseCache(code, proAuthoriseCache);
 
     URI redirectUri = UriComponentsBuilder
         .fromUriString(preAuthoriseCache.getRedirectUri())

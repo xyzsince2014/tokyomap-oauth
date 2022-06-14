@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tokyomap.oauth.domain.entities.postgres.Usr;
 import tokyomap.oauth.domain.entities.redis.ProAuthoriseCache;
-import tokyomap.oauth.domain.logics.AuthCodeLogic;
+import tokyomap.oauth.domain.logics.RedisLogic;
 import tokyomap.oauth.domain.logics.ClientLogic;
 import tokyomap.oauth.domain.logics.TokenLogic;
 import tokyomap.oauth.domain.logics.UsrLogic;
@@ -18,15 +18,15 @@ import tokyomap.oauth.utils.Logger;
 @Service
 public class AuthorisationCodeFlowSerivice extends TokenService<ProAuthoriseCache> {
 
-  private final AuthCodeLogic authCodeLogic;
+  private final RedisLogic redisLogic;
   private final TokenLogic tokenLogic;
   private final UsrLogic usrLogic;
   private final Logger logger;
 
   @Autowired
-  public AuthorisationCodeFlowSerivice(ClientLogic clientLogic, Decorder decorder, AuthCodeLogic authCodeLogic, TokenLogic tokenLogic, UsrLogic usrLogic, Logger logger) {
+  public AuthorisationCodeFlowSerivice(ClientLogic clientLogic, Decorder decorder, RedisLogic redisLogic, TokenLogic tokenLogic, UsrLogic usrLogic, Logger logger) {
     super(clientLogic, decorder, logger);
-    this.authCodeLogic = authCodeLogic;
+    this.redisLogic = redisLogic;
     this.tokenLogic = tokenLogic;
     this.usrLogic = usrLogic;
     this.logger = logger;
@@ -40,7 +40,7 @@ public class AuthorisationCodeFlowSerivice extends TokenService<ProAuthoriseCach
   public TokenValidationResultDto<ProAuthoriseCache> execValidation(GenerateTokensRequestDto requestDto, String authorization) {
 
     CredentialsDto credentialsDto = this.validateClient(requestDto, authorization);
-    ProAuthoriseCache proAuthoriseCache = this.authCodeLogic.getCacheByCode(requestDto.getCode());
+    ProAuthoriseCache proAuthoriseCache = this.redisLogic.getProAuthoriseCache(requestDto.getCode());
 
     //  check the expiry date of the auth code here
     if (!credentialsDto.getId().equals(proAuthoriseCache.getPreAuthoriseCache().getClientId())) {

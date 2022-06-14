@@ -14,7 +14,7 @@ public class PreAuthoriseCache implements Serializable {
   private String codeChallenge;
   private String codeChallengeMethod;
 
-  // used to deserialise values by authReqParamsRedisTemplate
+  // used to deserialise values by RedisTemplate
   PreAuthoriseCache() {}
 
   public PreAuthoriseCache(
