@@ -150,7 +150,7 @@ public class ProAuthoriseService {
       );
 
       String fragment = "accessToken=" + responseDto.getAccessToken() + "&idToken=" + responseDto.getIdToken()
-          + "&state=" + preAuthoriseCache.getState() + "&scope=" + String.join(" ", preAuthoriseCache.getScopes());
+          + "&state=" + preAuthoriseCache.getState() + "&scopes=" + String.join(" ", preAuthoriseCache.getScopes());
 
       URI redirectUri = UriComponentsBuilder
           .fromUriString(preAuthoriseCache.getRedirectUri())

@@ -112,7 +112,7 @@ public class RefreshTokenService extends TokenService<TokenPayloadDto> {
 
     Usr usr = this.usrLogic.getUsrBySub(tokenValidationResultDto.getPayload().getSub());
     if(usr == null) {
-      // todo: error handling
+      throw new InvalidTokenRequestException("no matching usr");
     }
 
     try {
@@ -125,9 +125,7 @@ public class RefreshTokenService extends TokenService<TokenPayloadDto> {
       );
 
     } catch (Exception e) {
-      // todo: error handling
-      e.printStackTrace();
-      return null;
+      throw new InvalidTokenRequestException(e.getMessage());
     }
   }
 }

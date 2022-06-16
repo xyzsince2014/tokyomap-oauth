@@ -1,11 +1,14 @@
 package tokyomap.oauth.domain.services.token;
 
+import com.nimbusds.jose.util.Base64URL;
+import java.security.MessageDigest;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tokyomap.oauth.domain.entities.postgres.Usr;
 import tokyomap.oauth.domain.entities.redis.ProAuthoriseCache;
-import tokyomap.oauth.domain.logics.RedisLogic;
 import tokyomap.oauth.domain.logics.ClientLogic;
+import tokyomap.oauth.domain.logics.RedisLogic;
 import tokyomap.oauth.domain.logics.TokenLogic;
 import tokyomap.oauth.domain.logics.UsrLogic;
 import tokyomap.oauth.dtos.CredentialsDto;
@@ -24,7 +27,8 @@ public class AuthorisationCodeFlowSerivice extends TokenService<ProAuthoriseCach
   private final Logger logger;
 
   @Autowired
-  public AuthorisationCodeFlowSerivice(ClientLogic clientLogic, Decorder decorder, RedisLogic redisLogic, TokenLogic tokenLogic, UsrLogic usrLogic, Logger logger) {
+  public AuthorisationCodeFlowSerivice(
+      ClientLogic clientLogic, Decorder decorder, RedisLogic redisLogic, TokenLogic tokenLogic, UsrLogic usrLogic, Logger logger) {
     super(clientLogic, decorder, logger);
     this.redisLogic = redisLogic;
     this.tokenLogic = tokenLogic;
@@ -42,36 +46,35 @@ public class AuthorisationCodeFlowSerivice extends TokenService<ProAuthoriseCach
     CredentialsDto credentialsDto = this.validateClient(requestDto, authorization);
     ProAuthoriseCache proAuthoriseCache = this.redisLogic.getProAuthoriseCache(requestDto.getCode());
 
-    //  check the expiry date of the auth code here
+    //  todo: check the expiry date of the auth code here
+
     if (!credentialsDto.getId().equals(proAuthoriseCache.getPreAuthoriseCache().getClientId())) {
       this.logger.log(
-          "AuthorisationCodeFlowSerivice",
+          AuthorisationCodeFlowSerivice.class.getName(),
           "invalid client id: proAuthoriseCache.getPreAuthoriseCache().getClientId() = " + proAuthoriseCache.getPreAuthoriseCache().getClientId() + ", credentialsDto.getClientId() = " + credentialsDto.getId()
       );
       throw new InvalidTokenRequestException("invalid clientId");
     }
 
-    // check PKCE values
-    // cf. https://auth0.com/docs/authorization/flows/authorization-code-flow-with-proof-key-for-code-exchange-pkce
+    // check PKCE values, cf. https://auth0.com/docs/authorization/flows/authorization-code-flow-with-proof-key-for-code-exchange-pkce
     if (proAuthoriseCache.getPreAuthoriseCache().getCodeChallenge() == null) {
-      this.logger.log("AuthorisationCodeFlowSerivice", "invalid codeChallenge");
+      this.logger.log(AuthorisationCodeFlowSerivice.class.getName(), "invalid codeChallenge");
       throw new InvalidTokenRequestException("invalid codeChallenge");
     }
+
     String codeChallengeMethod = proAuthoriseCache.getPreAuthoriseCache().getCodeChallengeMethod();
-    if (!codeChallengeMethod.equals("plain") && !codeChallengeMethod.equals("SHA256")) {
-      this.logger.log(
-          "AuthorisationCodeFlowSerivice",
-          "invalid codeChallengeMethod: codeChallengeMethod = " + codeChallengeMethod);
+    if (!codeChallengeMethod.equals("SHA256")) {
+      this.logger.log(AuthorisationCodeFlowSerivice.class.getName(), "invalid codeChallengeMethod: codeChallengeMethod = " + codeChallengeMethod);
       throw new InvalidTokenRequestException("invalid codeChallengeMethod");
     }
-    // todo: use `SHA256` only
-    //    String codeChallenge = codeChallengeMethod.equals("SHA256") ? base64url.fromBase64(crypto.createHash('sha256').update(requestDto.getCodeVerifier()).digest('base64')) : requestDto.getCodeVerifier();
-    String codeChallenge = requestDto.getCodeVerifier();
+
+    // recreate the codeChallenge from `requestDto.getCodeVerifier()`
+    MessageDigest md = DigestUtils.getSha256Digest();
+    md.update(requestDto.getCodeVerifier().getBytes());
+    String codeChallenge = Base64URL.encode(md.digest()).toString();
+
     if (!proAuthoriseCache.getPreAuthoriseCache().getCodeChallenge().equals(codeChallenge)) {
-      this.logger.log(
-          "AuthorisationCodeFlowSerivice",
-          "codeChallenge = " + codeChallenge + ", proAuthoriseCache.getPreAuthoriseCache().getCodeChallenge() = " + proAuthoriseCache.getPreAuthoriseCache().getCodeChallenge()
-      );
+      this.logger.log(AuthorisationCodeFlowSerivice.class.getName(), "codeChallenge = " + codeChallenge + ", proAuthoriseCache.getPreAuthoriseCache().getCodeChallenge() = " + proAuthoriseCache.getPreAuthoriseCache().getCodeChallenge());
       throw new InvalidTokenRequestException("invalid codeChallenge");
     }
 
@@ -88,10 +91,10 @@ public class AuthorisationCodeFlowSerivice extends TokenService<ProAuthoriseCach
 
     Usr usr = this.usrLogic.getUsrBySub(tokenValidationResultDto.getPayload().getSub());
     if(usr == null) {
-      throw new InvalidTokenRequestException("unmatching usr");
+      throw new InvalidTokenRequestException("no matching usr");
     }
 
-    this.logger.log("AuthorisationCodeFlowSerivice", "tokenValidationResultDto.payload = " + tokenValidationResultDto.getPayload().toString());
+    this.logger.log(AuthorisationCodeFlowSerivice.class.getName(), "tokenValidationResultDto.payload = " + tokenValidationResultDto.getPayload().toString());
 
     try {
       GenerateTokensResponseDto responseDto = this.tokenLogic.generateTokens(

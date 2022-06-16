@@ -8,6 +8,16 @@ import tokyomap.oauth.dtos.CredentialsDto;
 public class Decorder {
 
   /**
+   * decode a base64 encoded string
+   * @param encoodedString
+   * @return decoded string
+   */
+  public String decodeBase64String(String encoodedString) {
+    byte[] buff = (new Base64()).decode(encoodedString.getBytes());
+    return new String(buff);
+  }
+
+  /**
    * decode an authorization header to credentials
    * @param authorization
    * @return CredentialsDto
@@ -17,9 +27,8 @@ public class Decorder {
       return null;
     }
 
-    Base64 base64 = new Base64();
     String encodedClientCredentials = authorization.substring("Basic ".length());
-    String decodedString = new String(base64.decode(encodedClientCredentials.getBytes()));
+    String decodedString = this.decodeBase64String(encodedClientCredentials);
     String[] splitString = decodedString.split(":");
 
     CredentialsDto clientCredentials = new CredentialsDto(splitString[0], splitString[1]);
