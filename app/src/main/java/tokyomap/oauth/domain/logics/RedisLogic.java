@@ -1,5 +1,6 @@
 package tokyomap.oauth.domain.logics;
 
+import java.util.concurrent.TimeUnit;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import tokyomap.oauth.domain.entities.redis.PreAuthoriseCache;
@@ -33,5 +34,6 @@ public class RedisLogic {
 
   public void saveProAuthoriseCache(String key, ProAuthoriseCache proAuthoriseCache) {
     this.proAuthoriseCacheRedisTemplate.opsForValue().set(key, proAuthoriseCache);
+    this.proAuthoriseCacheRedisTemplate.expire(key, 10, TimeUnit.MINUTES);
   }
 }

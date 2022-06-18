@@ -46,26 +46,26 @@ public class AuthorisationCodeFlowSerivice extends TokenService<ProAuthoriseCach
     CredentialsDto credentialsDto = this.validateClient(requestDto, authorization);
     ProAuthoriseCache proAuthoriseCache = this.redisLogic.getProAuthoriseCache(requestDto.getCode());
 
-    //  todo: check the expiry date of the auth code here
-
-    if (!credentialsDto.getId().equals(proAuthoriseCache.getPreAuthoriseCache().getClientId())) {
-      this.logger.log(
-          AuthorisationCodeFlowSerivice.class.getName(),
-          "invalid client id: proAuthoriseCache.getPreAuthoriseCache().getClientId() = " + proAuthoriseCache.getPreAuthoriseCache().getClientId() + ", credentialsDto.getClientId() = " + credentialsDto.getId()
-      );
-      throw new InvalidTokenRequestException("invalid clientId");
+    if (proAuthoriseCache == null) {
+      this.logger.log(AuthorisationCodeFlowSerivice.class.getName(),"no proAuthoriseCache");
+      throw new InvalidTokenRequestException("invalid code.");
     }
 
-    // check PKCE values, cf. https://auth0.com/docs/authorization/flows/authorization-code-flow-with-proof-key-for-code-exchange-pkce
+    if (!credentialsDto.getId().equals(proAuthoriseCache.getPreAuthoriseCache().getClientId())) {
+      this.logger.log(AuthorisationCodeFlowSerivice.class.getName(), "invalid client id: proAuthoriseCache.getPreAuthoriseCache().getClientId() = " + proAuthoriseCache.getPreAuthoriseCache().getClientId() + ", credentialsDto.getClientId() = " + credentialsDto.getId());
+      throw new InvalidTokenRequestException("invalid clientId.");
+    }
+
+    /* *** check PKCE values, cf. https://auth0.com/docs/authorization/flows/authorization-code-flow-with-proof-key-for-code-exchange-pkce *** */
     if (proAuthoriseCache.getPreAuthoriseCache().getCodeChallenge() == null) {
       this.logger.log(AuthorisationCodeFlowSerivice.class.getName(), "invalid codeChallenge");
-      throw new InvalidTokenRequestException("invalid codeChallenge");
+      throw new InvalidTokenRequestException("invalid codeChallenge.");
     }
 
     String codeChallengeMethod = proAuthoriseCache.getPreAuthoriseCache().getCodeChallengeMethod();
     if (!codeChallengeMethod.equals("SHA256")) {
       this.logger.log(AuthorisationCodeFlowSerivice.class.getName(), "invalid codeChallengeMethod: codeChallengeMethod = " + codeChallengeMethod);
-      throw new InvalidTokenRequestException("invalid codeChallengeMethod");
+      throw new InvalidTokenRequestException("invalid codeChallengeMethod.");
     }
 
     // recreate the codeChallenge from `requestDto.getCodeVerifier()`
