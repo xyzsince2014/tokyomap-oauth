@@ -27,6 +27,11 @@ public class RevokeService {
     this.decorder = decorder;
   }
 
+  /**
+   * revoke the given access and refresh tokens
+   * @param requestDto
+   * @param authorization
+   */
   @Transactional
   public void revoke(RevokeRequestDto requestDto, String authorization) {
 

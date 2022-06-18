@@ -5,6 +5,7 @@ import java.util.Arrays;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tokyomap.oauth.domain.entities.postgres.Client;
 import tokyomap.oauth.domain.logics.ClientLogic;
 import tokyomap.oauth.dtos.ClientValidationResultDto;
@@ -27,6 +28,7 @@ public class RegisterClientService extends ClientService {
    * @param validationResultDto
    * @return clientRegistered
    */
+  @Transactional
   public Client register(RequestClientDto requestClientDto, ClientValidationResultDto validationResultDto) {
 
     String clientId = RandomStringUtils.random(8, true, true);

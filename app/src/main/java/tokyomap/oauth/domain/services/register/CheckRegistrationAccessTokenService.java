@@ -21,6 +21,12 @@ public class CheckRegistrationAccessTokenService {
     this.logger=logger;
   }
 
+  /**
+   * check whether the given client is registered
+   * @param clientId
+   * @param authorization
+   * @return registered client
+   */
   public Client checkRegistration(String clientId, String authorization) {
 
     Client client = this.clientLogic.getClientByClientId(clientId);
@@ -35,7 +41,6 @@ public class CheckRegistrationAccessTokenService {
       throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
     }
 
-    // token value itself is case sensitive, hence we slice the original string, not a transformed one
     String token = authorization.substring("bearer ".length());
 
     if (!token.equals(client.getRegistrationAccessToken())) {

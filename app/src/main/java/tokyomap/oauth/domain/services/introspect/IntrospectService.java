@@ -27,7 +27,6 @@ public class IntrospectService {
     this.logger = logger;
   }
 
-  @Transactional
   public Boolean introspect(String incomingToken, String authorization) {
     CredentialsDto credentialsDto = this.decorder.decodeCredentials(authorization); // fetch resourceId, resourceSecret from the Authorization header
     Resource resource = this.resourceLogic.getResourceByResourceId(credentialsDto.getId());

@@ -5,6 +5,7 @@ import java.security.MessageDigest;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tokyomap.oauth.domain.entities.postgres.Usr;
 import tokyomap.oauth.domain.entities.redis.ProAuthoriseCache;
 import tokyomap.oauth.domain.logics.ClientLogic;
@@ -87,6 +88,7 @@ public class AuthorisationCodeFlowSerivice extends TokenService<ProAuthoriseCach
    * @return GenerateTokensResponseDto
    */
   @Override
+  @Transactional
   public GenerateTokensResponseDto generateTokens(TokenValidationResultDto<ProAuthoriseCache> tokenValidationResultDto) {
 
     Usr usr = this.usrLogic.getUsrBySub(tokenValidationResultDto.getPayload().getSub());

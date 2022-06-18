@@ -5,6 +5,7 @@ import java.util.Arrays;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.UriComponentsBuilder;
 import tokyomap.oauth.application.authorise.AuthorisationForm;
 import tokyomap.oauth.domain.entities.postgres.Usr;
@@ -139,9 +140,11 @@ public class ProAuthoriseService {
 
   /**
    * generate an access token for a requests from a valid Browser Application Client
-   * @return
+   * set to be a protected function because of warning on `@Transactional`
+   * @return redirectUri
    */
-  private URI generateAccessToken(TokenValidationResultDto<ProAuthoriseCache> tokenValidationResultDto, PreAuthoriseCache preAuthoriseCache) {
+  @Transactional
+  protected URI generateAccessToken(TokenValidationResultDto<ProAuthoriseCache> tokenValidationResultDto, PreAuthoriseCache preAuthoriseCache) {
 
     try {
       GenerateTokensResponseDto responseDto = this.tokenLogic.generateTokens(

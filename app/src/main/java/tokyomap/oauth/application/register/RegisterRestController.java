@@ -159,6 +159,7 @@ public class RegisterRestController {
    */
   @RequestMapping(method = RequestMethod.POST, headers = {"Accept=application/json", "Content-Type=application/json"})
   public RegisterClientResponseDto registerClient(@RequestBody RegisterClientRequestDto requestDto) {
+
     ClientValidationResultDto resultDto = this.registerClientService.execValidation(requestDto.getClient());
     Client clientRegistered = this.registerClientService.register(requestDto.getClient(), resultDto);
 

@@ -3,6 +3,7 @@ package tokyomap.oauth.domain.services.token;
 import java.util.Arrays;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tokyomap.oauth.domain.logics.ClientLogic;
 import tokyomap.oauth.domain.logics.TokenLogic;
 import tokyomap.oauth.dtos.CredentialsDto;
@@ -48,6 +49,7 @@ public class ClientCredentialsSerivce extends TokenService<CredentialsDto> {
    * @return GenerateTokensResponseDto
    */
   @Override
+  @Transactional
   public GenerateTokensResponseDto generateTokens(TokenValidationResultDto<CredentialsDto> tokenValidationResultDto) {
 
     try {
