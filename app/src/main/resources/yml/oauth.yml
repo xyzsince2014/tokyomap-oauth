@@ -1,0 +1,19 @@
+TOKEN_ENDPOINT_AUTH_METHODS:
+  - NONE: "NONE" # the client does not authenticate to the token endpoint, either because it doesn’t use the token endpoint, or it uses the token endpoint but is a public client
+  - CLIENT_SECRET_BASIC: "CLIENT_SECRET_BASIC" # the client sends its client secret using HTTP Basic
+  - CLIENT_SECRET_POST: "CLIENT_SECRET_POST" # the client sends its client secret using HTTP form parameters
+  - CLIENT_SECRET_JWT: "CLIENT_SECRET_JWT" # the client will create a JWT symmetrically signed with its client secret
+  - PRIVATE_KEY_JWT: "PRIVATE_KEY_JWT" # the client will create a JWT asymmetrically signed with its private key. The public key will need to be registered with the authorisation server
+
+REGISTRATION_ENDPOINT: "http:#localhost:80/register"
+
+GRANT_TYPES:
+  - AUTHORISATION_CODE: "AUTHORISATION_CODE" # the authorisation code grant, where the client sends the resource owner to the authorisation endpoint to obtain an authorisation code
+  - IMPLICIT: "IMPLICIT" # the implicit grant, where the client sends the resource owner to the authorisation endpoint to obtain a token directly
+  - PASSWORD: "PASSWORD" # the client prompts the resource owner for their username and password and exchanges them for a token at the token endpoint
+  - REFRESH_TOKEN: "REFRESH_TOKEN" # the refresh token grant, where the client uses a refresh token to obtain a new access token when the resource owner is no longer present
+  - CLIENT_CREDENTIALS: "CLIENT_CREDENTIALS" # the client credentials grant, where the client uses its own credentials to obtain a token for itself
+
+RESPONSE_TYPES:
+  - CODE: "CODE" # the authorisation code response type, which returns an authorisation code to be handed in at the token endpoint to get a token
+  - TOKEN: "TOKEN" # the implicit response type, which returns a token directly to the redirect URI
