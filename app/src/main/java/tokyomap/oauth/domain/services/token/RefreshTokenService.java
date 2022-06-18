@@ -3,8 +3,6 @@ package tokyomap.oauth.domain.services.token;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,9 +25,13 @@ public class RefreshTokenService extends TokenService<TokenPayloadDto> {
   // todo: define in a config file
   private static final String AUTH_SERVER_HOST = "http://localhost:80";
 
+  // todo: `private static final String[] AUDIENCE = new String[] {"http://localhost:9002"};`
+  private static final String AUDIENCE = "http://localhost:9002"; // registered resource servers
+
   private final TokenLogic tokenLogic;
   private final UsrLogic usrLogic;
   private final Logger logger;
+  private final Decorder decorder;
 
   @Autowired
   public RefreshTokenService(ClientLogic clientLogic, Decorder decorder, TokenLogic tokenLogic, UsrLogic usrLogic, Logger logger) {
@@ -37,6 +39,7 @@ public class RefreshTokenService extends TokenService<TokenPayloadDto> {
     this.tokenLogic = tokenLogic;
     this.usrLogic = usrLogic;
     this.logger = logger;
+    this.decorder = decorder;
   }
 
   /**
@@ -65,7 +68,7 @@ public class RefreshTokenService extends TokenService<TokenPayloadDto> {
     String[] refreshTokenSplit = refreshToken.getRefreshToken().split("\\.");
 
     try {
-      String payload = new String((new Base64()).decode(refreshTokenSplit[1].getBytes()));
+      String payload = this.decorder.decodeBase64String(refreshTokenSplit[1]);
       this.logger.log(RefreshTokenService.class.getName(), "payload = " + payload);
 
       TokenPayloadDto tokenPayloadDto = new ObjectMapper().registerModule(new JavaTimeModule()).readValue(payload, TokenPayloadDto.class);
@@ -74,10 +77,10 @@ public class RefreshTokenService extends TokenService<TokenPayloadDto> {
         throw new InvalidTokenRequestException("invalid tokenPayloadDto.iss: payloadtokenPayloadDto.getIss() = " + tokenPayloadDto.getIss() + ", AUTH_SERVER_HOST " + AUTH_SERVER_HOST);
       }
 
-      // todo: aud comes as null, fix
-//      if (Arrays.asList(tokenPayloadDto.getAud()).indexOf(credentialsDto.getId()) == -1) {
-//        throw new InvalidTokenRequestException("tokenPayloadDto.aud is invalid");
-//      }
+      // todo: validation here is necessary ?
+      if (tokenPayloadDto.getAud() == null || !tokenPayloadDto.getAud().equals(AUDIENCE)) {
+        throw new InvalidTokenRequestException("tokenPayloadDto.aud is invalid");
+      }
 
       LocalDateTime now = LocalDateTime.now();
       if (now.isBefore(tokenPayloadDto.getIat()) || now.isAfter(tokenPayloadDto.getExp())) {
@@ -91,7 +94,7 @@ public class RefreshTokenService extends TokenService<TokenPayloadDto> {
       if (!tokenPayloadDto.getClientId().equals(credentialsDto.getId())) {
         this.logger.log(
             RefreshTokenService.class.getName(),
-            "tokenPayloadDto.clientId is invalid: tokenPayloadDto.clientId is invalid = " + tokenPayloadDto.getClientId()
+            "tokenPayloadDto.clientId is invalid: tokenPayloadDto.getClientId() = " + tokenPayloadDto.getClientId()
         );
         throw new InvalidTokenRequestException("tokenPayloadDto.clientId is invalid");
       }

@@ -24,27 +24,33 @@ import tokyomap.oauth.domain.entities.postgres.RefreshToken;
 import tokyomap.oauth.domain.repositories.postgres.AccessTokenRepository;
 import tokyomap.oauth.domain.repositories.postgres.RefreshTokenRepository;
 import tokyomap.oauth.dtos.GenerateTokensResponseDto;
+import tokyomap.oauth.utils.Logger;
 
 @Component
 public class TokenLogic {
 
-  // the authorisation server
-  // todo: define in a properties file
-  private static final String ISSUER = "http://localhost:80";
+  // todo: define in a config file
+  private static final String AUTH_SERVER_HOST = "http://localhost:80";
 
-  // registered resource servers
-  private static final String[] AUDIENCE = new String[] {"http://localhost:9002"};
+  // todo: malfunctioning if use `private static final String[] AUDIENCE = new String[] {"http://localhost:9002"};`
+  private static final String AUDIENCE = "http://localhost:9002"; // registered resource servers
+
+  private static final int ACCESS_TOKEN_LIFETIME = 30;
+  private static final int REFRESH_TOKEN_LIFETIME = 90;
+  private static final int ID_TOKEN_LIFETIME = 60;
 
   private final AccessTokenRepository accessTokenRepository;
   private final RefreshTokenRepository refreshTokenRepository;
+  private final Logger logger;
 
   private RSAPublicKey rsaPublicKey;
   private RSAPrivateKey rsaPrivateKey;
 
   @Autowired
-  public TokenLogic(AccessTokenRepository accessTokenRepository, RefreshTokenRepository refreshTokenRepository) {
+  public TokenLogic(AccessTokenRepository accessTokenRepository, RefreshTokenRepository refreshTokenRepository, Logger logger) {
     this.accessTokenRepository = accessTokenRepository;
     this.refreshTokenRepository = refreshTokenRepository;
+    this.logger = logger;
 
     // todo: fetch keys from DB
     try {
@@ -104,10 +110,10 @@ public class TokenLogic {
 
     LocalDateTime now = LocalDateTime.now();
 
-    SignedJWT accessJWT = this.createSignedJWT(sub, RandomStringUtils.random(8, true, true), scopes, clientId, now, 30);
+    SignedJWT accessJWT = this.createSignedJWT(sub, RandomStringUtils.random(8, true, true), scopes, clientId, now, ACCESS_TOKEN_LIFETIME);
 
     // Open ID Connect ID token
-    SignedJWT idJWT = this.createIdJWT(sub, clientId, nonce, now, 60);
+    SignedJWT idJWT = this.createIdJWT(sub, clientId, nonce, now, ID_TOKEN_LIFETIME);
 
     if(!isRefreshTokenGenerated) {
       AccessToken accessTokenRegistered = this.accessTokenRepository.saveAndFlush(new AccessToken(accessJWT.serialize(), now, now));
@@ -116,7 +122,7 @@ public class TokenLogic {
       return responseDto;
     }
 
-    SignedJWT refreshJWT = this.createSignedJWT(sub, RandomStringUtils.random(8, true, true), scopes, clientId, now, 90);
+    SignedJWT refreshJWT = this.createSignedJWT(sub, RandomStringUtils.random(8, true, true), scopes, clientId, now, REFRESH_TOKEN_LIFETIME);
 
     AccessToken accessTokenRegistered = this.accessTokenRepository.saveAndFlush(new AccessToken(accessJWT.serialize(), now, now));
     RefreshToken refreshTokenRegistered = this.refreshTokenRepository.saveAndFlush(new RefreshToken(refreshJWT.serialize(), now, now));
@@ -165,9 +171,8 @@ public class TokenLogic {
 
     // payload
     JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
-        .claim("iss", ISSUER) // the issuer, normally the URI of the auth server
+        .claim("iss", AUTH_SERVER_HOST) // the issuer, normally the URI of the auth server
         .claim("sub", sub) // the subject, normally the unique identifier for the resource owner
-        // todo: aud is set to null, fix
         .claim("aud", AUDIENCE) // the audience, normally the URI(s) of the protected resource(s) the access token can be sent to
         .claim("iat", iat.toString()) // the issued-at timestamp of the token in seconds from 1 Jan 1970 (GMT)
         .claim("exp", iat.plusDays(days).toString()) // the expiration time, the token expires in 5 min later in this case
@@ -195,7 +200,7 @@ public class TokenLogic {
 
     // payload
     JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
-        .claim("iss", this.ISSUER) // the issuer of the token, i.e. the URL of the Id Provider
+        .claim("iss", this.AUTH_SERVER_HOST) // the issuer of the token, i.e. the URL of the Id Provider
         .claim("sub", sub) // the subject of the token, a stable and unique identifier for the user at the Id Provider, which is usually a machine-readable string and shouldn’t be used as a username
         .claim("aud", clientId) // the audience of the token that must contain the client ID of the Relying Party
         .claim("iat", iat.toString()) // the timestamp at which the token is issued

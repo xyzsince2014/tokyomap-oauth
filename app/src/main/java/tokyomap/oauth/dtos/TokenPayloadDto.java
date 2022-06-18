@@ -12,7 +12,8 @@ public class TokenPayloadDto implements Serializable {
 
   private String sub;
 
-  private String[] aud;
+  // todo: private String[] aud;
+  private String aud;
 
   @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.nnn")
   private LocalDateTime iat;
@@ -42,11 +43,11 @@ public class TokenPayloadDto implements Serializable {
     this.sub = sub;
   }
 
-  public String[] getAud() {
+  public String getAud() {
     return aud;
   }
 
-  public void setAud(String[] aud) {
+  public void setAud(String aud) {
     this.aud = aud;
   }
 
@@ -92,7 +93,7 @@ public class TokenPayloadDto implements Serializable {
 
   @Override
   public String toString() {
-    return "iss = " + this.iss + ", sub = " + this.sub + ", String.join(\" \", aud) = " + String.join(" ", this.aud)
+    return "iss = " + this.iss + ", sub = " + this.sub + ", aud = " + this.aud
         + ", iat = " + this.iat.toString() + ", exp = " + this.exp.toString() + ", jti = " + this.jti
         + ", String.join(\" \", scopes) = " + String.join(" ", this.scopes) + ", clientId = " + this.clientId;
   }
