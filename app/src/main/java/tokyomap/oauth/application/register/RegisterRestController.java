@@ -125,27 +125,9 @@ public class RegisterRestController {
    * @throws ResponseStatusException
    */
   private ResponseClientDto checkAccessTokenRegistration(String clientId, String authorization, RequestMethod requestMethod) throws ResponseStatusException {
-
     try {
       Client clientRegistered = this.checkRegistrationAccessTokenService.checkRegistration(clientId, authorization);
-
-      ResponseClientDto responseClientDto = new ResponseClientDto();
-      responseClientDto.setClientId(clientRegistered.getClientId());
-      responseClientDto.setClientSecret(clientRegistered.getClientSecret());
-      responseClientDto.setClientName(clientRegistered.getClientName());
-      responseClientDto.setClientUri(clientRegistered.getClientUri());
-      responseClientDto.setRedirectUris(clientRegistered.getRedirectUris().split(" "));
-      responseClientDto.setGrantTypes(clientRegistered.getGrantTypes().split(" "));
-      responseClientDto.setResponseTypes(clientRegistered.getResponseTypes().split(" "));
-      responseClientDto.setTokenEndpointAuthMethod(clientRegistered.getTokenEndpointAuthMethod());
-      responseClientDto.setScopes(clientRegistered.getScopes().split(" "));
-      responseClientDto.setRegistrationAccessToken(clientRegistered.getRegistrationAccessToken());
-      responseClientDto.setRegistrationClientUri(clientRegistered.getRegistrationClientUri());
-      responseClientDto.setCreatedAt(clientRegistered.getCreatedAt());
-      responseClientDto.setExpiresAt(clientRegistered.getExpiresAt());
-
-      return responseClientDto;
-
+      return this.convertClientToResponseClientDto(clientRegistered);
     }catch(Exception e) {
       HttpStatus httpStatus = requestMethod.equals(RequestMethod.DELETE) ? HttpStatus.NO_CONTENT : HttpStatus.INTERNAL_SERVER_ERROR;
       throw new ResponseStatusException(httpStatus);
@@ -163,24 +145,11 @@ public class RegisterRestController {
     ClientValidationResultDto resultDto = this.registerClientService.execValidation(requestDto.getClient());
     Client clientRegistered = this.registerClientService.register(requestDto.getClient(), resultDto);
 
-    ResponseClientDto responseClientDto = new ResponseClientDto();
-    responseClientDto.setClientId(clientRegistered.getClientId());
-    responseClientDto.setClientSecret(clientRegistered.getClientSecret());
-    responseClientDto.setClientName(clientRegistered.getClientName());
-    responseClientDto.setClientUri(clientRegistered.getClientUri());
-    responseClientDto.setRedirectUris(clientRegistered.getRedirectUris().split(" "));
-    responseClientDto.setGrantTypes(clientRegistered.getGrantTypes().split(" "));
-    responseClientDto.setResponseTypes(clientRegistered.getResponseTypes().split(" "));
-    responseClientDto.setTokenEndpointAuthMethod(clientRegistered.getTokenEndpointAuthMethod());
-    responseClientDto.setScopes(clientRegistered.getScopes().split(" "));
-    responseClientDto.setRegistrationAccessToken(clientRegistered.getRegistrationAccessToken());
-    responseClientDto.setRegistrationClientUri(clientRegistered.getRegistrationClientUri());
-    responseClientDto.setExpiresAt(clientRegistered.getExpiresAt());
+    ResponseClientDto responseClientDto = this.convertClientToResponseClientDto(clientRegistered);
 
     return new RegisterClientResponseDto(responseClientDto);
   }
 
-  // todo:
   /**
    * convert Client to ResponseClientDto
    * @param client
@@ -199,6 +168,7 @@ public class RegisterRestController {
     responseClientDto.setScopes(client.getScopes().split(" "));
     responseClientDto.setRegistrationAccessToken(client.getRegistrationAccessToken());
     responseClientDto.setRegistrationClientUri(client.getRegistrationClientUri());
+    responseClientDto.setCreatedAt(client.getCreatedAt());
     responseClientDto.setExpiresAt(client.getExpiresAt());
     return responseClientDto;
   }
