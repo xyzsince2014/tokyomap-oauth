@@ -9,6 +9,8 @@ import tokyomap.oauth.domain.entities.redis.ProAuthoriseCache;
 @Component
 public class RedisLogic {
 
+  private static final int CODE_LIFETIME = 10;
+
   private final RedisTemplate<String, PreAuthoriseCache> preAuthoriseCacheRedisTemplate;
   private final RedisTemplate<String, ProAuthoriseCache> proAuthoriseCacheRedisTemplate;
 
@@ -34,6 +36,6 @@ public class RedisLogic {
 
   public void saveProAuthoriseCache(String key, ProAuthoriseCache proAuthoriseCache) {
     this.proAuthoriseCacheRedisTemplate.opsForValue().set(key, proAuthoriseCache);
-    this.proAuthoriseCacheRedisTemplate.expire(key, 10, TimeUnit.MINUTES);
+    this.proAuthoriseCacheRedisTemplate.expire(key, CODE_LIFETIME, TimeUnit.MINUTES);
   }
 }

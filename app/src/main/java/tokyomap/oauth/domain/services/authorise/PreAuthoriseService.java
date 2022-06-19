@@ -63,6 +63,10 @@ public class PreAuthoriseService {
       throw new InvalidPreAuthoriseException("invalid scopes requested.");
     }
 
+    if(preAuthoriseCache.getNonce() == null) {
+      throw new InvalidPreAuthoriseException("no nonce is given.");
+    }
+
     return new ValidationResult(client, requestedScopes);
   }
 

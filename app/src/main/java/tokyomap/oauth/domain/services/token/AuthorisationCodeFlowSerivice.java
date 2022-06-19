@@ -101,7 +101,8 @@ public class AuthorisationCodeFlowSerivice extends TokenService<ProAuthoriseCach
     try {
       GenerateTokensResponseDto responseDto = this.tokenLogic.generateTokens(
           tokenValidationResultDto.getClientId(), usr.getSub(),
-          tokenValidationResultDto.getPayload().getScopeRequested(),true, null
+          tokenValidationResultDto.getPayload().getScopeRequested(),true,
+          tokenValidationResultDto.getPayload().getPreAuthoriseCache().getNonce()
       );
       return responseDto;
     } catch (Exception e) {

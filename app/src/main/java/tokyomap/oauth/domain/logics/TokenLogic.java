@@ -127,7 +127,7 @@ public class TokenLogic {
     AccessToken accessTokenRegistered = this.accessTokenRepository.saveAndFlush(new AccessToken(accessJWT.serialize(), now, now));
     RefreshToken refreshTokenRegistered = this.refreshTokenRepository.saveAndFlush(new RefreshToken(refreshJWT.serialize(), now, now));
 
-    // scope must not be sent back to the client in production
+    // todo: scope must not be sent back to the client in production
     GenerateTokensResponseDto responseDto = new GenerateTokensResponseDto(
         "Bearer",
         accessTokenRegistered.getAccessToken(),
@@ -198,14 +198,16 @@ public class TokenLogic {
    */
   private SignedJWT createIdJWT(String sub, String clientId, String nonce, LocalDateTime iat, long minutes) throws Exception {
 
+    this.logger.log(TokenLogic.class.getName(), "nonce = " + nonce);
+
     // payload
     JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
-        .claim("iss", this.AUTH_SERVER_HOST) // the issuer of the token, i.e. the URL of the Id Provider
-        .claim("sub", sub) // the subject of the token, a stable and unique identifier for the user at the Id Provider, which is usually a machine-readable string and shouldn’t be used as a username
-        .claim("aud", clientId) // the audience of the token that must contain the client ID of the Relying Party
+        .claim("iss", AUTH_SERVER_HOST) // the issuer of the token, i.e. the URL of the ID Provider
+        .claim("sub", sub) // the subject of the token, a stable and unique identifier for the user at the ID Provider, which is usually a machine-readable string and shouldn’t be used as a username
+        .claim("aud", clientId) // the audience of the id token that must contain the client ID of the Relying Party
         .claim("iat", iat.toString()) // the timestamp at which the token is issued
         .claim("exp", iat.plusMinutes(minutes).toString()) // the expiration timestamp of the token at which all ID tokens expire and usually pretty quickly
-        .claim("nonce", nonce) // a string sent by the Relying Party during the authentication request, used to mitigate replay attacks similar to the state parameter. It must be included if the Relying Party sends it
+        .claim("nonce", nonce) // a string sent by the Relying Party during the authentication request, used to mitigate replay attacks. It must be included if the Relying Party sends it
         .build();
 
     SignedJWT signedJWT = new SignedJWT(this.createJWSHeader(), jwtClaimsSet);

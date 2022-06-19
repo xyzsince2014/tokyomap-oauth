@@ -47,14 +47,15 @@ public class AuthoriseController {
   public String preAuthorise(Model model, @RequestParam Map<String, String> queryParams) {
 
     PreAuthoriseCache preAuthoriseCache = new PreAuthoriseCache(
-        queryParams.get("responseType"), queryParams.get("scopes").split(" "), queryParams.get("clientId"),
-        queryParams.get("redirectUri"), queryParams.get("state"), queryParams.get("codeChallenge"), queryParams.get("codeChallengeMethod")
+        queryParams.get("responseType"), queryParams.get("scopes").split(" "),
+        queryParams.get("clientId"), queryParams.get("redirectUri"), queryParams.get("state"), queryParams.get("codeChallenge"),
+        queryParams.get("codeChallengeMethod"), queryParams.get("nonce")
     );
 
     PreAuthoriseResponseDto responseDto = this.preAuthoriseService.execute(preAuthoriseCache);
 
     /**
-     * todo: OAuth Authentication with Modal
+     * todo: Yml Authentication with Modal
      * * distribute a js beforehand
      * * clients use the js
      * * authentication actions trigger a function of the js

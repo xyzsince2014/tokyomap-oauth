@@ -149,11 +149,13 @@ public class ProAuthoriseService {
     try {
       GenerateTokensResponseDto responseDto = this.tokenLogic.generateTokens(
           tokenValidationResultDto.getClientId(), tokenValidationResultDto.getPayload().getSub(),
-          tokenValidationResultDto.getPayload().getScopeRequested(), true, null
+          tokenValidationResultDto.getPayload().getScopeRequested(), true,
+          tokenValidationResultDto.getPayload().getPreAuthoriseCache().getNonce()
       );
 
       String fragment = "accessToken=" + responseDto.getAccessToken() + "&idToken=" + responseDto.getIdToken()
-          + "&state=" + preAuthoriseCache.getState() + "&scopes=" + String.join(" ", preAuthoriseCache.getScopes());
+          + "&state=" + preAuthoriseCache.getState() + "&scopes=" + String.join(" ", preAuthoriseCache.getScopes())
+          + "&nonce=" + preAuthoriseCache.getNonce();
 
       URI redirectUri = UriComponentsBuilder
           .fromUriString(preAuthoriseCache.getRedirectUri())

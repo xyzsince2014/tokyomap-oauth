@@ -1,6 +1,7 @@
 package tokyomap.oauth.domain.entities.redis;
 
 import java.io.Serializable;
+import org.springframework.lang.Nullable;
 
 public class PreAuthoriseCache implements Serializable {
 
@@ -13,13 +14,14 @@ public class PreAuthoriseCache implements Serializable {
   private String state;
   private String codeChallenge;
   private String codeChallengeMethod;
+  private String nonce;
 
   // used to deserialise values by RedisTemplate
   PreAuthoriseCache() {}
 
   public PreAuthoriseCache(
       String responseType, String[] scopes, String clientId, String redirectUri,
-      String state, String codeChallenge, String codeChallengeMethod
+      String state, String codeChallenge, String codeChallengeMethod, String nonce
   ) {
     this.responseType = responseType;
     this.scopes = scopes;
@@ -28,6 +30,7 @@ public class PreAuthoriseCache implements Serializable {
     this.state = state;
     this.codeChallenge = codeChallenge;
     this.codeChallengeMethod = codeChallengeMethod;
+    this.nonce = nonce;
   }
 
   public String getResponseType() {
@@ -86,10 +89,14 @@ public class PreAuthoriseCache implements Serializable {
     this.codeChallengeMethod = codeChallengeMethod;
   }
 
+  public String getNonce() {return nonce;}
+
+  public void setNonce(String nonce) {this.nonce = nonce;}
+
   @Override
   public String toString() {
     return "responseType = " + this.responseType + ", scopes = " + String.join(" ", this.scopes) + ", clientId = " + this.clientId
         + ", redirectUri = " + this.redirectUri + ", state = " + this.state + ", codeChallenge = " + this.codeChallenge
-        + ", codeChallengeMethod = " + this.codeChallengeMethod;
+        + ", codeChallengeMethod = " + this.codeChallengeMethod + ", nonce = " + this.nonce;
   }
 }

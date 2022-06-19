@@ -33,7 +33,8 @@ public class PreAuthoriseServiceIntegrationTest {
         "http://localhost:9000/callback",
         "Dxyd94mc0D4GvbC5m6pxjpqnKIwuzHn3",
         "7gS7IusXI3JCG8EE8C7p70yo7O7qJc8hG-Lrs6fj_0o",
-        "SHA256"
+        "SHA256",
+        "PYoPqyBDNk00BXDQPdrpb6VZJMUBjXCC"
     );
 
     PreAuthoriseResponseDto actualDto = this.preAuthoriseService.execute(preAuthoriseCache);
