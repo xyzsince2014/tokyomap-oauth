@@ -7,7 +7,7 @@ participant app as Client Application Server
 participant auth as Authorisation Server
 
 user->>app: GET /authorise-client-credentials
-app->>app: nullfy tokens, scopes, userInfo etc.
+app->>app: nullify tokens, scopes, userInfo etc.
 app->>auth: POST /token<br>+ clientId, clientSecret in Authorization header<br>+ GenerateTokensRequestDto<br>(grantType: CLIENT_CREDENTIALS, scopes)
 auth->>auth: execute validation
 auth->>auth: generate access and id tokens

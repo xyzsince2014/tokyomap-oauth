@@ -12,7 +12,7 @@ app->>auth: DELETE /register/{clientId}<br>+ registrationAccessToken in Authoriz
 auth->>auth: checkAccessTokenRegistration()
 auth->>auth: unregister client
 auth-->>app: 204 No Content
-app->>app: nullfy stored tokens, state, scopes, codeVerifier
+app->>app: nullify stored tokens, state, scopes, codeVerifier
 app-->>user: 200 OK + index.html
 
 ```

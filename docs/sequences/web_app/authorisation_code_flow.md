@@ -8,7 +8,7 @@ participant auth as Authorisation Server
 participant res as Resource Server
 
 user->>app: GET /authorise
-app->>app: nullfy accessToken and state
+app->>app: nullify accessToken and state
 app->>app: generate and store state and codeVerifier
 app-->>user: 302 Found
 user->>auth: GET /authorise?queryParams

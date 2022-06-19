@@ -11,6 +11,6 @@ app->>auth: POST /revoke<br>+ credentials in Authorization header<br>+ RevokeReq
 auth->>auth: validate credentials and accessToken
 auth->>auth: revoke tokens
 auth-->>app: 204 No Content
-app->>app: nullfy stored tokens, states etc
+app->>app: nullify stored tokens, states etc
 app-->>user: 200 OK + index.html
 ```

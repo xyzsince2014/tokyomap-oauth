@@ -26,7 +26,7 @@ opt url fragment exists
   user->>user: store fragment components
   user->>user: validate state
   opt invalid state
-    user->>user: nullfy fragment components
+    user->>user: nullify fragment components
   end
 end
 

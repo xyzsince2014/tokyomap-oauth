@@ -20,7 +20,7 @@ app-->>user: 200 OK + resource.html
 
 else
 res->>app: 401 Unauthorized
-app->>app: nullfy stored accessToken and scoeps
+app->>app: nullify stored accessToken and scoeps
 
 alt has no refreshToken stored
 app-->>user: 200 OK + error.html
