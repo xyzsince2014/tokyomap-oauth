@@ -64,7 +64,7 @@ public class ProAuthoriseService {
   }
 
   /**
-   * authenticate the username and password, and fetch the authReqParams for the requestId
+   * authenticate the username and password, and fetch the preAuthoriseCache for the requestId
    * @param authorisationForm
    * @return AuthenticationResult
    */
@@ -130,8 +130,6 @@ public class ProAuthoriseService {
     String sub = authenticationResult.getUsr().getSub();
     String[] requestedScopes = authenticationResult.getScopesRequested();
     PreAuthoriseCache preAuthoriseCache = authenticationResult.getAuthorisationRequest();
-
-    // todo: execute validation here ?
 
     ProAuthoriseCache proAuthoriseCache = new ProAuthoriseCache(sub, requestedScopes, preAuthoriseCache);
 
