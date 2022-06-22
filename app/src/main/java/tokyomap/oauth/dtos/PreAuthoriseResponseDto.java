@@ -9,7 +9,7 @@ public class PreAuthoriseResponseDto implements Serializable {
 
   private Client client;
   private String requestId;
-  private String[] requestedScope;
+  private String[] requestedScope; // todo: rename to requestedScopes
 
   public PreAuthoriseResponseDto(Client client, String requestId, String[] requestedScope) {
     this.client = client;

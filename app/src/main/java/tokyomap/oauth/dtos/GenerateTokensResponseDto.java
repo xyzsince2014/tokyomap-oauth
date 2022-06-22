@@ -10,14 +10,14 @@ public class GenerateTokensResponseDto implements Serializable {
   private String accessToken;
   private String refreshToken;
   private String idToken;
-  private String scope;
+  private String scopes;
 
-  public GenerateTokensResponseDto(String tokenType, String accessToken, String refreshToken, String idToken, String scope) {
+  public GenerateTokensResponseDto(String tokenType, String accessToken, String refreshToken, String idToken, String scopes) {
     this.tokenType = tokenType;
     this.accessToken = accessToken;
     this.refreshToken = refreshToken;
     this.idToken = idToken;
-    this.scope = scope;
+    this.scopes = scopes;
   }
 
   public String getTokenType() {
@@ -52,11 +52,11 @@ public class GenerateTokensResponseDto implements Serializable {
     this.idToken = idToken;
   }
 
-  public String getScope() {
-    return scope;
+  public String getScopes() {
+    return scopes;
   }
 
-  public void setScope(String scope) {
-    this.scope = scope;
+  public void setScopes(String scope) {
+    this.scopes = scopes;
   }
 }

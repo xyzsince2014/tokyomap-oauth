@@ -10,7 +10,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
-import tokyomap.oauth.domain.services.register.UpdateClientApplicationService;
+import tokyomap.oauth.domain.entities.postgres.Client;
+import tokyomap.oauth.domain.services.register.CheckRegistrationAccessTokenService;
+import tokyomap.oauth.domain.services.register.RegisterClientService;
+import tokyomap.oauth.domain.services.register.UnregisterClientService;
+import tokyomap.oauth.domain.services.register.UpdateClientService;
+import tokyomap.oauth.dtos.ClientValidationResultDto;
 import tokyomap.oauth.dtos.ReadClientResponseDto;
 import tokyomap.oauth.dtos.RegisterClientRequestDto;
 import tokyomap.oauth.dtos.RegisterClientResponseDto;
@@ -24,24 +29,24 @@ import tokyomap.oauth.utils.Logger;
 @RequestMapping("/register")
 public class RegisterRestController {
 
-  private final RegisterClientApplicationService registerClientApplicationService;
-  private final CheckRegistrationAccessTokenApplicationService checkRegistrationAccessTokenApplicationService;
-  private final UpdateClientApplicationService updateClientApplicationService;
-  private final UnregisterClientApplicationService unregisterClientApplicationService;
+  private final RegisterClientService registerClientService;
+  private final CheckRegistrationAccessTokenService checkRegistrationAccessTokenService;
+  private final UpdateClientService updateClientService;
+  private final UnregisterClientService unregisterClientService;
   private final Logger logger;
 
   @Autowired
   public RegisterRestController(
-      RegisterClientApplicationService registerClientApplicationService,
-      CheckRegistrationAccessTokenApplicationService checkRegistrationAccessTokenApplicationService,
-      UpdateClientApplicationService updateClientApplicationService,
-      UnregisterClientApplicationService unregisterClientApplicationService,
+      RegisterClientService registerClientService,
+      CheckRegistrationAccessTokenService checkRegistrationAccessTokenService,
+      UpdateClientService updateClientService,
+      UnregisterClientService unregisterClientService,
       Logger logger
   ) {
-    this.registerClientApplicationService = registerClientApplicationService;
-    this.checkRegistrationAccessTokenApplicationService = checkRegistrationAccessTokenApplicationService;
-    this.updateClientApplicationService = updateClientApplicationService;
-    this.unregisterClientApplicationService = unregisterClientApplicationService;
+    this.registerClientService = registerClientService;
+    this.checkRegistrationAccessTokenService = checkRegistrationAccessTokenService;
+    this.updateClientService = updateClientService;
+    this.unregisterClientService = unregisterClientService;
     this.logger = logger;
   }
 
@@ -53,7 +58,7 @@ public class RegisterRestController {
    */
   @RequestMapping(path = "/{clientId}", method = RequestMethod.GET, headers = "Accept=application/json")
   public ReadClientResponseDto readClient(@PathVariable String clientId, @RequestHeader("Authorization") String authorization) {
-    ResponseClientDto responseClientDto = this.checkRegistrationAccessToken(clientId, authorization, RequestMethod.GET);
+    ResponseClientDto responseClientDto = this.checkAccessTokenRegistration(clientId, authorization, RequestMethod.GET);
     return new ReadClientResponseDto(responseClientDto);
   }
 
@@ -64,15 +69,37 @@ public class RegisterRestController {
    * @param requestDto
    * @return UpdateClientResponseDto
    */
-  @RequestMapping(path = "/{clientId}", method = RequestMethod.PUT, headers = {"Accept=application/json", "Content-Type=application/json"})
+  @RequestMapping(
+      path = "/{clientId}",
+      method = RequestMethod.PUT,
+      headers = {"Accept=application/json", "Content-Type=application/json"}
+  )
   public UpdateClientResponseDto updateClient(
       @PathVariable String clientId,
       @RequestHeader("Authorization") String authorization,
       @RequestBody UpdateClientRequestDto requestDto
   ) {
-    ResponseClientDto responseClientDto = this.checkRegistrationAccessToken(clientId, authorization, RequestMethod.PUT);
-    UpdateClientResponseDto responseDto = this.updateClientApplicationService.execute(responseClientDto, requestDto);
-    return responseDto;
+    ResponseClientDto responseClientDto = this.checkAccessTokenRegistration(clientId, authorization, RequestMethod.PUT);
+
+    ClientValidationResultDto validationResultDto = this.updateClientService.execValidation(requestDto.getClient());
+    String clientNameToUpdate = this.updateClientService.execAdditionalValidation(requestDto.getClient(), responseClientDto);
+    Client clientUpdated = this.updateClientService.update(clientNameToUpdate, validationResultDto, responseClientDto);
+
+    responseClientDto.setClientId(clientUpdated.getClientId());
+    responseClientDto.setClientSecret(clientUpdated.getClientSecret());
+    responseClientDto.setClientName(clientUpdated.getClientName());
+    responseClientDto.setClientUri(clientUpdated.getClientUri());
+    responseClientDto.setRedirectUris(clientUpdated.getRedirectUris().split(" "));
+    responseClientDto.setGrantTypes(clientUpdated.getGrantTypes().split(" "));
+    responseClientDto.setResponseTypes(clientUpdated.getResponseTypes().split(" "));
+    responseClientDto.setTokenEndpointAuthMethod(clientUpdated.getTokenEndpointAuthMethod());
+    responseClientDto.setScopes(clientUpdated.getScopes().split(" "));
+    responseClientDto.setRegistrationAccessToken(clientUpdated.getRegistrationAccessToken());
+    responseClientDto.setRegistrationClientUri(clientUpdated.getRegistrationClientUri());
+    responseClientDto.setCreatedAt(clientUpdated.getCreatedAt());
+    responseClientDto.setExpiresAt(clientUpdated.getExpiresAt());
+
+    return new UpdateClientResponseDto(responseClientDto);
   }
 
   /**
@@ -83,12 +110,10 @@ public class RegisterRestController {
   @RequestMapping(path = "/{clientId}", method = RequestMethod.DELETE, headers = "Accept=application/json")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void unregisterClient(
-      @PathVariable String clientId,
-      @RequestHeader("Authorization") String authorization,
-      @RequestBody UnregisterClientRequestDto requestDto
+      @PathVariable String clientId, @RequestHeader("Authorization") String authorization, @RequestBody UnregisterClientRequestDto requestDto
       ) {
-    ResponseClientDto responseClientDto = this.checkRegistrationAccessToken(clientId, authorization, RequestMethod.DELETE);
-    this.unregisterClientApplicationService.execute(responseClientDto.getClientId(), requestDto);
+    ResponseClientDto responseClientDto = this.checkAccessTokenRegistration(clientId, authorization, RequestMethod.DELETE);
+    this.unregisterClientService.unregister(clientId, requestDto.getAccessToken(), requestDto.getRefreshToken());
   }
 
   /**
@@ -99,18 +124,13 @@ public class RegisterRestController {
    * @return ResponseClientDto
    * @throws ResponseStatusException
    */
-  private ResponseClientDto checkRegistrationAccessToken(String clientId, String authorization, RequestMethod requestMethod) throws ResponseStatusException {
-
+  private ResponseClientDto checkAccessTokenRegistration(String clientId, String authorization, RequestMethod requestMethod) throws ResponseStatusException {
     try {
-      ResponseClientDto responseClientDto = this.checkRegistrationAccessTokenApplicationService.execute(clientId, authorization);
-      return responseClientDto;
-
+      Client clientRegistered = this.checkRegistrationAccessTokenService.checkRegistration(clientId, authorization);
+      return this.convertClientToResponseClientDto(clientRegistered);
     }catch(Exception e) {
-      if(requestMethod.equals(RequestMethod.DELETE)) {
-        throw new ResponseStatusException(HttpStatus.NO_CONTENT);
-      }
-      // todo: res.status(e.getStat(e.length, 3)).end();
-      return null;
+      HttpStatus httpStatus = requestMethod.equals(RequestMethod.DELETE) ? HttpStatus.NO_CONTENT : HttpStatus.INTERNAL_SERVER_ERROR;
+      throw new ResponseStatusException(httpStatus);
     }
   }
 
@@ -121,7 +141,35 @@ public class RegisterRestController {
    */
   @RequestMapping(method = RequestMethod.POST, headers = {"Accept=application/json", "Content-Type=application/json"})
   public RegisterClientResponseDto registerClient(@RequestBody RegisterClientRequestDto requestDto) {
-    RegisterClientResponseDto responseDto = this.registerClientApplicationService.execute(requestDto);
-    return responseDto;
+
+    ClientValidationResultDto resultDto = this.registerClientService.execValidation(requestDto.getClient());
+    Client clientRegistered = this.registerClientService.register(requestDto.getClient(), resultDto);
+
+    ResponseClientDto responseClientDto = this.convertClientToResponseClientDto(clientRegistered);
+
+    return new RegisterClientResponseDto(responseClientDto);
+  }
+
+  /**
+   * convert Client to ResponseClientDto
+   * @param client
+   * @return ResponseClientDto
+   */
+  private ResponseClientDto convertClientToResponseClientDto(Client client) {
+    ResponseClientDto responseClientDto = new ResponseClientDto();
+    responseClientDto.setClientId(client.getClientId());
+    responseClientDto.setClientSecret(client.getClientSecret());
+    responseClientDto.setClientName(client.getClientName());
+    responseClientDto.setClientUri(client.getClientUri());
+    responseClientDto.setRedirectUris(client.getRedirectUris().split(" "));
+    responseClientDto.setGrantTypes(client.getGrantTypes().split(" "));
+    responseClientDto.setResponseTypes(client.getResponseTypes().split(" "));
+    responseClientDto.setTokenEndpointAuthMethod(client.getTokenEndpointAuthMethod());
+    responseClientDto.setScopes(client.getScopes().split(" "));
+    responseClientDto.setRegistrationAccessToken(client.getRegistrationAccessToken());
+    responseClientDto.setRegistrationClientUri(client.getRegistrationClientUri());
+    responseClientDto.setCreatedAt(client.getCreatedAt());
+    responseClientDto.setExpiresAt(client.getExpiresAt());
+    return responseClientDto;
   }
 }

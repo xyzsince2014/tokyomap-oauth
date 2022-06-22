@@ -28,12 +28,10 @@ public class AccessToken implements Serializable {
 
   public AccessToken() {}
 
-  public AccessToken(String accessToken) {
+  public AccessToken(String accessToken, LocalDateTime createdAt, LocalDateTime updatedAt) {
     this.accessToken = accessToken;
-    // todo: use JST
-    LocalDateTime ldt = LocalDateTime.now();
-    this.createdAt = ldt;
-    this.updatedAt = ldt;
+    this.createdAt = createdAt;
+    this.updatedAt = updatedAt;
   }
 
   public String getAccessToken() {

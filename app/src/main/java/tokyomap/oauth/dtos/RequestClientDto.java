@@ -56,7 +56,7 @@ public class RequestClientDto implements Serializable {
 
   private String tokenEndpointAuthMethod;
 
-  private String[] scope;
+  private String[] scopes;
 
   @Nullable
   private String registrationAccessToken;
@@ -196,12 +196,10 @@ public class RequestClientDto implements Serializable {
     this.tokenEndpointAuthMethod = tokenEndpointAuthMethod;
   }
 
-  public String[] getScope() {
-    return scope;
-  }
+  public String[] getScopes() { return scopes; }
 
-  public void setScope(String[] scope) {
-    this.scope = scope;
+  public void setScopes(String[] scopes) {
+    this.scopes = scopes;
   }
 
   @Nullable
@@ -236,8 +234,7 @@ public class RequestClientDto implements Serializable {
     return "clientId = " + this.clientId + ", clientSecret = " + this.clientSecret + ", clientName = " + this.clientName
         + ", clientUri = " + this.clientUri + ", redirectUris = " + this.redirectUris.toString()
         + ", grantTypes = " + this.grantTypes + ", responseTypes = " + this.responseTypes + ", tokenEndpointAuthMethod = " + this.tokenEndpointAuthMethod
-        + ", scope = " + this.scope + ", registrationAccessToken = " + this.registrationAccessToken
-        + ", registrationClientUri = " + this.registrationClientUri;
-        // todo: fix NullPointException + ", expiresAt = " + this.expiresAt.toString();
+        + ", scopes = " + this.scopes + ", registrationAccessToken = " + this.registrationAccessToken
+        + ", registrationClientUri = " + this.registrationClientUri + ", expiresAt = " + this.expiresAt.toString();
   }
 }

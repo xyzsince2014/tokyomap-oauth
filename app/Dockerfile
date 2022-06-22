@@ -6,6 +6,8 @@ RUN amazon-linux-extras install tomcat9
 RUN yum update -y
 RUN yum install -y tomcat-webapps tomcat-admin-webapps vim fileutils
 
+ENV TZ='Asia/Tokyo'
+
 RUN systemctl enable tomcat.service
 RUN echo 'alias ls="ls --color"' >> ~/.bashrc
 

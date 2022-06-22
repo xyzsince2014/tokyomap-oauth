@@ -207,6 +207,12 @@
       <artifactId>nimbus-jose-jwt</artifactId>
       <version>${nimbus-jose-jwt.version}</version>
     </dependency>
+    <!-- Apache Commons Codec -->
+    <dependency>
+      <groupId>commons-codec</groupId>
+      <artifactId>commons-codec</artifactId>
+      <version>${commons-codec.version}</version>
+    </dependency>
     <!-- jUnit-->
     <dependency>
       <groupId>org.junit.jupiter</groupId>

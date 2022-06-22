@@ -29,7 +29,7 @@
     <p>Client Redirect Uris:&nbsp;<span th:text="${dto.client.redirectUris}"/></p>
     <p>Client Grant Types:&nbsp;<span th:text="${dto.client.grantTypes}"/></p>
     <p>Client Response Types:&nbsp;<span th:text="${dto.client.responseTypes}"/></p>
-    <p>Client Scope:&nbsp;<span th:text="${dto.client.scope}"/></p>
+    <p>Client Scopes:&nbsp;<span th:text="${dto.client.scopes}"/></p>
     <p>Client Registration Access Token:&nbsp;<span th:text="${dto.client.registrationAccessToken}"/></p>
     <p>Client Registration Client Uri:&nbsp;<span th:text="${dto.client.registrationClientUri}"/></p>
     <form th:object="${authorisationForm}" th:action="@{/authorise}" method="POST" class="form" >
