@@ -15,6 +15,7 @@ import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.Optional;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,12 +58,17 @@ public class TokenLogic {
       KeyPairGenerator keyGenerator = KeyPairGenerator.getInstance("RSA");
       keyGenerator.initialize(2048);
       KeyPair kp = keyGenerator.genKeyPair();
-      // todo: this.rsaPublicKey = (RSAPublicKey) kp.getPublic();
       this.rsaPublicKey = (RSAPublicKey) kp.getPublic();
       this.rsaPrivateKey = (RSAPrivateKey) kp.getPrivate();
     } catch (Exception e) {
       }
-    }
+  }
+
+  /**
+   * todo: public key should be fetched from DB
+   * @return RSAPublicKey getRsaPublicKey
+   */
+  public RSAPublicKey getRsaPublicKey() {return this.rsaPublicKey;}
 
   /**
    * get the AccessToken entity for the given access token
@@ -174,8 +180,8 @@ public class TokenLogic {
         .claim("iss", AUTH_SERVER_HOST) // the issuer, normally the URI of the auth server
         .claim("sub", sub) // the subject, normally the unique identifier for the resource owner
         .claim("aud", AUDIENCE) // the audience, normally the URI(s) of the protected resource(s) the access token can be sent to
-        .claim("iat", iat.toString()) // the issued-at timestamp of the token in seconds from 1 Jan 1970 (GMT)
-        .claim("exp", iat.plusDays(days).toString()) // the expiration time, the token expires in 5 min later in this case
+        .claim("iat", iat.toEpochSecond(ZoneOffset.ofHours(+9))) // the issued-at timestamp of the token in seconds from 1 Jan 1970 (GMT)
+        .claim("exp", iat.plusDays(days).toEpochSecond(ZoneOffset.ofHours(+9))) // the expiration time, the token expires in 5 min later in this case
         .claim("jti", jti) // the unique identifier of the token, that is a value unique to each token created by the issuer, and it’s often a cryptographically random value
         .claim("scopes", scopes)
         .claim("clientId", clientId)
@@ -205,8 +211,8 @@ public class TokenLogic {
         .claim("iss", AUTH_SERVER_HOST) // the issuer of the token, i.e. the URL of the ID Provider
         .claim("sub", sub) // the subject of the token, a stable and unique identifier for the user at the ID Provider, which is usually a machine-readable string and shouldn’t be used as a username
         .claim("aud", clientId) // the audience of the id token that must contain the client ID of the Relying Party
-        .claim("iat", iat.toString()) // the timestamp at which the token is issued
-        .claim("exp", iat.plusMinutes(minutes).toString()) // the expiration timestamp of the token at which all ID tokens expire and usually pretty quickly
+        .claim("iat", iat.toEpochSecond(ZoneOffset.ofHours(+9))) // the timestamp at which the token is issued
+        .claim("exp", iat.plusMinutes(minutes).toEpochSecond(ZoneOffset.ofHours(+9))) // the expiration timestamp of the token at which all ID tokens expire and usually pretty quickly
         .claim("nonce", nonce) // a string sent by the Relying Party during the authentication request, used to mitigate replay attacks. It must be included if the Relying Party sends it
         .build();
 

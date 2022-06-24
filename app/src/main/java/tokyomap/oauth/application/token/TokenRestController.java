@@ -1,5 +1,6 @@
 package tokyomap.oauth.application.token;
 
+import com.nimbusds.jwt.SignedJWT;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -46,7 +47,7 @@ public class TokenRestController {
         return response;
       }
       case "REFRESH_TOKEN": { // todo: use a Constant
-        TokenValidationResultDto<TokenPayloadDto> tokenValidationResultDto = this.refreshTokenService.execValidation(requestDto, authorization);
+        TokenValidationResultDto<SignedJWT> tokenValidationResultDto = this.refreshTokenService.execValidation(requestDto, authorization);
         GenerateTokensResponseDto response = this.refreshTokenService.generateTokens(tokenValidationResultDto);
         return response;
       }
