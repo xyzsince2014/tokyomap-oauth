@@ -17,7 +17,7 @@ import tokyomap.oauth.domain.logics.TokenLogic;
 import tokyomap.oauth.dtos.CredentialsDto;
 import tokyomap.oauth.utils.Logger;
 
-@Component
+@Component // todo: should be put in the service layer ?
 public class TokenScrutiny {
 
   // todo: define in a config file

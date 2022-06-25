@@ -65,6 +65,7 @@ public class AuthoriseController {
      */
     model.addAttribute("dto", responseDto);
 
+    // todo: separate authentication from authorisation, use WebSecurityConfigurerAdapter ?
     return "authorise";
   }
 
