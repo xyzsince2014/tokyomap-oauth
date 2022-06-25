@@ -119,7 +119,7 @@ public class TokenLogic {
     SignedJWT accessJWT = this.createSignedJWT(sub, RandomStringUtils.random(8, true, true), scopes, clientId, now, ACCESS_TOKEN_LIFETIME);
 
     // Open ID Connect ID token
-    SignedJWT idJWT = this.createIdJWT(sub, clientId, nonce, now, ID_TOKEN_LIFETIME);
+    SignedJWT idJWT = this.createIdJWT(sub, clientId, nonce, now, ID_TOKEN_LIFETIME, now); // todo: authTime should be set on authentication
 
     if(!isRefreshTokenGenerated) {
       AccessToken accessTokenRegistered = this.accessTokenRepository.saveAndFlush(new AccessToken(accessJWT.serialize(), now, now));
@@ -202,9 +202,7 @@ public class TokenLogic {
    * @return SignedJWT
    * @throws Exception
    */
-  private SignedJWT createIdJWT(String sub, String clientId, String nonce, LocalDateTime iat, long minutes) throws Exception {
-
-    this.logger.log(TokenLogic.class.getName(), "nonce = " + nonce);
+  private SignedJWT createIdJWT(String sub, String clientId, String nonce, LocalDateTime iat, long minutes, LocalDateTime authTime) throws Exception {
 
     // payload
     JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
@@ -214,6 +212,10 @@ public class TokenLogic {
         .claim("iat", iat.toEpochSecond(ZoneOffset.ofHours(+9))) // the timestamp at which the token is issued
         .claim("exp", iat.plusMinutes(minutes).toEpochSecond(ZoneOffset.ofHours(+9))) // the expiration timestamp of the token at which all ID tokens expire and usually pretty quickly
         .claim("nonce", nonce) // a string sent by the Relying Party during the authentication request, used to mitigate replay attacks. It must be included if the Relying Party sends it
+        .claim("authTime", authTime.toEpochSecond(ZoneOffset.ofHours(+9))) // the timestamp at which the user authenticated to the Id Provider
+        .claim("amr", new String[] {"pwd"}) // the authentication method reference, which indicates how the user authenticated to the Id Provider, e.g. pwd (by password), otp (by password and one-time password), sms (by SMS), email (by mail)
+        // todo: .claim("atHash", accessToken)
+        // todo: .claim("cHash", hashed authorisation code)
         .build();
 
     SignedJWT signedJWT = new SignedJWT(this.createJWSHeader(), jwtClaimsSet);
