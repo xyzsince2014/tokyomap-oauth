@@ -3,7 +3,6 @@ package tokyomap.oauth.application.token;
 import com.nimbusds.jwt.SignedJWT;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -16,7 +15,6 @@ import tokyomap.oauth.domain.services.token.RefreshTokenService;
 import tokyomap.oauth.dtos.CredentialsDto;
 import tokyomap.oauth.dtos.GenerateTokensRequestDto;
 import tokyomap.oauth.dtos.GenerateTokensResponseDto;
-import tokyomap.oauth.dtos.TokenPayloadDto;
 import tokyomap.oauth.dtos.TokenValidationResultDto;
 
 @RestController
