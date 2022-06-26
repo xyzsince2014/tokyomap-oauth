@@ -133,7 +133,7 @@ public class TokenScrutiny {
    * @throws JOSEException
    */
   private void checkJWSSignature(SignedJWT signedJWT) throws JOSEException {
-    RSAPublicKey rsaPublicKey = this.tokenLogic.getRsaPublicKey();
+    RSAPublicKey rsaPublicKey = this.tokenLogic.getRsaPublicKeyByKid(signedJWT.getHeader().getKeyID());
     JWSVerifier verifier = new RSASSAVerifier(rsaPublicKey);
 
     if (!signedJWT.verify(verifier)) {

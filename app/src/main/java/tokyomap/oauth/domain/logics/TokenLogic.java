@@ -1,5 +1,6 @@
 package tokyomap.oauth.domain.logics;
 
+import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JOSEObjectType;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
@@ -22,53 +23,58 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import tokyomap.oauth.domain.entities.postgres.AccessToken;
 import tokyomap.oauth.domain.entities.postgres.RefreshToken;
+import tokyomap.oauth.domain.entities.postgres.RsaPublicKey;
 import tokyomap.oauth.domain.repositories.postgres.AccessTokenRepository;
 import tokyomap.oauth.domain.repositories.postgres.RefreshTokenRepository;
+import tokyomap.oauth.domain.repositories.postgres.RsaPublicKeyRepository;
 import tokyomap.oauth.dtos.GenerateTokensResponseDto;
-import tokyomap.oauth.utils.Logger;
 
 @Component
 public class TokenLogic {
 
-  // todo: define in a config file
+  // todo: define in rsaKey.properties
   private static final String AUTH_SERVER_HOST = "http://localhost:80";
-
-  // todo: malfunctioning if use `private static final String[] AUDIENCE = new String[] {"http://localhost:9002"};`
-  private static final String AUDIENCE = "http://localhost:9002"; // registered resource servers
-
+  private static final String AUDIENCE = "http://localhost:9002"; // todo: malfunctioning if use `private static final String[] AUDIENCE = new String[] {"http://localhost:9002"};`
   private static final int ACCESS_TOKEN_LIFETIME = 30;
   private static final int REFRESH_TOKEN_LIFETIME = 90;
   private static final int ID_TOKEN_LIFETIME = 60;
+  private static final String ALGORITHM = "RSA";
+  private static final int KEY_SIZE = 2048;
 
   private final AccessTokenRepository accessTokenRepository;
   private final RefreshTokenRepository refreshTokenRepository;
-  private final Logger logger;
+  private final RsaPublicKeyRepository rsaPublicKeyRepository;
 
   private RSAPublicKey rsaPublicKey;
   private RSAPrivateKey rsaPrivateKey;
+  private String kid;
 
   @Autowired
-  public TokenLogic(AccessTokenRepository accessTokenRepository, RefreshTokenRepository refreshTokenRepository, Logger logger) {
+  public TokenLogic(AccessTokenRepository accessTokenRepository, RefreshTokenRepository refreshTokenRepository, RsaPublicKeyRepository rsaPublicKeyRepository) {
     this.accessTokenRepository = accessTokenRepository;
     this.refreshTokenRepository = refreshTokenRepository;
-    this.logger = logger;
+    this.rsaPublicKeyRepository = rsaPublicKeyRepository;
 
-    // todo: fetch keys from DB
     try {
-      KeyPairGenerator keyGenerator = KeyPairGenerator.getInstance("RSA");
-      keyGenerator.initialize(2048);
+      KeyPairGenerator keyGenerator = KeyPairGenerator.getInstance(ALGORITHM);
+      keyGenerator.initialize(KEY_SIZE);
       KeyPair kp = keyGenerator.genKeyPair();
       this.rsaPublicKey = (RSAPublicKey) kp.getPublic();
       this.rsaPrivateKey = (RSAPrivateKey) kp.getPrivate();
-    } catch (Exception e) {
-      }
-  }
 
-  /**
-   * todo: public key should be fetched from DB
-   * @return RSAPublicKey getRsaPublicKey
-   */
-  public RSAPublicKey getRsaPublicKey() {return this.rsaPublicKey;}
+      // the JSON Web Key (JWK public key)
+      RSAKey jwk = new RSAKey.Builder(this.rsaPublicKey).keyIDFromThumbprint().build();
+      this.kid = jwk.getKeyID();
+
+      LocalDateTime now = LocalDateTime.now();
+      this.rsaPublicKeyRepository.saveAndFlush(new RsaPublicKey(this.kid, this.rsaPublicKey, now, now));
+
+    } catch (NoSuchAlgorithmException e) {
+      // todo:
+    } catch (JOSEException e) {
+      // todo:
+    }
+  }
 
   /**
    * get the AccessToken entity for the given access token
@@ -151,12 +157,10 @@ public class TokenLogic {
    * @throws Exception
    */
   private JWSHeader createJWSHeader() throws Exception {
-    // the JSON Web Key (JWK)
-    RSAKey jwk = new RSAKey.Builder(this.rsaPublicKey).keyIDFromThumbprint().build();
 
     // the JSON Web Signature Header (JWS Header)
     JWSHeader jwsHeader = new JWSHeader.Builder(JWSAlgorithm.RS256) // the signature algorithm is the RS256
-        .keyID(jwk.getKeyID()) // use the JWK Thumbprint as kid
+        .keyID(this.kid) // use the RsaPublicKey Thumbprint as kid
         .type(JOSEObjectType.JWT) // the type of the token
         .build();
 
@@ -223,5 +227,18 @@ public class TokenLogic {
     signedJWT.sign(signer);
 
     return signedJWT;
+  }
+
+  /**
+   * get the RSAPublicKey for the given kid
+   * @param kid
+   * @return RSAPublicKey
+   */
+  public RSAPublicKey getRsaPublicKeyByKid(String kid) {
+    Optional<RsaPublicKey> rsaPublicKeyOptional = this.rsaPublicKeyRepository.findById(kid);
+    if (rsaPublicKeyOptional == null) {
+      return null;
+    }
+    return rsaPublicKeyOptional.get().getRsaPublicKey();
   }
 }
