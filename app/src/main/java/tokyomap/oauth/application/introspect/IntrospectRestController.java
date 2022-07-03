@@ -22,7 +22,7 @@ public class IntrospectRestController {
 
   @RequestMapping(method = RequestMethod.POST, headers = "Content-Type=application/x-www-form-urlencoded;charset=utf-8")
   public Boolean introspect(RequestIntrospectDto requestDto, @RequestHeader("Authorization") String authorization) {
-    Boolean isActive = this.introspectService.introspect(requestDto.getToken(), authorization);
+    Boolean isActive = this.introspectService.execute(requestDto.getToken(), authorization);
     return isActive;
   }
 }

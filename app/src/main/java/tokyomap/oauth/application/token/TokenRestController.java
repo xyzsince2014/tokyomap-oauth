@@ -41,17 +41,17 @@ public class TokenRestController {
     switch (requestDto.getGrantType()) {
       case "AUTHORISATION_CODE": { // todo: use a Constant
         TokenValidationResultDto<ProAuthoriseCache> tokenValidationResultDto = this.authorisationCodeFlowSerivce.execValidation(requestDto, authorization);
-        GenerateTokensResponseDto response = this.authorisationCodeFlowSerivce.generateTokens(tokenValidationResultDto);
+        GenerateTokensResponseDto response = this.authorisationCodeFlowSerivce.execute(tokenValidationResultDto);
         return response;
       }
       case "REFRESH_TOKEN": { // todo: use a Constant
         TokenValidationResultDto<SignedJWT> tokenValidationResultDto = this.refreshTokenService.execValidation(requestDto, authorization);
-        GenerateTokensResponseDto response = this.refreshTokenService.generateTokens(tokenValidationResultDto);
+        GenerateTokensResponseDto response = this.refreshTokenService.execute(tokenValidationResultDto);
         return response;
       }
       case "CLIENT_CREDENTIALS": { // todo: use a Constant
         TokenValidationResultDto<CredentialsDto> tokenValidationResultDto = this.clientCredentialsSerivce.execValidation(requestDto, authorization);
-        GenerateTokensResponseDto response = this.clientCredentialsSerivce.generateTokens(tokenValidationResultDto);
+        GenerateTokensResponseDto response = this.clientCredentialsSerivce.execute(tokenValidationResultDto);
         return response;
       }
       default: {

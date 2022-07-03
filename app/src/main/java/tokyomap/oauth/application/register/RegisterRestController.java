@@ -83,7 +83,7 @@ public class RegisterRestController {
 
     ClientValidationResultDto validationResultDto = this.updateClientService.execValidation(requestDto.getClient());
     String clientNameToUpdate = this.updateClientService.execAdditionalValidation(requestDto.getClient(), responseClientDto);
-    Client clientUpdated = this.updateClientService.update(clientNameToUpdate, validationResultDto, responseClientDto);
+    Client clientUpdated = this.updateClientService.execute(clientNameToUpdate, validationResultDto, responseClientDto);
 
     responseClientDto.setClientId(clientUpdated.getClientId());
     responseClientDto.setClientSecret(clientUpdated.getClientSecret());
@@ -113,7 +113,7 @@ public class RegisterRestController {
       @PathVariable String clientId, @RequestHeader("Authorization") String authorization, @RequestBody UnregisterClientRequestDto requestDto
       ) {
     ResponseClientDto responseClientDto = this.checkAccessTokenRegistration(clientId, authorization, RequestMethod.DELETE);
-    this.unregisterClientService.unregister(clientId, requestDto.getAccessToken(), requestDto.getRefreshToken());
+    this.unregisterClientService.execute(clientId, requestDto.getAccessToken(), requestDto.getRefreshToken());
   }
 
   /**
@@ -126,7 +126,7 @@ public class RegisterRestController {
    */
   private ResponseClientDto checkAccessTokenRegistration(String clientId, String authorization, RequestMethod requestMethod) throws ResponseStatusException {
     try {
-      Client clientRegistered = this.checkRegistrationAccessTokenService.checkRegistration(clientId, authorization);
+      Client clientRegistered = this.checkRegistrationAccessTokenService.execute(clientId, authorization);
       return this.convertClientToResponseClientDto(clientRegistered);
     }catch(Exception e) {
       HttpStatus httpStatus = requestMethod.equals(RequestMethod.DELETE) ? HttpStatus.NO_CONTENT : HttpStatus.INTERNAL_SERVER_ERROR;
@@ -143,7 +143,7 @@ public class RegisterRestController {
   public RegisterClientResponseDto registerClient(@RequestBody RegisterClientRequestDto requestDto) {
 
     ClientValidationResultDto resultDto = this.registerClientService.execValidation(requestDto.getClient());
-    Client clientRegistered = this.registerClientService.register(requestDto.getClient(), resultDto);
+    Client clientRegistered = this.registerClientService.execute(requestDto.getClient(), resultDto);
 
     ResponseClientDto responseClientDto = this.convertClientToResponseClientDto(clientRegistered);
 

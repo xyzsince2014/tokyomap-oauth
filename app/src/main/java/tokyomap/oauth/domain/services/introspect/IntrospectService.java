@@ -36,12 +36,12 @@ public class IntrospectService {
   }
 
   /**
-   * introspect the given access token
+   * execute introspection of the given access token
    * @param incomingToken
    * @param authorization
    * @return Boolean
    */
-  public Boolean introspect(String incomingToken, String authorization) {
+  public Boolean execute(String incomingToken, String authorization) {
 
     CredentialsDto credentialsDto = this.decorder.decodeCredentials(authorization); // fetch resourceId, resourceSecret from the Authorization header
     Resource resource = this.resourceLogic.getResourceByResourceId(credentialsDto.getId());

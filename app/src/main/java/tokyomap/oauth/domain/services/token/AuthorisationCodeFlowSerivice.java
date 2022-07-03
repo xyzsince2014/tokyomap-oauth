@@ -89,7 +89,7 @@ public class AuthorisationCodeFlowSerivice extends TokenService<ProAuthoriseCach
    */
   @Override
   @Transactional
-  public GenerateTokensResponseDto generateTokens(TokenValidationResultDto<ProAuthoriseCache> tokenValidationResultDto) {
+  public GenerateTokensResponseDto execute(TokenValidationResultDto<ProAuthoriseCache> tokenValidationResultDto) {
 
     Usr usr = this.usrLogic.getUsrBySub(tokenValidationResultDto.getPayload().getSub());
     if(usr == null) {

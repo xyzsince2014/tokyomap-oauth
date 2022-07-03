@@ -5,7 +5,7 @@ import java.util.List;
 import tokyomap.oauth.dtos.ClientValidationResultDto;
 import tokyomap.oauth.dtos.RequestClientDto;
 
-public abstract class ClientService {
+public abstract class RegisterService {
 
   // todo: define in a config file
   protected final String[] TOKEN_ENDPOINT_AUTH_METHODS = new String[] {

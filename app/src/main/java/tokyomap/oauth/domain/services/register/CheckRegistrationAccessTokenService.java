@@ -27,7 +27,7 @@ public class CheckRegistrationAccessTokenService {
    * @param authorization
    * @return registered client
    */
-  public Client checkRegistration(String clientId, String authorization) {
+  public Client execute(String clientId, String authorization) {
 
     Client client = this.clientLogic.getClientByClientId(clientId);
 

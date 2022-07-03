@@ -20,12 +20,7 @@ public class RevokeService {
   private final Decorder decorder;
 
   @Autowired
-  public RevokeService(
-      TokenScrutiny tokenScrutiny,
-      ClientLogic clientLogic,
-      TokenLogic tokenLogic,
-      Decorder decorder
-  ) {
+  public RevokeService(TokenScrutiny tokenScrutiny, ClientLogic clientLogic, TokenLogic tokenLogic, Decorder decorder) {
     this.tokenScrutiny = tokenScrutiny;
     this.clientLogic = clientLogic;
     this.tokenLogic = tokenLogic;
@@ -38,7 +33,7 @@ public class RevokeService {
    * @param authorization
    */
   @Transactional
-  public void revoke(RevokeRequestDto requestDto, String authorization) {
+  public void execute(RevokeRequestDto requestDto, String authorization) {
 
     CredentialsDto credentialsDto = this.decorder.decodeCredentials(authorization);
 

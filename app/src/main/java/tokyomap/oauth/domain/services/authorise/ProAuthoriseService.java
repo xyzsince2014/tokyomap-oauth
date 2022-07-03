@@ -27,12 +27,7 @@ public class ProAuthoriseService {
   private final Logger logger;
 
   @Autowired
-  public ProAuthoriseService(
-      RedisLogic redisLogic,
-      TokenLogic tokenLogic,
-      UsrLogic usrLogic,
-      Logger logger
-  ) {
+  public ProAuthoriseService(RedisLogic redisLogic, TokenLogic tokenLogic, UsrLogic usrLogic, Logger logger) {
     this.redisLogic = redisLogic;
     this.tokenLogic = tokenLogic;
     this.usrLogic = usrLogic;

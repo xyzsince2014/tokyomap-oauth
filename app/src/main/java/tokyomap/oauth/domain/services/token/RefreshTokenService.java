@@ -30,12 +30,8 @@ public class RefreshTokenService extends TokenService<SignedJWT> {
 
   @Autowired
   public RefreshTokenService(
-      TokenScrutiny tokenScrutiny,
-      ClientLogic clientLogic,
-      Decorder decorder,
-      TokenLogic tokenLogic,
-      UsrLogic usrLogic,
-      Logger logger
+      TokenScrutiny tokenScrutiny, ClientLogic clientLogic, Decorder decorder,
+      TokenLogic tokenLogic, UsrLogic usrLogic, Logger logger
   ) {
     super(clientLogic, decorder, logger);
     this.tokenScrutiny = tokenScrutiny;
@@ -74,7 +70,7 @@ public class RefreshTokenService extends TokenService<SignedJWT> {
    */
   @Override
   @Transactional
-  public GenerateTokensResponseDto generateTokens(TokenValidationResultDto<SignedJWT> tokenValidationResultDto) {
+  public GenerateTokensResponseDto execute(TokenValidationResultDto<SignedJWT> tokenValidationResultDto) {
 
     try {
       Usr usr = this.usrLogic.getUsrBySub(tokenValidationResultDto.getPayload().getJWTClaimsSet().getSubject());

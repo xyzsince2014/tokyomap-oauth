@@ -17,17 +17,11 @@ public class PreAuthoriseService {
 
   private final RedisLogic redisLogic;
   private final ClientLogic clientLogic;
-  private final Logger logger;
 
   @Autowired
-  public PreAuthoriseService(
-      RedisLogic redisLogic,
-      ClientLogic clientLogic,
-      Logger logger
-  ) {
+  public PreAuthoriseService(RedisLogic redisLogic, ClientLogic clientLogic) {
     this.redisLogic = redisLogic;
     this.clientLogic = clientLogic;
-    this.logger = logger;
   }
 
   /**

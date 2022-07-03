@@ -32,7 +32,7 @@ public abstract class TokenService<T> {
    * @param tokenValidationResultDto
    * @return GenerateTokensResponseDto
    */
-  public abstract GenerateTokensResponseDto generateTokens(TokenValidationResultDto<T> tokenValidationResultDto);
+  public abstract GenerateTokensResponseDto execute(TokenValidationResultDto<T> tokenValidationResultDto);
 
   /**
    * validate client

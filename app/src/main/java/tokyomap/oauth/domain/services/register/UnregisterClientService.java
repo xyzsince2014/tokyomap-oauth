@@ -25,7 +25,7 @@ public class UnregisterClientService {
    * @param refreshToken
    */
   @Transactional
-  public void unregister(String clientId, String accessToken, String refreshToken) {
+  public void execute(String clientId, String accessToken, String refreshToken) {
     this.clientLogic.unregisterClient(clientId);
     this.tokenLogic.revokeTokens(accessToken, refreshToken);
   }

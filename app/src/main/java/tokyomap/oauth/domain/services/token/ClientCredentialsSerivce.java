@@ -50,7 +50,7 @@ public class ClientCredentialsSerivce extends TokenService<CredentialsDto> {
    */
   @Override
   @Transactional
-  public GenerateTokensResponseDto generateTokens(TokenValidationResultDto<CredentialsDto> tokenValidationResultDto) {
+  public GenerateTokensResponseDto execute(TokenValidationResultDto<CredentialsDto> tokenValidationResultDto) {
 
     try {
       // the Client Credentials Flow should not have a user it's on behalf of

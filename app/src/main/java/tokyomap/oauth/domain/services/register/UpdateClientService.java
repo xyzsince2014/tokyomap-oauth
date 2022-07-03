@@ -11,7 +11,7 @@ import tokyomap.oauth.dtos.RequestClientDto;
 import tokyomap.oauth.dtos.ResponseClientDto;
 
 @Service
-public class UpdateClientService extends ClientService {
+public class UpdateClientService extends RegisterService {
 
   private final ClientLogic clientLogic;
 
@@ -43,7 +43,7 @@ public class UpdateClientService extends ClientService {
    * @param validationResultDto
    * @return clientUpdated
    */
-  public Client update(String clientNameToUpdate, ClientValidationResultDto validationResultDto, ResponseClientDto responseClientDto) {
+  public Client execute(String clientNameToUpdate, ClientValidationResultDto validationResultDto, ResponseClientDto responseClientDto) {
 
     LocalDateTime now = LocalDateTime.now();
 

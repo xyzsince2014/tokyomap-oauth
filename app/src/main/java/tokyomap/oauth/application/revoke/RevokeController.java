@@ -25,6 +25,6 @@ public class RevokeController {
   @RequestMapping(method = RequestMethod.POST, headers = "Content-Type=application/x-www-form-urlencoded;charset=utf-8")
   @ResponseStatus(HttpStatus.NO_CONTENT) // return "204 No Content"
   public void revoke(RevokeRequestDto requestDto, @RequestHeader("Authorization") String authorization) {
-    this.revokeService.revoke(requestDto, authorization);
+    this.revokeService.execute(requestDto, authorization);
   }
 }
