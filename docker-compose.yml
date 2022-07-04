@@ -34,19 +34,3 @@ services:
       - ./redis/data:/data
     ports:
       - 6379:6379
-  # postgres-test:
-  #   image: postgres:latest
-  #   container_name: tokyomap-oauth-postgres-test
-  #   environment:
-  #     POSTGRES_DB: postgres
-  #     POSTGRES_USER: postgres
-  #     POSTGRES_PASSWORD: postgres
-  #     POSTGRES_INITDB_ARGS: --encoding=UTF-8
-  #     TZ: Asia/Tokyo
-  #   volumes:
-  #     - ./postgres-test/hgsql/data:/var/lib/hgsql/data
-  #     - ./postgres-test/initdb.d:/docker-entrypoint-initdb.d
-  #     - ./postgres-test/var/lib/postgresql/data:/var/lib/postgresql/data
-  #     - ./postgres-test/csv:/var/tmp
-  #   ports:
-  #     - "15432:5432"
