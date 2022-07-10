@@ -3,7 +3,6 @@ package tokyomap.oauth.application.authorise;
 import java.net.URI;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
@@ -12,10 +11,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import tokyomap.oauth.domain.entities.redis.PreAuthoriseCache;
+import tokyomap.oauth.domain.services.authorise.InvalidPreAuthoriseException;
+import tokyomap.oauth.domain.services.authorise.InvalidProAuthoriseException;
 import tokyomap.oauth.domain.services.authorise.PreAuthoriseService;
 import tokyomap.oauth.domain.services.authorise.ProAuthoriseService;
 import tokyomap.oauth.dtos.PreAuthoriseResponseDto;
-import tokyomap.oauth.utils.Logger;
 
 @Controller
 @RequestMapping("/authorise")
@@ -23,13 +23,11 @@ public class AuthoriseController {
 
   private final PreAuthoriseService preAuthoriseService;
   private final ProAuthoriseService proAuthoriseService;
-  private final Logger logger;
 
   @Autowired
-  public AuthoriseController(PreAuthoriseService preAuthoriseService, ProAuthoriseService proAuthoriseService, Logger logger) {
+  public AuthoriseController(PreAuthoriseService preAuthoriseService, ProAuthoriseService proAuthoriseService) {
     this.preAuthoriseService = preAuthoriseService;
     this.proAuthoriseService = proAuthoriseService;
-    this.logger = logger;
   }
 
   @ModelAttribute("authorisationForm")
@@ -52,21 +50,20 @@ public class AuthoriseController {
         queryParams.get("codeChallengeMethod"), queryParams.get("nonce")
     );
 
-    PreAuthoriseResponseDto responseDto = this.preAuthoriseService.execute(preAuthoriseCache);
+    // todo: use regex
+    if (preAuthoriseCache.getRedirectUri() == null || preAuthoriseCache.getRedirectUri().equals("")) {
+      return "error";
+    }
 
-    /**
-     * todo: Yml Authentication with Modal
-     * * distribute a js beforehand
-     * * clients use the js
-     * * authentication actions trigger a function of the js
-     * * the function display an Authentication form in a modal
-     * * use Multi-Factor Authentication
-     * * submit the form request to the pro-authorisaton endpoint
-     */
-    model.addAttribute("dto", responseDto);
+    try {
+      PreAuthoriseResponseDto responseDto = this.preAuthoriseService.execute(preAuthoriseCache);
+      model.addAttribute("dto", responseDto);
+      return "authorise"; // todo: separate authentication from authorisation, use WebSecurityConfigurerAdapter ?
 
-    // todo: separate authentication from authorisation, use WebSecurityConfigurerAdapter ?
-    return "authorise";
+    } catch(InvalidPreAuthoriseException e) {
+      model.addAttribute("clientUri", e.getClientUri());
+      return "invalidRequest";
+    }
   }
 
   /**
@@ -75,8 +72,15 @@ public class AuthoriseController {
    * @return String
    */
   @RequestMapping(method = RequestMethod.POST, headers = "Content-Type=application/x-www-form-urlencoded;charset=utf-8")
-  public String proAuthorise(@Validated AuthorisationForm authorisationForm) {
-    URI redirectUri = this.proAuthoriseService.execute(authorisationForm);
-    return "redirect:" + redirectUri.toString();
+  public String proAuthorise(Model model, @Validated AuthorisationForm authorisationForm) {
+
+    try {
+      URI redirectUri = this.proAuthoriseService.execute(authorisationForm);
+      return "redirect:" + redirectUri.toString();
+
+    } catch (InvalidProAuthoriseException e) {
+      model.addAttribute("clientUri", authorisationForm.getClientUri());
+      return "invalidAuthorisation";
+    }
   }
 }

@@ -10,7 +10,6 @@ import tokyomap.oauth.domain.entities.redis.PreAuthoriseCache;
 import tokyomap.oauth.domain.logics.ClientLogic;
 import tokyomap.oauth.domain.logics.RedisLogic;
 import tokyomap.oauth.dtos.PreAuthoriseResponseDto;
-import tokyomap.oauth.utils.Logger;
 
 @Service
 public class PreAuthoriseService {
@@ -28,9 +27,10 @@ public class PreAuthoriseService {
    * validate the given preAuthoriseCache, and cache it if valid
    * @param preAuthoriseCache
    * @return PreAuthoriseResponseDto
+   * @exception throws Exception if request is invalid or something wrong takes place
    */
   @Transactional
-  public PreAuthoriseResponseDto execute(PreAuthoriseCache preAuthoriseCache) {
+  public PreAuthoriseResponseDto execute(PreAuthoriseCache preAuthoriseCache) throws InvalidPreAuthoriseException {
     ValidationResult validationResult = this.validateAuthorisationRequest(preAuthoriseCache);
     String requestId = this.cacheAuthorisationRequest(preAuthoriseCache);
     return new PreAuthoriseResponseDto(validationResult.getClient(), requestId, validationResult.getRequestedScope());
@@ -42,23 +42,26 @@ public class PreAuthoriseService {
    * @return ValidationResult
    */
   private ValidationResult validateAuthorisationRequest(PreAuthoriseCache preAuthoriseCache) {
+
     Client client = this.clientLogic.getClientByClientId(preAuthoriseCache.getClientId());
+
     if(client == null) {
-      throw new InvalidPreAuthoriseException("no matching client.");
+      // todo: make a logging aspect for Exceptions thrown
+      throw new InvalidPreAuthoriseException("No Matching Client", client.getClientUri());
     }
 
     if(client.getRedirectUris().indexOf(preAuthoriseCache.getRedirectUri()) == -1) {
-      throw new InvalidPreAuthoriseException("invalid redirect uri requested.");
+      throw new InvalidPreAuthoriseException("Invalid Redirect URI", client.getClientUri());
     }
 
     String[] requestedScopes = preAuthoriseCache.getScopes();
 
     if(!Arrays.asList(client.getScopes().split(" ")).containsAll(Arrays.asList(requestedScopes))) {
-      throw new InvalidPreAuthoriseException("invalid scopes requested.");
+      throw new InvalidPreAuthoriseException("Invalid Scopes Requested", client.getClientUri());
     }
 
     if(preAuthoriseCache.getNonce() == null) {
-      throw new InvalidPreAuthoriseException("no nonce is given.");
+      throw new InvalidPreAuthoriseException("No Nonce Given", client.getClientUri());
     }
 
     return new ValidationResult(client, requestedScopes);
