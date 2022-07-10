@@ -16,6 +16,8 @@ public class AuthorisationForm implements Serializable {
   @NotNull
   private String password;
 
+  private String clientUri;
+
   public AuthorisationForm() {
   }
 
@@ -42,4 +44,8 @@ public class AuthorisationForm implements Serializable {
   public void setPassword(String password) {
     this.password = password;
   }
+
+  public String getClientUri() { return clientUri; }
+
+  public void setClientUri(String clientUri) { this.clientUri = clientUri; }
 }

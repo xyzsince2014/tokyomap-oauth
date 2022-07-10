@@ -13,7 +13,7 @@
 <nav class="navbar navbar-inverse navbar-fixed-top">
   <div class="container">
     <div class="navbar-header">
-      <a class="navbar-brand" href="/">OAuth in Action: <span class="label label-danger">OAuth Authorization Server</span></a>
+      <a class="navbar-brand" href="/">Tokyomap: <span class="label label-danger">Authorization Server</span></a>
     </div>
   </div>
 </nav>
@@ -34,10 +34,13 @@
     <p>Client Registration Client Uri:&nbsp;<span th:text="${dto.client.registrationClientUri}"/></p>
     <form th:object="${authorisationForm}" th:action="@{/authorise}" method="POST" class="form" >
       <input type="hidden" name="requestId" th:value="${dto.requestId}">
+      <input type="hidden" name="clientUri" th:value="${dto.client.clientUri}"/>
+      <!-- todo: authentication should be done beforehand-->
       <input type="text" name="username" placeholder="username">
       <input type="password" name="password" placeholder="password">
-      <input type="submit" class="btn btn-success" value="Authenticate">
+      <input type="submit" class="btn btn-success" value="Authorise">
     </form>
+    <p><a th:href="${dto.client.clientUri}">Back</a></p>
   </section>
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>

@@ -16,7 +16,6 @@ import tokyomap.oauth.domain.logics.TokenLogic;
 import tokyomap.oauth.domain.logics.UsrLogic;
 import tokyomap.oauth.dtos.GenerateTokensResponseDto;
 import tokyomap.oauth.dtos.TokenValidationResultDto;
-import tokyomap.oauth.utils.Logger;
 
 @Service
 public class ProAuthoriseService {
@@ -24,14 +23,12 @@ public class ProAuthoriseService {
   private final RedisLogic redisLogic;
   private final TokenLogic tokenLogic;
   private final UsrLogic usrLogic;
-  private final Logger logger;
 
   @Autowired
-  public ProAuthoriseService(RedisLogic redisLogic, TokenLogic tokenLogic, UsrLogic usrLogic, Logger logger) {
+  public ProAuthoriseService(RedisLogic redisLogic, TokenLogic tokenLogic, UsrLogic usrLogic) {
     this.redisLogic = redisLogic;
     this.tokenLogic = tokenLogic;
     this.usrLogic = usrLogic;
-    this.logger = logger;
   }
 
   /**
@@ -39,7 +36,8 @@ public class ProAuthoriseService {
    * @param authorisationForm
    * @return redirectUri
    */
-  public URI execute(AuthorisationForm authorisationForm) {
+  @Transactional
+  public URI execute(AuthorisationForm authorisationForm) throws InvalidProAuthoriseException {
 
     AuthenticationResult authenticationResult = this.authenticate(authorisationForm);
 
@@ -54,7 +52,7 @@ public class ProAuthoriseService {
         return redirectUri;
       }
       default:
-        throw new InvalidProAuthoriseException("unsupported responseType.");
+        throw new InvalidProAuthoriseException("Invalid Response Type");
     }
   }
 
@@ -71,20 +69,20 @@ public class ProAuthoriseService {
 
     Usr usr = this.usrLogic.getUsrByName(username);
 
-    if (usr == null || usr.getPassword() == password) {
-      throw new InvalidProAuthoriseException("authentication failed.");
+    if (usr == null || !usr.getPassword().equals(password)) {
+      throw new InvalidProAuthoriseException("Invalid Username or Password");
     }
 
     PreAuthoriseCache preAuthoriseCache = this.redisLogic.getPreAuthoriseCache(requestId);
 
+    if (preAuthoriseCache == null) {
+      throw new InvalidProAuthoriseException("Invalid RequestId");
+    }
+
     String[] requestedScopes = preAuthoriseCache.getScopes();
 
     if(!Arrays.asList(usr.getScopes().split(" ")).containsAll(Arrays.asList(requestedScopes))) {
-      this.logger.log(
-          ProAuthoriseService.class.getName(),
-          "Arrays.asList(usr.getScopes().split(\" \")) = " + Arrays.asList(usr.getScopes().split(" ")) + ", Arrays.asList(requestedScopes) = " + Arrays.asList(requestedScopes)
-      );
-      throw new InvalidProAuthoriseException("invalid scope requested.");
+      throw new InvalidProAuthoriseException("Invalid Scopes Requested");
     }
 
     return new AuthenticationResult(usr, requestedScopes, preAuthoriseCache);
