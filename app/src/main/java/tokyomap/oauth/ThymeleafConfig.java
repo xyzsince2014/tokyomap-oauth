@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.thymeleaf.extras.springsecurity5.dialect.SpringSecurityDialect;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring5.view.ThymeleafViewResolver;
@@ -18,6 +19,11 @@ public class ThymeleafConfig {
   @Value("${thymeleaf.suffix}") private String suffix;
   @Value("${thymeleaf.encoding}") private String encoding;
   @Value("${thymeleaf.content_type}") private String contentType;
+
+  @Bean
+  public SpringSecurityDialect springSecurityDialect() {
+    return new SpringSecurityDialect();
+  }
 
   @Bean
   public SpringResourceTemplateResolver templateResolver() {

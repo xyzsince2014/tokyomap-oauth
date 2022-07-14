@@ -10,16 +10,9 @@ public class AuthorisationForm implements Serializable {
   @NotNull
   private String requestId;
 
-  @NotNull
-  private String username;
-
-  @NotNull
-  private String password;
-
   private String clientUri;
 
-  public AuthorisationForm() {
-  }
+  public AuthorisationForm() {}
 
   public String getRequestId() {
     return requestId;
@@ -27,22 +20,6 @@ public class AuthorisationForm implements Serializable {
 
   public void setRequestId(String requestId) {
     this.requestId = requestId;
-  }
-
-  public String getUsername() {
-    return username;
-  }
-
-  public void setUsername(String username) {
-    this.username = username;
-  }
-
-  public String getPassword() {
-    return password;
-  }
-
-  public void setPassword(String password) {
-    this.password = password;
   }
 
   public String getClientUri() { return clientUri; }

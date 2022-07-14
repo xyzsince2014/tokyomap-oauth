@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -14,7 +16,7 @@ import javax.persistence.Table;
 @Table(name = "t_usr")
 public class Usr implements Serializable {
 
-  private static final long serialVersionUID = 6550687434599143082L;
+  private static final long serialVersionUID = 3500988921393233705L;
 
   @Id
   @Column(name = "sub")
@@ -73,6 +75,9 @@ public class Usr implements Serializable {
 
   @Column(name = "scopes")
   private String scopes;
+
+  @Enumerated(EnumType.STRING)
+  private Role role;
 
   @Column(name = "created_at")
   private LocalDateTime createdAt;
@@ -234,6 +239,10 @@ public class Usr implements Serializable {
     this.scopes = scopes;
   }
 
+  public Role getRole() { return role; }
+
+  public void setRole(Role role) { this.role = role; }
+
   public LocalDateTime getCreatedAt() {
     return createdAt;
   }
@@ -248,30 +257,6 @@ public class Usr implements Serializable {
 
   public void setUpdatedAt(LocalDateTime updatedAt) {
     this.updatedAt = updatedAt;
-  }
-
-  public Map<String, Object> convertToMap() {
-    Map<String, Object> usrMap = new HashMap();
-    usrMap.put("sub", this.sub);
-    usrMap.put("name", this.name);
-    usrMap.put("familyName", this.familyName);
-    usrMap.put("givenName", this.givenName);
-    usrMap.put("middleName", this.middleName);
-    usrMap.put("nickname", this.nickname);
-    usrMap.put("preferredUsername", this.preferredUsername);
-    usrMap.put("profile", this.profile);
-    usrMap.put("picture", this.picture);
-    usrMap.put("website", this.website);
-    usrMap.put("zoneinfo", this.zoneinfo);
-    usrMap.put("locale", this.locale);
-    usrMap.put("password", this.password);
-    usrMap.put("email", this.email);
-    usrMap.put("emailVerified", this.emailVerified);
-    usrMap.put("address", this.address);
-    usrMap.put("phone", this.phone);
-    usrMap.put("phoneNumberVerified", this.phoneNumberVerified);
-    usrMap.put("scope", this.scopes);
-    return usrMap;
   }
 
   @Override

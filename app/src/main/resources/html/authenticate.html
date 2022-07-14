@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <title>Authenticate</title>
+</head>
+<body>
+  <section>
+    <h3>Authenticate</h3>
+    <p th:if="${param.error}">Error!</p>
+    <form th:action="@{/authenticate/pro}" method="POST">
+      <table>
+        <tr>
+          <td><input type="text" id="username" name="username" placeholder="username" /></td>
+        </tr>
+        <tr>
+          <td><input type="password" id="password" name="password" placeholder="password" /></td>
+        </tr>
+        <tr>
+          <td><button type="submit">Authenticate</button></td>
+        </tr>
+      </table>
+    </form>
+  </section>
+</body>
+</html>

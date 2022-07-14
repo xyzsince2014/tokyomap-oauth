@@ -3,6 +3,7 @@ package tokyomap.oauth.application.authorise;
 import java.net.URI;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
@@ -10,7 +11,9 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import tokyomap.oauth.domain.entities.postgres.Usr;
 import tokyomap.oauth.domain.entities.redis.PreAuthoriseCache;
+import tokyomap.oauth.domain.services.authenticate.ResourceOwnerDetails;
 import tokyomap.oauth.domain.services.authorise.InvalidPreAuthoriseException;
 import tokyomap.oauth.domain.services.authorise.InvalidProAuthoriseException;
 import tokyomap.oauth.domain.services.authorise.PreAuthoriseService;
@@ -44,6 +47,7 @@ public class AuthoriseController {
   @RequestMapping(method = RequestMethod.GET)
   public String preAuthorise(Model model, @RequestParam Map<String, String> queryParams) {
 
+    // todo: error handling
     PreAuthoriseCache preAuthoriseCache = new PreAuthoriseCache(
         queryParams.get("responseType"), queryParams.get("scopes").split(" "),
         queryParams.get("clientId"), queryParams.get("redirectUri"), queryParams.get("state"), queryParams.get("codeChallenge"),
@@ -75,7 +79,8 @@ public class AuthoriseController {
   public String proAuthorise(Model model, @Validated AuthorisationForm authorisationForm) {
 
     try {
-      URI redirectUri = this.proAuthoriseService.execute(authorisationForm);
+      Usr resourceOwner = ((ResourceOwnerDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getResourceOwner();
+      URI redirectUri = this.proAuthoriseService.execute(resourceOwner, authorisationForm);
       return "redirect:" + redirectUri.toString();
 
     } catch (InvalidProAuthoriseException e) {
