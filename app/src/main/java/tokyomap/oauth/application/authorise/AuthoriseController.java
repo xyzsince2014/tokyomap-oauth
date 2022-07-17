@@ -47,22 +47,24 @@ public class AuthoriseController {
   @RequestMapping(method = RequestMethod.GET)
   public String preAuthorise(Model model, @RequestParam Map<String, String> queryParams) {
 
-    // todo: error handling
-    PreAuthoriseCache preAuthoriseCache = new PreAuthoriseCache(
-        queryParams.get("responseType"), queryParams.get("scopes").split(" "),
-        queryParams.get("clientId"), queryParams.get("redirectUri"), queryParams.get("state"), queryParams.get("codeChallenge"),
-        queryParams.get("codeChallengeMethod"), queryParams.get("nonce")
-    );
-
-    // todo: use regex
-    if (preAuthoriseCache.getRedirectUri() == null || preAuthoriseCache.getRedirectUri().equals("")) {
-      return "error";
-    }
-
     try {
+      PreAuthoriseCache preAuthoriseCache = new PreAuthoriseCache(
+          queryParams.get("responseType"), queryParams.get("scopes").split(" "),
+          queryParams.get("clientId"), queryParams.get("redirectUri"), queryParams.get("state"), queryParams.get("codeChallenge"),
+          queryParams.get("codeChallengeMethod"), queryParams.get("nonce")
+      );
+
+      // todo: use regex
+      if (preAuthoriseCache.getRedirectUri() == null || preAuthoriseCache.getRedirectUri().equals("")) {
+        return "error";
+      }
+
       PreAuthoriseResponseDto responseDto = this.preAuthoriseService.execute(preAuthoriseCache);
       model.addAttribute("dto", responseDto);
       return "authorise"; // todo: separate authentication from authorisation, use WebSecurityConfigurerAdapter ?
+
+    } catch (NullPointerException e) {
+      return "error";
 
     } catch(InvalidPreAuthoriseException e) {
       model.addAttribute("clientUri", e.getClientUri());
