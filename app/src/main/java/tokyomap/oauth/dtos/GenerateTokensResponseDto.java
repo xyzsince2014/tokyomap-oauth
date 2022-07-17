@@ -2,7 +2,7 @@ package tokyomap.oauth.dtos;
 
 import java.io.Serializable;
 
-public class GenerateTokensResponseDto implements Serializable {
+public class GenerateTokensResponseDto extends ApiResponseDto implements Serializable {
 
   private static final long serialVersionUID = 8788792708297075355L;
 

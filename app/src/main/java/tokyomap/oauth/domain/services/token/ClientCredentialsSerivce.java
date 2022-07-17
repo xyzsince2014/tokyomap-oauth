@@ -11,19 +11,16 @@ import tokyomap.oauth.dtos.GenerateTokensRequestDto;
 import tokyomap.oauth.dtos.GenerateTokensResponseDto;
 import tokyomap.oauth.dtos.TokenValidationResultDto;
 import tokyomap.oauth.utils.Decorder;
-import tokyomap.oauth.utils.Logger;
 
 @Service
 public class ClientCredentialsSerivce extends TokenService<CredentialsDto> {
 
   private final TokenLogic tokenLogic;
-  private final Logger logger;
 
   @Autowired
-  public ClientCredentialsSerivce(ClientLogic clientLogic, Decorder decorder, TokenLogic tokenLogic, Logger logger) {
-    super(clientLogic, decorder, logger);
+  public ClientCredentialsSerivce(ClientLogic clientLogic, Decorder decorder, TokenLogic tokenLogic) {
+    super(clientLogic, decorder);
     this.tokenLogic = tokenLogic;
-    this.logger = logger;
   }
 
   /**
@@ -31,13 +28,13 @@ public class ClientCredentialsSerivce extends TokenService<CredentialsDto> {
    * @return TokenValidationResultDto
    */
   @Override
-  public TokenValidationResultDto<CredentialsDto> execValidation(GenerateTokensRequestDto requestDto, String authorization) {
+  public TokenValidationResultDto<CredentialsDto> execValidation(GenerateTokensRequestDto requestDto, String authorization) throws InvalidTokenRequestException {
 
     CredentialsDto credentialsDto = this.validateClient(requestDto, authorization);
     String[] requestedScopes = requestDto.getScopes();
 
     if (!Arrays.asList(credentialsDto.getScopes()).containsAll(Arrays.asList(requestedScopes))) {
-      throw new InvalidTokenRequestException("invalid scopes");
+      throw new InvalidTokenRequestException("Invalid Scopes");
     }
 
     return new TokenValidationResultDto(credentialsDto.getId(), credentialsDto);
@@ -50,25 +47,16 @@ public class ClientCredentialsSerivce extends TokenService<CredentialsDto> {
    */
   @Override
   @Transactional
-  public GenerateTokensResponseDto execute(TokenValidationResultDto<CredentialsDto> tokenValidationResultDto) {
+  public GenerateTokensResponseDto execute(TokenValidationResultDto<CredentialsDto> tokenValidationResultDto) throws Exception {
 
-    try {
-      // the Client Credentials Flow should not have a user it's on behalf of
-      GenerateTokensResponseDto responseDto = this.tokenLogic.generateTokens(
-          tokenValidationResultDto.getClientId(),
-          null, tokenValidationResultDto.getPayload().getScopes(),
-          false,
-          null
-      );
+    // the Client Credentials Flow should not have a user it's on behalf of
+    GenerateTokensResponseDto responseDto = this.tokenLogic.generateTokens(
+        tokenValidationResultDto.getClientId(),
+        null, tokenValidationResultDto.getPayload().getScopes(),
+        false,
+        null
+    );
 
-      if(responseDto == null) {
-        throw new InvalidTokenRequestException("failed to issue tokens");
-      }
-
-      return responseDto;
-
-    } catch (Exception e) {
-      throw new InvalidTokenRequestException(e.getMessage());
-    }
+    return responseDto;
   }
 }
