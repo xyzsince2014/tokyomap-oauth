@@ -1,4 +1,4 @@
-package tokyomap.oauth.application.token;
+package tokyomap.oauth.application.api.v1.token;
 
 import com.nimbusds.jwt.SignedJWT;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +18,7 @@ import tokyomap.oauth.dtos.GenerateTokensResponseDto;
 import tokyomap.oauth.dtos.TokenValidationResultDto;
 
 @RestController
-@RequestMapping("/token")
+@RequestMapping("/api/v1/token")
 public class TokenRestController {
 
   // todo: use constants
