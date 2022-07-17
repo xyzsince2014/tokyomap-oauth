@@ -18,7 +18,7 @@ import tokyomap.oauth.domain.services.authenticate.AuthenticateService;
 @Configuration
 @ComponentScan
 @EnableWebSecurity
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+public class WebSecurityConfig extends WebSecurityConfigurerAdapter { // todo: use SpringSecurity@5.7
 
   private final AuthenticateService authenticateService;
 
@@ -32,21 +32,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     return new BCryptPasswordEncoder();
   }
 
-  /**
-   * allow requests for static resources to ignore Spring Security filter
-   * @param web
-   * @throws Exception
-   */
-  @Override
-  public void configure(WebSecurity web) throws Exception {
-    web.ignoring().antMatchers("/css/**", "/img/**", "/js/**");
-  }
-
-  // todo: use constants
   @Override
   protected void configure(HttpSecurity http) throws Exception {
     http.authorizeRequests()
-        .antMatchers("/authenticate/pre").permitAll()
+        .antMatchers("/css/**", "/img/**", "/js/**").permitAll()
+        .antMatchers("/authenticate/**").not().authenticated()
         // todo: .antMatchers("/api/**").permitAll()
         .antMatchers("/introspect/**").permitAll()
         .antMatchers("/public-keys/**").permitAll()
@@ -60,10 +50,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         .loginProcessingUrl("/authenticate/pro")
         .usernameParameter("username")
         .passwordParameter("password")
-        .failureUrl("/authenticate/error"); // todo: fix
+        .failureUrl("/authenticate/pre?error=true");
 
     http.logout()
-        .logoutUrl("/logout")
+        .logoutUrl("/sign-out/pro")
         .deleteCookies("JSESSIONID");
 
     // todo: refine config
