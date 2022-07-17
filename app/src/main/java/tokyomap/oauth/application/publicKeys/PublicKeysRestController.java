@@ -1,4 +1,4 @@
-package tokyomap.oauth.application.publickeys;
+package tokyomap.oauth.application.publicKeys;
 
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;

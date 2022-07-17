@@ -1,6 +1,7 @@
 package tokyomap.oauth.domain.logics;
 
 import java.util.concurrent.TimeUnit;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import tokyomap.oauth.domain.entities.redis.PreAuthoriseCache;
@@ -14,6 +15,7 @@ public class RedisLogic {
   private final RedisTemplate<String, PreAuthoriseCache> preAuthoriseCacheRedisTemplate;
   private final RedisTemplate<String, ProAuthoriseCache> proAuthoriseCacheRedisTemplate;
 
+  @Autowired
   public RedisLogic(
       RedisTemplate<String, PreAuthoriseCache> preAuthoriseCacheRedisTemplate,
       RedisTemplate<String, ProAuthoriseCache> proAuthoriseCacheRedisTemplate

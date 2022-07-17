@@ -13,7 +13,6 @@ import tokyomap.oauth.domain.entities.redis.PreAuthoriseCache;
 import tokyomap.oauth.domain.entities.redis.ProAuthoriseCache;
 import tokyomap.oauth.domain.logics.RedisLogic;
 import tokyomap.oauth.domain.logics.TokenLogic;
-import tokyomap.oauth.domain.logics.UsrLogic;
 import tokyomap.oauth.dtos.GenerateTokensResponseDto;
 import tokyomap.oauth.dtos.TokenValidationResultDto;
 
@@ -22,24 +21,23 @@ public class ProAuthoriseService {
 
   private final RedisLogic redisLogic;
   private final TokenLogic tokenLogic;
-  private final UsrLogic usrLogic;
 
   @Autowired
-  public ProAuthoriseService(RedisLogic redisLogic, TokenLogic tokenLogic, UsrLogic usrLogic) {
+  public ProAuthoriseService(RedisLogic redisLogic, TokenLogic tokenLogic) {
     this.redisLogic = redisLogic;
     this.tokenLogic = tokenLogic;
-    this.usrLogic = usrLogic;
   }
 
   /**
    * execute authorisation for the authorisationForm given
+   * @param
    * @param authorisationForm
    * @return redirectUri
    */
   @Transactional
-  public URI execute(AuthorisationForm authorisationForm) throws InvalidProAuthoriseException {
+  public URI execute(Usr resourceOwner, AuthorisationForm authorisationForm) throws InvalidProAuthoriseException {
 
-    AuthenticationResult authenticationResult = this.authenticate(authorisationForm);
+    AuthenticationResult authenticationResult = this.authenticate(resourceOwner, authorisationForm);
 
     switch (authenticationResult.getAuthorisationRequest().getResponseType()) {
       case "AUTHORISATION_CODE": { // for the Authorisation Code Flow
@@ -61,17 +59,9 @@ public class ProAuthoriseService {
    * @param authorisationForm
    * @return AuthenticationResult
    */
-  private AuthenticationResult authenticate(AuthorisationForm authorisationForm) {
+  private AuthenticationResult authenticate(Usr resourceOwner, AuthorisationForm authorisationForm) {
 
-    String username = authorisationForm.getUsername();
-    String password = authorisationForm.getPassword();
     String requestId = authorisationForm.getRequestId();
-
-    Usr usr = this.usrLogic.getUsrByName(username);
-
-    if (usr == null || !usr.getPassword().equals(password)) {
-      throw new InvalidProAuthoriseException("Invalid Username or Password");
-    }
 
     PreAuthoriseCache preAuthoriseCache = this.redisLogic.getPreAuthoriseCache(requestId);
 
@@ -81,11 +71,11 @@ public class ProAuthoriseService {
 
     String[] requestedScopes = preAuthoriseCache.getScopes();
 
-    if(!Arrays.asList(usr.getScopes().split(" ")).containsAll(Arrays.asList(requestedScopes))) {
+    if(!Arrays.asList(resourceOwner.getScopes().split(" ")).containsAll(Arrays.asList(requestedScopes))) {
       throw new InvalidProAuthoriseException("Invalid Scopes Requested");
     }
 
-    return new AuthenticationResult(usr, requestedScopes, preAuthoriseCache);
+    return new AuthenticationResult(resourceOwner, requestedScopes, preAuthoriseCache);
   }
 
   /**
@@ -94,7 +84,7 @@ public class ProAuthoriseService {
    * @return redirectUri
    */
   private URI issueCode(AuthenticationResult authenticationResult) {
-    String sub = authenticationResult.getUsr().getSub();
+    String sub = authenticationResult.getResourceOwner().getSub();
     String[] requestedScopes = authenticationResult.getScopesRequested();
     PreAuthoriseCache preAuthoriseCache = authenticationResult.getAuthorisationRequest();
 
@@ -120,7 +110,7 @@ public class ProAuthoriseService {
    */
   private TokenValidationResultDto<ProAuthoriseCache> execValidation(AuthenticationResult authenticationResult) {
 
-    String sub = authenticationResult.getUsr().getSub();
+    String sub = authenticationResult.getResourceOwner().getSub();
     String[] requestedScopes = authenticationResult.getScopesRequested();
     PreAuthoriseCache preAuthoriseCache = authenticationResult.getAuthorisationRequest();
 
@@ -162,22 +152,22 @@ public class ProAuthoriseService {
   }
 
   private class AuthenticationResult {
-    private Usr usr;
+    private Usr resourceOwner;
     private String[] requestedScopes;
     private PreAuthoriseCache preAuthoriseCache;
 
-    AuthenticationResult(Usr usr, String[] requestedScopes, PreAuthoriseCache preAuthoriseCache) {
-      this.usr = usr;
+    AuthenticationResult(Usr resourceOwner, String[] requestedScopes, PreAuthoriseCache preAuthoriseCache) {
+      this.resourceOwner = resourceOwner;
       this.requestedScopes = requestedScopes;
       this.preAuthoriseCache = preAuthoriseCache;
     }
 
-    public Usr getUsr() {
-      return usr;
+    public Usr getResourceOwner() {
+      return resourceOwner;
     }
 
-    public void setUsr(Usr usr) {
-      this.usr = usr;
+    public void setResourceOwner(Usr resourceOwner) {
+      this.resourceOwner = resourceOwner;
     }
 
     public String[] getScopesRequested() {

@@ -6,6 +6,7 @@ import javax.servlet.ServletRegistration.Dynamic;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
+import org.springframework.web.filter.DelegatingFilterProxy;
 import org.springframework.web.filter.HiddenHttpMethodFilter;
 import org.springframework.web.servlet.DispatcherServlet;
 
@@ -23,6 +24,7 @@ public class OAuthApplicationInitializer implements WebApplicationInitializer {
     // todo: webApplicationContext should have business logics only, e.g. services, repositories, ORMs and data sources
     AnnotationConfigWebApplicationContext webApplicationContext = new AnnotationConfigWebApplicationContext();
     webApplicationContext.setConfigLocations(PostgresJpaConfig.class.getName());
+    webApplicationContext.setConfigLocation(WebSecurityConfig.class.getName());
     webApplicationContext.setConfigLocation(ThymeleafConfig.class.getName());
     webApplicationContext.setConfigLocation(WebMvcConfig.class.getName());
     webApplicationContext.registerShutdownHook();
@@ -36,6 +38,7 @@ public class OAuthApplicationInitializer implements WebApplicationInitializer {
     // todo: dispatcherServlet.setAsyncSupported(true);
     dispatcherServlet.addMapping("/");
 
+    servletContext.addFilter("springSecurityFilterChain", new DelegatingFilterProxy()).addMappingForUrlPatterns(null, true,"/*");
     servletContext.addFilter("hiddenHttpMethodFilter", new HiddenHttpMethodFilter()).addMappingForUrlPatterns(null, true, "/*");
   }
 }

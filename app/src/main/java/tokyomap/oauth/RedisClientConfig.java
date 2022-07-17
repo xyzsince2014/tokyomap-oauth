@@ -9,8 +9,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
-import tokyomap.oauth.domain.entities.redis.ProAuthoriseCache;
 import tokyomap.oauth.domain.entities.redis.PreAuthoriseCache;
+import tokyomap.oauth.domain.entities.redis.ProAuthoriseCache;
 
 @Configuration
 @PropertySource("classpath:conf/redisClient.properties")
@@ -34,13 +34,14 @@ public class RedisClientConfig {
     return redisTemplate;
   }
 
+  // todo: use cacheManagers, cf. https://jappy.hatenablog.com/entry/2017/08/11/100701
   /**
    * the RedisTemplate<String, PreAuthoriseCache> bean with Jackson2JsonRedisSerializer
    * @param jedisConnectionFactory
    * @return redisTemplate
    */
   @Bean
-  public RedisTemplate<String, PreAuthoriseCache> authReqParamsRedisTemplate(JedisConnectionFactory jedisConnectionFactory) {
+  public RedisTemplate<String, PreAuthoriseCache> preAuthoriseCacheRedisTemplate(JedisConnectionFactory jedisConnectionFactory) {
     RedisTemplate<String, PreAuthoriseCache> redisTemplate = new RedisTemplate();
     redisTemplate.setConnectionFactory(jedisConnectionFactory);
     redisTemplate.setKeySerializer(new StringRedisSerializer());
@@ -54,7 +55,7 @@ public class RedisClientConfig {
    * @return redisTemplate
    */
   @Bean
-  public RedisTemplate<String, ProAuthoriseCache> authCodeRedisTemplate(JedisConnectionFactory jedisConnectionFactory) {
+  public RedisTemplate<String, ProAuthoriseCache> proAuthoriseCacheRedisTemplate(JedisConnectionFactory jedisConnectionFactory) {
     RedisTemplate<String, ProAuthoriseCache> redisTemplate = new RedisTemplate();
     redisTemplate.setConnectionFactory(jedisConnectionFactory);
     redisTemplate.setKeySerializer(new StringRedisSerializer());
