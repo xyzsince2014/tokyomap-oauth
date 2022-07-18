@@ -21,6 +21,13 @@ import tokyomap.oauth.utils.Decorder;
 @Service
 public class AuthorisationCodeFlowSerivice extends TokenService<ProAuthoriseCache> {
 
+  // todo: use constants
+  private static final String CODE_CHALLENGE_METHOD = "SHA256";
+  private static final String ERROR_MESSAGE_INVALID_CODE = "Invalid Authorisation Code";
+  private static final String ERROR_MESSAGE_INVALID_CLIENT_ID = "Invalid Client Id";
+  private static final String ERROR_MESSAGE_INVALID_CHALLENGE = "Invalid Code Challenge";
+  private static final String ERROR_MESSAGE_NO_MATCHING_USER = "No Matching User";
+
   private final RedisLogic redisLogic;
   private final TokenLogic tokenLogic;
   private final UsrLogic usrLogic;
@@ -45,20 +52,20 @@ public class AuthorisationCodeFlowSerivice extends TokenService<ProAuthoriseCach
     ProAuthoriseCache proAuthoriseCache = this.redisLogic.getProAuthoriseCache(requestDto.getCode());
 
     if (proAuthoriseCache == null) {
-      throw new InvalidTokenRequestException("Invalid Authorisation Code");
+      throw new InvalidTokenRequestException(ERROR_MESSAGE_INVALID_CODE);
     }
 
     if (!credentialsDto.getId().equals(proAuthoriseCache.getPreAuthoriseCache().getClientId())) {
-      throw new InvalidTokenRequestException("Invalid Client Id");
+      throw new InvalidTokenRequestException(ERROR_MESSAGE_INVALID_CLIENT_ID);
     }
 
     /* *** check PKCE values, cf. https://auth0.com/docs/authorization/flows/authorization-code-flow-with-proof-key-for-code-exchange-pkce *** */
     if (proAuthoriseCache.getPreAuthoriseCache().getCodeChallenge() == null) {
-      throw new InvalidTokenRequestException("Invalid Code Challenge");
+      throw new InvalidTokenRequestException(ERROR_MESSAGE_INVALID_CHALLENGE);
     }
 
     String codeChallengeMethod = proAuthoriseCache.getPreAuthoriseCache().getCodeChallengeMethod();
-    if (!codeChallengeMethod.equals("SHA256")) {
+    if (!codeChallengeMethod.equals(CODE_CHALLENGE_METHOD)) {
       throw new InvalidTokenRequestException("Invalid Code Challenge Method");
     }
 
@@ -68,7 +75,7 @@ public class AuthorisationCodeFlowSerivice extends TokenService<ProAuthoriseCach
     String codeChallenge = Base64URL.encode(md.digest()).toString();
 
     if (!proAuthoriseCache.getPreAuthoriseCache().getCodeChallenge().equals(codeChallenge)) {
-      throw new InvalidTokenRequestException("Invalid Code Challenge");
+      throw new InvalidTokenRequestException(ERROR_MESSAGE_INVALID_CHALLENGE);
     }
 
     return new TokenValidationResultDto(credentialsDto.getId(), proAuthoriseCache);
@@ -85,7 +92,7 @@ public class AuthorisationCodeFlowSerivice extends TokenService<ProAuthoriseCach
 
     Usr usr = this.usrLogic.getUsrBySub(tokenValidationResultDto.getPayload().getSub());
     if(usr == null) {
-      throw new InvalidTokenRequestException("No Matching User");
+      throw new InvalidTokenRequestException(ERROR_MESSAGE_NO_MATCHING_USER);
     }
 
     GenerateTokensResponseDto responseDto = this.tokenLogic.generateTokens(

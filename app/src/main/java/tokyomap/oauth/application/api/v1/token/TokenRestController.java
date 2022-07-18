@@ -22,6 +22,7 @@ import tokyomap.oauth.dtos.TokenValidationResultDto;
 public class TokenRestController {
 
   // todo: use constants
+  private static final int ERROR_CODE_SUCCESS = 0;
   private static final int ERROR_CODE_INVALID_REQUEST = 9000;
   private static final int ERROR_CODE_SERVER_ERROR = 9001;
   private static final String ERROR_MESSAGE_SERVER_ERROR = "Server Error";
@@ -49,16 +50,19 @@ public class TokenRestController {
         case "AUTHORISATION_CODE": { // todo: use a Constant
           TokenValidationResultDto<ProAuthoriseCache> tokenValidationResultDto = this.authorisationCodeFlowSerivce.execValidation(requestDto, authorization);
           GenerateTokensResponseDto responseDto = this.authorisationCodeFlowSerivce.execute(tokenValidationResultDto);
+          responseDto.setErrorCode(ERROR_CODE_SUCCESS);
           return responseDto;
         }
         case "REFRESH_TOKEN": { // todo: use a Constant
           TokenValidationResultDto<SignedJWT> tokenValidationResultDto = this.refreshTokenService.execValidation(requestDto, authorization);
           GenerateTokensResponseDto responseDto = this.refreshTokenService.execute(tokenValidationResultDto);
+          responseDto.setErrorCode(ERROR_CODE_SUCCESS);
           return responseDto;
         }
         case "CLIENT_CREDENTIALS": { // todo: use a Constant
           TokenValidationResultDto<CredentialsDto> tokenValidationResultDto = this.clientCredentialsSerivce.execValidation(requestDto, authorization);
           GenerateTokensResponseDto responseDto = this.clientCredentialsSerivce.execute(tokenValidationResultDto);
+          responseDto.setErrorCode(ERROR_CODE_SUCCESS);
           return responseDto;
         }
         default: {
@@ -67,11 +71,9 @@ public class TokenRestController {
       }
 
     } catch (InvalidTokenRequestException e) {
-      // todo: return with Http Status Code = 400
       return new ApiResponseDto(ERROR_CODE_INVALID_REQUEST, e.getErrorMessage());
 
     } catch (Exception e) {
-      // todo: return with Http Status Code = 400
       return new ApiResponseDto(ERROR_CODE_SERVER_ERROR, ERROR_MESSAGE_SERVER_ERROR);
     }
   }
