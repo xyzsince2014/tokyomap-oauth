@@ -12,6 +12,10 @@ public class GenerateTokensResponseDto extends ApiResponseDto implements Seriali
   private String idToken;
   private String scopes;
 
+  public GenerateTokensResponseDto(String errorMessage) {
+    super(errorMessage);
+  }
+
   public GenerateTokensResponseDto(String tokenType, String accessToken, String refreshToken, String idToken, String scopes) {
     this.tokenType = tokenType;
     this.accessToken = accessToken;

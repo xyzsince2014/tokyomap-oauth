@@ -2,10 +2,12 @@ package tokyomap.oauth.domain.services.token;
 
 import java.util.Arrays;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tokyomap.oauth.domain.logics.ClientLogic;
 import tokyomap.oauth.domain.logics.TokenLogic;
+import tokyomap.oauth.domain.services.ApiException;
 import tokyomap.oauth.dtos.CredentialsDto;
 import tokyomap.oauth.dtos.GenerateTokensRequestDto;
 import tokyomap.oauth.dtos.GenerateTokensResponseDto;
@@ -14,6 +16,9 @@ import tokyomap.oauth.utils.Decorder;
 
 @Service
 public class ClientCredentialsSerivce extends TokenService<CredentialsDto> {
+
+  // todo: use global constants
+  private static final String ERROR_MESSAGE_INVALID_SCOPES = "Invalid Scopes";
 
   private final TokenLogic tokenLogic;
 
@@ -28,13 +33,13 @@ public class ClientCredentialsSerivce extends TokenService<CredentialsDto> {
    * @return TokenValidationResultDto
    */
   @Override
-  public TokenValidationResultDto<CredentialsDto> execValidation(GenerateTokensRequestDto requestDto, String authorization) throws InvalidTokenRequestException {
+  public TokenValidationResultDto<CredentialsDto> execValidation(GenerateTokensRequestDto requestDto, String authorization) throws ApiException {
 
     CredentialsDto credentialsDto = this.validateClient(requestDto, authorization);
     String[] requestedScopes = requestDto.getScopes();
 
     if (!Arrays.asList(credentialsDto.getScopes()).containsAll(Arrays.asList(requestedScopes))) {
-      throw new InvalidTokenRequestException("Invalid Scopes");
+      throw new ApiException(HttpStatus.BAD_REQUEST, ERROR_MESSAGE_INVALID_SCOPES);
     }
 
     return new TokenValidationResultDto(credentialsDto.getId(), credentialsDto);

@@ -41,7 +41,7 @@ public class TokenScrutiny {
    * @param incomingToken
    * @return SignedJWT
    */
-  public SignedJWT execute(CredentialsDto credentialsDto, String incomingToken) {
+  public SignedJWT execute(CredentialsDto credentialsDto, String incomingToken) throws TokenScrutinyFailureException {
 
     try {
       SignedJWT signedJWT = SignedJWT.parse(incomingToken);
@@ -88,7 +88,7 @@ public class TokenScrutiny {
    * @param incomingToken
    * @return
    */
-  public SignedJWT execute(String incomingToken) {
+  public SignedJWT execute(String incomingToken) throws TokenScrutinyFailureException {
     try {
       SignedJWT signedJWT = SignedJWT.parse(incomingToken);
       this.checkJWSHeader(signedJWT);
@@ -113,7 +113,7 @@ public class TokenScrutiny {
    * check the JWS header of the given signedJWT
    * @param signedJWT
    */
-  private void checkJWSHeader(SignedJWT signedJWT) {
+  private void checkJWSHeader(SignedJWT signedJWT) throws TokenScrutinyFailureException {
     JWSHeader jwsHeader = signedJWT.getHeader();
 
     if (!jwsHeader.getType().equals(JOSEObjectType.JWT)) {

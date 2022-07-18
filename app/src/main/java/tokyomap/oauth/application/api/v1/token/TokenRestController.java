@@ -2,16 +2,17 @@ package tokyomap.oauth.application.api.v1.token;
 
 import com.nimbusds.jwt.SignedJWT;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import tokyomap.oauth.domain.entities.redis.ProAuthoriseCache;
+import tokyomap.oauth.domain.services.ApiException;
 import tokyomap.oauth.domain.services.token.AuthorisationCodeFlowSerivice;
 import tokyomap.oauth.domain.services.token.ClientCredentialsSerivce;
-import tokyomap.oauth.domain.services.token.InvalidTokenRequestException;
 import tokyomap.oauth.domain.services.token.RefreshTokenService;
-import tokyomap.oauth.dtos.ApiResponseDto;
 import tokyomap.oauth.dtos.CredentialsDto;
 import tokyomap.oauth.dtos.GenerateTokensRequestDto;
 import tokyomap.oauth.dtos.GenerateTokensResponseDto;
@@ -21,11 +22,11 @@ import tokyomap.oauth.dtos.TokenValidationResultDto;
 @RequestMapping("/api/v1/token")
 public class TokenRestController {
 
-  // todo: use constants
-  private static final int ERROR_CODE_SUCCESS = 0;
-  private static final int ERROR_CODE_INVALID_REQUEST = 9000;
-  private static final int ERROR_CODE_SERVER_ERROR = 9001;
-  private static final String ERROR_MESSAGE_SERVER_ERROR = "Server Error";
+  // todo: use global constants
+  private static final String GRANT_TYPE_AUTHORISATION_CODE = "AUTHORISATION_CODE";
+  private static final String GRANT_TYPE_REFRESH_TOKEN = "REFRESH_TOKEN";
+  private static final String GRANT_TYPE_CLIENT_CREDENTIALS = "CLIENT_CREDENTIALS";
+  private static final String ERROR_MESSAGE_INVALID_GRANT_TYPE = "Invalid Grant Type";
 
   private final AuthorisationCodeFlowSerivice authorisationCodeFlowSerivce;
   private final RefreshTokenService refreshTokenService;
@@ -43,38 +44,37 @@ public class TokenRestController {
   }
 
   @RequestMapping(method = RequestMethod.POST, headers = "Content-Type=application/x-www-form-urlencoded;charset=utf-8")
-  public ApiResponseDto generateTokens(GenerateTokensRequestDto requestDto, @RequestHeader("Authorization") String authorization) {
+  public ResponseEntity<GenerateTokensResponseDto> generateTokens(GenerateTokensRequestDto requestDto, @RequestHeader("Authorization") String authorization) {
 
     try {
       switch (requestDto.getGrantType()) {
-        case "AUTHORISATION_CODE": { // todo: use a Constant
+        case GRANT_TYPE_AUTHORISATION_CODE: {
           TokenValidationResultDto<ProAuthoriseCache> tokenValidationResultDto = this.authorisationCodeFlowSerivce.execValidation(requestDto, authorization);
           GenerateTokensResponseDto responseDto = this.authorisationCodeFlowSerivce.execute(tokenValidationResultDto);
-          responseDto.setErrorCode(ERROR_CODE_SUCCESS);
-          return responseDto;
+          return ResponseEntity.status(HttpStatus.OK).body(responseDto);
         }
-        case "REFRESH_TOKEN": { // todo: use a Constant
+        case GRANT_TYPE_REFRESH_TOKEN: {
           TokenValidationResultDto<SignedJWT> tokenValidationResultDto = this.refreshTokenService.execValidation(requestDto, authorization);
           GenerateTokensResponseDto responseDto = this.refreshTokenService.execute(tokenValidationResultDto);
-          responseDto.setErrorCode(ERROR_CODE_SUCCESS);
-          return responseDto;
+          return ResponseEntity.status(HttpStatus.OK).body(responseDto);
         }
-        case "CLIENT_CREDENTIALS": { // todo: use a Constant
+        case GRANT_TYPE_CLIENT_CREDENTIALS: {
           TokenValidationResultDto<CredentialsDto> tokenValidationResultDto = this.clientCredentialsSerivce.execValidation(requestDto, authorization);
           GenerateTokensResponseDto responseDto = this.clientCredentialsSerivce.execute(tokenValidationResultDto);
-          responseDto.setErrorCode(ERROR_CODE_SUCCESS);
-          return responseDto;
+          return ResponseEntity.status(HttpStatus.OK).body(responseDto);
         }
         default: {
-          throw new InvalidTokenRequestException("Invalid Response Type");
+          GenerateTokensResponseDto responseDto = new GenerateTokensResponseDto(ERROR_MESSAGE_INVALID_GRANT_TYPE);
+          return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseDto);
         }
       }
 
-    } catch (InvalidTokenRequestException e) {
-      return new ApiResponseDto(ERROR_CODE_INVALID_REQUEST, e.getErrorMessage());
+    } catch (ApiException e) {
+      GenerateTokensResponseDto responseDto = new GenerateTokensResponseDto(e.getErrorMessage());
+      return ResponseEntity.status(e.getStatusCode()).body(responseDto);
 
     } catch (Exception e) {
-      return new ApiResponseDto(ERROR_CODE_SERVER_ERROR, ERROR_MESSAGE_SERVER_ERROR);
+      return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }

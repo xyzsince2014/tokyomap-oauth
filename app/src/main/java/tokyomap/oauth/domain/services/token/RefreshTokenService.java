@@ -2,6 +2,7 @@ package tokyomap.oauth.domain.services.token;
 
 import com.nimbusds.jwt.SignedJWT;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tokyomap.oauth.domain.entities.postgres.RefreshToken;
@@ -9,16 +10,20 @@ import tokyomap.oauth.domain.entities.postgres.Usr;
 import tokyomap.oauth.domain.logics.ClientLogic;
 import tokyomap.oauth.domain.logics.TokenLogic;
 import tokyomap.oauth.domain.logics.UsrLogic;
+import tokyomap.oauth.domain.services.ApiException;
 import tokyomap.oauth.domain.services.common.TokenScrutiny;
 import tokyomap.oauth.dtos.CredentialsDto;
 import tokyomap.oauth.dtos.GenerateTokensRequestDto;
 import tokyomap.oauth.dtos.GenerateTokensResponseDto;
 import tokyomap.oauth.dtos.TokenValidationResultDto;
 import tokyomap.oauth.utils.Decorder;
-import tokyomap.oauth.utils.Logger;
 
 @Service
 public class RefreshTokenService extends TokenService<SignedJWT> {
+
+  // todo: use global constants
+  private static final String ERROR_MESSAGE_NO_MATCHING_REFRESH_TOKEN = "No Matching RefreshToken";
+  private static final String ERROR_MESSAGE_NO_MATCHING_USER = "No Matching User";
 
   private final TokenScrutiny tokenScrutiny;
   private final TokenLogic tokenLogic;
@@ -37,7 +42,7 @@ public class RefreshTokenService extends TokenService<SignedJWT> {
    * @return TokenValidationResultDto
    */
   @Override
-  public TokenValidationResultDto<SignedJWT> execValidation(GenerateTokensRequestDto requestDto, String authorization) throws InvalidTokenRequestException {
+  public TokenValidationResultDto<SignedJWT> execValidation(GenerateTokensRequestDto requestDto, String authorization) throws ApiException {
 
     CredentialsDto credentialsDto = this.validateClient(requestDto, authorization);
     String incomingToken = requestDto.getRefreshToken();
@@ -46,7 +51,7 @@ public class RefreshTokenService extends TokenService<SignedJWT> {
 
     RefreshToken refreshToken = this.tokenLogic.getRefreshToken(incomingToken);
     if(refreshToken == null) {
-      throw new InvalidTokenRequestException("No Matching RefreshToken");
+      throw new ApiException(HttpStatus.BAD_REQUEST, ERROR_MESSAGE_NO_MATCHING_REFRESH_TOKEN);
     }
 
     return new TokenValidationResultDto(credentialsDto.getId(), refreshJWT);
@@ -63,7 +68,7 @@ public class RefreshTokenService extends TokenService<SignedJWT> {
 
     Usr usr = this.usrLogic.getUsrBySub(tokenValidationResultDto.getPayload().getJWTClaimsSet().getSubject());
     if(usr == null) {
-      throw new InvalidTokenRequestException("No Matching User");
+      throw new ApiException(HttpStatus.BAD_REQUEST, ERROR_MESSAGE_NO_MATCHING_USER);
     }
 
     String clientId = tokenValidationResultDto.getPayload().getJWTClaimsSet().getStringClaim("clientId");

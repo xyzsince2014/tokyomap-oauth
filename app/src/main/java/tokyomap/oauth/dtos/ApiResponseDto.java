@@ -5,28 +5,15 @@ import org.springframework.lang.Nullable;
 
 public class ApiResponseDto implements Serializable {
 
-  private static final long serialVersionUID = 6618686241435069855L;
-
-  @Nullable
-  private int errorCode;
+  private static final long serialVersionUID = -614256360571915173L;
 
   @Nullable
   private String errorMessage;
 
   public ApiResponseDto() {}
 
-  public ApiResponseDto(int errorCode, String errorMessage) {
-    this.errorCode =errorCode;
+  public ApiResponseDto(String errorMessage) {
     this.errorMessage = errorMessage;
-  }
-
-  @Nullable
-  public int getErrorCode() {
-    return errorCode;
-  }
-
-  public void setErrorCode(@Nullable int errorCode) {
-    this.errorCode = errorCode;
   }
 
   @Nullable
