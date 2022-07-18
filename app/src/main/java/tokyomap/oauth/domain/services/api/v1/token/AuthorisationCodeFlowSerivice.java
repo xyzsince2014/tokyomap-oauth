@@ -1,4 +1,4 @@
-package tokyomap.oauth.domain.services.token;
+package tokyomap.oauth.domain.services.api.v1.token;
 
 import com.nimbusds.jose.util.Base64URL;
 import java.security.MessageDigest;
@@ -13,7 +13,7 @@ import tokyomap.oauth.domain.logics.ClientLogic;
 import tokyomap.oauth.domain.logics.RedisLogic;
 import tokyomap.oauth.domain.logics.TokenLogic;
 import tokyomap.oauth.domain.logics.UsrLogic;
-import tokyomap.oauth.domain.services.ApiException;
+import tokyomap.oauth.domain.services.api.v1.ApiException;
 import tokyomap.oauth.dtos.CredentialsDto;
 import tokyomap.oauth.dtos.GenerateTokensRequestDto;
 import tokyomap.oauth.dtos.GenerateTokensResponseDto;

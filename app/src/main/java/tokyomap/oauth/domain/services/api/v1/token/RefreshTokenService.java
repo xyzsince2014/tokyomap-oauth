@@ -1,4 +1,4 @@
-package tokyomap.oauth.domain.services.token;
+package tokyomap.oauth.domain.services.api.v1.token;
 
 import com.nimbusds.jwt.SignedJWT;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +10,7 @@ import tokyomap.oauth.domain.entities.postgres.Usr;
 import tokyomap.oauth.domain.logics.ClientLogic;
 import tokyomap.oauth.domain.logics.TokenLogic;
 import tokyomap.oauth.domain.logics.UsrLogic;
-import tokyomap.oauth.domain.services.ApiException;
+import tokyomap.oauth.domain.services.api.v1.ApiException;
 import tokyomap.oauth.domain.services.common.TokenScrutiny;
 import tokyomap.oauth.dtos.CredentialsDto;
 import tokyomap.oauth.dtos.GenerateTokensRequestDto;

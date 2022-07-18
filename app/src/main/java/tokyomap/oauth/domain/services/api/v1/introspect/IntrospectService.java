@@ -1,4 +1,4 @@
-package tokyomap.oauth.domain.services.introspect;
+package tokyomap.oauth.domain.services.api.v1.introspect;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -7,7 +7,7 @@ import tokyomap.oauth.domain.entities.postgres.AccessToken;
 import tokyomap.oauth.domain.entities.postgres.Resource;
 import tokyomap.oauth.domain.logics.ResourceLogic;
 import tokyomap.oauth.domain.logics.TokenLogic;
-import tokyomap.oauth.domain.services.ApiException;
+import tokyomap.oauth.domain.services.api.v1.ApiException;
 import tokyomap.oauth.domain.services.common.TokenScrutiny;
 import tokyomap.oauth.dtos.CredentialsDto;
 import tokyomap.oauth.utils.Decorder;

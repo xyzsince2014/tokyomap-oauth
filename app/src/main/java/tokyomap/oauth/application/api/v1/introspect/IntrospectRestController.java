@@ -1,4 +1,4 @@
-package tokyomap.oauth.application.introspect;
+package tokyomap.oauth.application.api.v1.introspect;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -7,13 +7,13 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import tokyomap.oauth.domain.services.introspect.IntrospectService;
-import tokyomap.oauth.domain.services.ApiException;
+import tokyomap.oauth.domain.services.api.v1.introspect.IntrospectService;
+import tokyomap.oauth.domain.services.api.v1.ApiException;
 import tokyomap.oauth.dtos.IntrospectResponseDto;
 import tokyomap.oauth.dtos.RequestIntrospectDto;
 
 @RestController
-@RequestMapping("/introspect")
+@RequestMapping("/api/v1/introspect")
 public class IntrospectRestController {
 
   private final IntrospectService introspectService;

@@ -1,4 +1,4 @@
-package tokyomap.oauth.domain.services;
+package tokyomap.oauth.domain.services.api.v1;
 
 import org.springframework.http.HttpStatus;
 
