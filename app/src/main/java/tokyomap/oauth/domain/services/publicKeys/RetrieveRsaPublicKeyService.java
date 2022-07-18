@@ -25,7 +25,7 @@ public class RetrieveRsaPublicKeyService {
    * @param kid
    * @return the PEM encoded public key
    */
-  public String execute(String kid) {
+  public String execute(String kid) throws Exception {
     RSAPublicKey rsaPublicKey = this.tokenLogic.getRsaPublicKeyByKid(kid);
     byte[] encoded = encodeder.encode(rsaPublicKey.getEncoded());
 
