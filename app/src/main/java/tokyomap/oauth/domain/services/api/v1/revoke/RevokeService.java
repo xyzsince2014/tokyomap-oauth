@@ -1,4 +1,4 @@
-package tokyomap.oauth.domain.services.revoke;
+package tokyomap.oauth.domain.services.api.v1.revoke;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

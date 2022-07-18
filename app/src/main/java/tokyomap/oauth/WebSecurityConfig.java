@@ -38,7 +38,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter { // todo: u
         .antMatchers("/authenticate/**").not().authenticated()
         .antMatchers("/api/**").permitAll()
         .antMatchers("/register/**").permitAll()
-        .antMatchers("/revoke/**").permitAll()
         .anyRequest().authenticated();
 
     http.formLogin()
