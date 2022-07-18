@@ -1,4 +1,4 @@
-package tokyomap.oauth.application.publicKeys;
+package tokyomap.oauth.application.api.v1.publicKeys;
 
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,11 +8,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import tokyomap.oauth.domain.services.publicKeys.RetrieveRsaPublicKeyService;
+import tokyomap.oauth.domain.services.api.v1.publicKeys.RetrieveRsaPublicKeyService;
 import tokyomap.oauth.dtos.RetrieveRsaPublicKeyResponseDto;
 
 @RestController
-@RequestMapping("/public-keys")
+@RequestMapping("/api/v1/public-keys")
 public class PublicKeysRestController {
 
   private final RetrieveRsaPublicKeyService retrieveRsaPublicKeyService;

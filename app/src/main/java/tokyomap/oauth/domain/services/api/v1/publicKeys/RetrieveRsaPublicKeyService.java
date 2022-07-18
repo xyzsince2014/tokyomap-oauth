@@ -1,4 +1,4 @@
-package tokyomap.oauth.domain.services.publicKeys;
+package tokyomap.oauth.domain.services.api.v1.publicKeys;
 
 import java.security.interfaces.RSAPublicKey;
 import java.util.Base64;
