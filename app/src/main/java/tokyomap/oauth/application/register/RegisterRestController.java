@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 import tokyomap.oauth.domain.entities.postgres.Client;
 import tokyomap.oauth.domain.services.api.v1.ApiException;
 import tokyomap.oauth.domain.services.register.CheckRegistrationAccessTokenService;
@@ -55,10 +54,18 @@ public class RegisterRestController {
    * @return ReadClientResponseDto
    */
   @RequestMapping(path = "/{clientId}", method = RequestMethod.GET, headers = "Accept=application/json")
-  public ReadClientResponseDto readClient(@PathVariable String clientId, @RequestHeader("Authorization") String authorization) {
-    ResponseClientDto responseClientDto = this.checkAccessTokenRegistration(clientId, authorization, RequestMethod.GET);
-    return new ReadClientResponseDto(responseClientDto);
-  }
+  public ResponseEntity<ReadClientResponseDto> readClient(@PathVariable String clientId, @RequestHeader("Authorization") String authorization) {
+    try {
+      ResponseClientDto responseClientDto = this.checkAccessTokenRegistration(clientId, authorization);
+      return ResponseEntity.status(HttpStatus.OK).body(new ReadClientResponseDto(responseClientDto));
+
+    } catch (ApiException e) {
+      return ResponseEntity.status(e.getStatusCode()).body(new ReadClientResponseDto(e.getErrorMessage()));
+
+    } catch (Exception e) {
+      return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+}
 
   /**
    * update the registered client
@@ -67,37 +74,41 @@ public class RegisterRestController {
    * @param requestDto
    * @return UpdateClientResponseDto
    */
-  @RequestMapping(
-      path = "/{clientId}",
-      method = RequestMethod.PUT,
-      headers = {"Accept=application/json", "Content-Type=application/json"}
-  )
-  public UpdateClientResponseDto updateClient(
+  @RequestMapping(path = "/{clientId}", method = RequestMethod.PUT, headers = {"Accept=application/json", "Content-Type=application/json"})
+  public ResponseEntity<UpdateClientResponseDto> updateClient(
       @PathVariable String clientId,
       @RequestHeader("Authorization") String authorization,
       @RequestBody UpdateClientRequestDto requestDto
   ) {
-    ResponseClientDto responseClientDto = this.checkAccessTokenRegistration(clientId, authorization, RequestMethod.PUT);
+    try {
+      ResponseClientDto responseClientDto = this.checkAccessTokenRegistration(clientId, authorization);
 
-    ClientValidationResultDto validationResultDto = this.updateClientService.execValidation(requestDto.getClient());
-    String clientNameToUpdate = this.updateClientService.execAdditionalValidation(requestDto.getClient(), responseClientDto);
-    Client clientUpdated = this.updateClientService.execute(clientNameToUpdate, validationResultDto, responseClientDto);
+      ClientValidationResultDto validationResultDto = this.updateClientService.execValidation(requestDto.getClient());
+      String clientNameToUpdate = this.updateClientService.execAdditionalValidation(requestDto.getClient(), responseClientDto);
+      Client clientUpdated = this.updateClientService.execute(clientNameToUpdate, validationResultDto, responseClientDto);
 
-    responseClientDto.setClientId(clientUpdated.getClientId());
-    responseClientDto.setClientSecret(clientUpdated.getClientSecret());
-    responseClientDto.setClientName(clientUpdated.getClientName());
-    responseClientDto.setClientUri(clientUpdated.getClientUri());
-    responseClientDto.setRedirectUris(clientUpdated.getRedirectUris().split(" "));
-    responseClientDto.setGrantTypes(clientUpdated.getGrantTypes().split(" "));
-    responseClientDto.setResponseTypes(clientUpdated.getResponseTypes().split(" "));
-    responseClientDto.setTokenEndpointAuthMethod(clientUpdated.getTokenEndpointAuthMethod());
-    responseClientDto.setScopes(clientUpdated.getScopes().split(" "));
-    responseClientDto.setRegistrationAccessToken(clientUpdated.getRegistrationAccessToken());
-    responseClientDto.setRegistrationClientUri(clientUpdated.getRegistrationClientUri());
-    responseClientDto.setCreatedAt(clientUpdated.getCreatedAt());
-    responseClientDto.setExpiresAt(clientUpdated.getExpiresAt());
+      responseClientDto.setClientId(clientUpdated.getClientId());
+      responseClientDto.setClientSecret(clientUpdated.getClientSecret());
+      responseClientDto.setClientName(clientUpdated.getClientName());
+      responseClientDto.setClientUri(clientUpdated.getClientUri());
+      responseClientDto.setRedirectUris(clientUpdated.getRedirectUris().split(" "));
+      responseClientDto.setGrantTypes(clientUpdated.getGrantTypes().split(" "));
+      responseClientDto.setResponseTypes(clientUpdated.getResponseTypes().split(" "));
+      responseClientDto.setTokenEndpointAuthMethod(clientUpdated.getTokenEndpointAuthMethod());
+      responseClientDto.setScopes(clientUpdated.getScopes().split(" "));
+      responseClientDto.setRegistrationAccessToken(clientUpdated.getRegistrationAccessToken());
+      responseClientDto.setRegistrationClientUri(clientUpdated.getRegistrationClientUri());
+      responseClientDto.setCreatedAt(clientUpdated.getCreatedAt());
+      responseClientDto.setExpiresAt(clientUpdated.getExpiresAt());
 
-    return new UpdateClientResponseDto(responseClientDto);
+      return ResponseEntity.status(HttpStatus.OK).body(new UpdateClientResponseDto(responseClientDto));
+
+    } catch (ApiException e) {
+      return ResponseEntity.status(e.getStatusCode()).body(new UpdateClientResponseDto(e.getErrorMessage()));
+
+    } catch (Exception e) {
+      return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   /**
@@ -107,29 +118,24 @@ public class RegisterRestController {
    */
   @RequestMapping(path = "/{clientId}", method = RequestMethod.DELETE, headers = "Accept=application/json")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  public void unregisterClient(
-      @PathVariable String clientId, @RequestHeader("Authorization") String authorization, @RequestBody UnregisterClientRequestDto requestDto
-      ) {
-    ResponseClientDto responseClientDto = this.checkAccessTokenRegistration(clientId, authorization, RequestMethod.DELETE);
-    this.unregisterClientService.execute(clientId, requestDto.getAccessToken(), requestDto.getRefreshToken());
+  public void unregisterClient(@PathVariable String clientId, @RequestHeader("Authorization") String authorization, @RequestBody UnregisterClientRequestDto requestDto) {
+    try {
+      this.checkAccessTokenRegistration(clientId, authorization);
+      this.unregisterClientService.execute(clientId, requestDto.getAccessToken(), requestDto.getRefreshToken());
+    } catch (Exception e) {
+      // do nothing
+    }
   }
 
   /**
    * check the given registration access token
    * @param clientId
    * @param authorization
-   * @param requestMethod
    * @return ResponseClientDto
-   * @throws ResponseStatusException
    */
-  private ResponseClientDto checkAccessTokenRegistration(String clientId, String authorization, RequestMethod requestMethod) throws ResponseStatusException {
-    try {
+  private ResponseClientDto checkAccessTokenRegistration(String clientId, String authorization) throws ApiException {
       Client clientRegistered = this.checkRegistrationAccessTokenService.execute(clientId, authorization);
       return this.convertClientToResponseClientDto(clientRegistered);
-    }catch(Exception e) {
-      HttpStatus httpStatus = requestMethod.equals(RequestMethod.DELETE) ? HttpStatus.NO_CONTENT : HttpStatus.INTERNAL_SERVER_ERROR;
-      throw new ResponseStatusException(httpStatus);
-    }
   }
 
   /**
@@ -143,9 +149,7 @@ public class RegisterRestController {
     try {
       ClientValidationResultDto resultDto = this.registerClientService.execValidation(requestDto.getClient());
       Client clientRegistered = this.registerClientService.execute(requestDto.getClient(), resultDto);
-
       ResponseClientDto responseClientDto = this.convertClientToResponseClientDto(clientRegistered);
-
       return ResponseEntity.status(HttpStatus.CREATED).body(new RegisterClientResponseDto(responseClientDto));
 
     } catch (ApiException e) {

@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import javax.annotation.Nullable;
 
-public class ResponseClientDto implements Serializable {
+public class ResponseClientDto extends ApiResponseDto implements Serializable {
 
   private static final long serialVersionUID = -5825872791496453030L;
 
@@ -69,6 +69,12 @@ public class ResponseClientDto implements Serializable {
 
   @Nullable
   private LocalDateTime expiresAt;
+
+  public ResponseClientDto() {}
+
+  public ResponseClientDto(String errorMessage) {
+    super(errorMessage);
+  }
 
   @Nullable
   public String getClientId() {

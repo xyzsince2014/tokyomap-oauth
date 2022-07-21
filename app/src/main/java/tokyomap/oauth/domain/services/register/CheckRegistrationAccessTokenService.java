@@ -1,24 +1,20 @@
 package tokyomap.oauth.domain.services.register;
 
-import java.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 import tokyomap.oauth.domain.entities.postgres.Client;
 import tokyomap.oauth.domain.logics.ClientLogic;
-import tokyomap.oauth.utils.Logger;
+import tokyomap.oauth.domain.services.api.v1.ApiException;
 
 @Service
 public class CheckRegistrationAccessTokenService {
 
   private final ClientLogic clientLogic;
-  private final Logger logger;
 
   @Autowired
-  public CheckRegistrationAccessTokenService(ClientLogic clientLogic, Logger logger) {
+  public CheckRegistrationAccessTokenService(ClientLogic clientLogic) {
     this.clientLogic = clientLogic;
-    this.logger=logger;
   }
 
   /**
@@ -26,26 +22,22 @@ public class CheckRegistrationAccessTokenService {
    * @param clientId
    * @param authorization
    * @return registered client
+   * @throws ApiException
    */
-  public Client execute(String clientId, String authorization) {
+  public Client execute(String clientId, String authorization) throws ApiException {
 
     Client client = this.clientLogic.getClientByClientId(clientId);
-
     if (client == null) {
-      this.logger.log("CheckRegistrationAccessTokenService", "client not found.");
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+      throw new ApiException(HttpStatus.NOT_FOUND, "Client Not Found");
     }
 
     if (authorization == null || authorization.toLowerCase().indexOf("bearer") == -1) {
-      this.logger.log("CheckRegistrationAccessTokenService", "unauthorised.");
-      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+      throw new ApiException(HttpStatus.UNAUTHORIZED, "Unauthorised");
     }
 
     String token = authorization.substring("bearer ".length());
-
     if (!token.equals(client.getRegistrationAccessToken())) {
-      this.logger.log("CheckRegistrationAccessTokenService", "forbidden.");
-      throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+      throw new ApiException(HttpStatus.UNAUTHORIZED, "Invali Access Token");
     }
 
     return client;

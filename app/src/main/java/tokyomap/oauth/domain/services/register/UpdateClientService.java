@@ -3,9 +3,11 @@ package tokyomap.oauth.domain.services.register;
 import java.time.LocalDateTime;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import tokyomap.oauth.domain.entities.postgres.Client;
 import tokyomap.oauth.domain.logics.ClientLogic;
+import tokyomap.oauth.domain.services.api.v1.ApiException;
 import tokyomap.oauth.dtos.ClientValidationResultDto;
 import tokyomap.oauth.dtos.RequestClientDto;
 import tokyomap.oauth.dtos.ResponseClientDto;
@@ -25,15 +27,15 @@ public class UpdateClientService extends RegisterService {
    * @param requestClientDto
    * @param responseClientDto
    * @return clientNameToUpdate
+   * @throws ApiException
    */
-  public String execAdditionalValidation(RequestClientDto requestClientDto, ResponseClientDto responseClientDto) {
+  public String execAdditionalValidation(RequestClientDto requestClientDto, ResponseClientDto responseClientDto) throws ApiException {
     if (!requestClientDto.getClientId().equals(responseClientDto.getClientId())) {
-      throw new InvalidClientException("invalid clientId.");
+      throw new ApiException(HttpStatus.UNAUTHORIZED, "Invalid ClientId");
     }
     if(requestClientDto.getClientSecret() != null && !requestClientDto.getClientSecret().equals(responseClientDto.getClientSecret())) {
-      throw new InvalidClientException("invalid clientSecret.");
+      throw new ApiException(HttpStatus.UNAUTHORIZED, "Invalid Client Secret");
     }
-
     return requestClientDto.getClientName();
   }
 
@@ -42,8 +44,9 @@ public class UpdateClientService extends RegisterService {
    * @param clientNameToUpdate
    * @param validationResultDto
    * @return clientUpdated
+   * @throws Exception
    */
-  public Client execute(String clientNameToUpdate, ClientValidationResultDto validationResultDto, ResponseClientDto responseClientDto) {
+  public Client execute(String clientNameToUpdate, ClientValidationResultDto validationResultDto, ResponseClientDto responseClientDto) throws Exception {
 
     LocalDateTime now = LocalDateTime.now();
 

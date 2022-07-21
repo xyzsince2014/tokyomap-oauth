@@ -37,6 +37,7 @@ public abstract class RegisterService {
    * execute validation
    * @param requestClientDto
    * @return ClientValidationResultDto
+   * @throws ApiException
    */
   public ClientValidationResultDto execValidation(RequestClientDto requestClientDto) throws ApiException {
 
@@ -90,10 +91,10 @@ public abstract class RegisterService {
 
     // throw Exception if either grantTypes or responseTypes has an invalid type
     if(!Arrays.asList(GRANT_TYPES).containsAll(Arrays.asList(validationResultDto.getGrantTypes()))) {
-      throw new ApiException(HttpStatus.BAD_REQUEST, "Invalid Grant Types.");
+      throw new ApiException(HttpStatus.BAD_REQUEST, "Invalid Grant Types");
     }
     if(!Arrays.asList(RESPONSE_TYPES).containsAll(Arrays.asList(validationResultDto.getResponseTypes()))) {
-      throw new ApiException(HttpStatus.BAD_REQUEST, "Invalid Response Types.");
+      throw new ApiException(HttpStatus.BAD_REQUEST, "Invalid Response Types");
     }
 
     return validationResultDto;
