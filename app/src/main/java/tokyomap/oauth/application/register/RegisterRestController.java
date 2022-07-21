@@ -25,7 +25,6 @@ import tokyomap.oauth.dtos.ResponseClientDto;
 import tokyomap.oauth.dtos.UnregisterClientRequestDto;
 import tokyomap.oauth.dtos.UpdateClientRequestDto;
 import tokyomap.oauth.dtos.UpdateClientResponseDto;
-import tokyomap.oauth.utils.Logger;
 
 @RestController
 @RequestMapping("/register")
@@ -35,21 +34,18 @@ public class RegisterRestController {
   private final CheckRegistrationAccessTokenService checkRegistrationAccessTokenService;
   private final UpdateClientService updateClientService;
   private final UnregisterClientService unregisterClientService;
-  private final Logger logger;
 
   @Autowired
   public RegisterRestController(
       RegisterClientService registerClientService,
       CheckRegistrationAccessTokenService checkRegistrationAccessTokenService,
       UpdateClientService updateClientService,
-      UnregisterClientService unregisterClientService,
-      Logger logger
+      UnregisterClientService unregisterClientService
   ) {
     this.registerClientService = registerClientService;
     this.checkRegistrationAccessTokenService = checkRegistrationAccessTokenService;
     this.updateClientService = updateClientService;
     this.unregisterClientService = unregisterClientService;
-    this.logger = logger;
   }
 
   /**
