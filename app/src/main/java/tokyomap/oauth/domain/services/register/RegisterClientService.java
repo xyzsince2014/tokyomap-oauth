@@ -28,7 +28,7 @@ public class RegisterClientService extends RegisterService {
    * @return clientRegistered
    */
   @Transactional
-  public Client execute(RequestClientDto requestClientDto, ClientValidationResultDto validationResultDto) {
+  public Client execute(RequestClientDto requestClientDto, ClientValidationResultDto validationResultDto) throws Exception {
 
     String clientId = RandomStringUtils.random(8, true, true);
     String clientSecret = Arrays.stream(TOKEN_ENDPOINT_AUTH_METHODS).anyMatch(authMethod -> authMethod.equals(validationResultDto.getTokenEndpointAuthMethod())) ? RandomStringUtils.random(8, true, true) : null;

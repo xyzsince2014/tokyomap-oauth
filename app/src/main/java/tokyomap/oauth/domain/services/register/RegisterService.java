@@ -2,6 +2,8 @@ package tokyomap.oauth.domain.services.register;
 
 import java.util.Arrays;
 import java.util.List;
+import org.springframework.http.HttpStatus;
+import tokyomap.oauth.domain.services.api.v1.ApiException;
 import tokyomap.oauth.dtos.ClientValidationResultDto;
 import tokyomap.oauth.dtos.RequestClientDto;
 
@@ -36,17 +38,17 @@ public abstract class RegisterService {
    * @param requestClientDto
    * @return ClientValidationResultDto
    */
-  public ClientValidationResultDto execValidation(RequestClientDto requestClientDto) {
+  public ClientValidationResultDto execValidation(RequestClientDto requestClientDto) throws ApiException {
 
     // make sure that the client has registered at least one redirect URI
     if (requestClientDto.getRedirectUris() == null || requestClientDto.getRedirectUris().length == 0) {
-      throw new InvalidClientException("invalid redirectUris.");
+      throw new ApiException(HttpStatus.BAD_REQUEST, "Invalid Redirect Uris.");
     }
 
     String tokenEndpointAuthMethod = requestClientDto.getTokenEndpointAuthMethod() != null ? requestClientDto.getTokenEndpointAuthMethod() : "CLIENT_SECRET_BASIC";
 
     if (!Arrays.stream(TOKEN_ENDPOINT_AUTH_METHODS).anyMatch(authMethod -> authMethod.equals(requestClientDto.getTokenEndpointAuthMethod()))) {
-      throw new InvalidClientException("invalid tokenEndpointAuthMethod.");
+      throw new ApiException(HttpStatus.BAD_REQUEST, "Invalid tokenEndpointAuthMethod.");
     }
 
     // if the client specify neither the grantTypes nor responseTypes, default them to the authorisation code grant
@@ -88,10 +90,10 @@ public abstract class RegisterService {
 
     // throw Exception if either grantTypes or responseTypes has an invalid type
     if(!Arrays.asList(GRANT_TYPES).containsAll(Arrays.asList(validationResultDto.getGrantTypes()))) {
-      throw new InvalidClientException("invalid grantTypes.");
+      throw new ApiException(HttpStatus.BAD_REQUEST, "Invalid Grant Types.");
     }
     if(!Arrays.asList(RESPONSE_TYPES).containsAll(Arrays.asList(validationResultDto.getResponseTypes()))) {
-      throw new InvalidClientException("invalid responseTypes.");
+      throw new ApiException(HttpStatus.BAD_REQUEST, "Invalid Response Types.");
     }
 
     return validationResultDto;

@@ -2,6 +2,7 @@ package tokyomap.oauth.application.register;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import tokyomap.oauth.domain.entities.postgres.Client;
+import tokyomap.oauth.domain.services.api.v1.ApiException;
 import tokyomap.oauth.domain.services.register.CheckRegistrationAccessTokenService;
 import tokyomap.oauth.domain.services.register.RegisterClientService;
 import tokyomap.oauth.domain.services.register.UnregisterClientService;
@@ -140,14 +142,23 @@ public class RegisterRestController {
    * @return RegisterClientResponseDto
    */
   @RequestMapping(method = RequestMethod.POST, headers = {"Accept=application/json", "Content-Type=application/json"})
-  public RegisterClientResponseDto registerClient(@RequestBody RegisterClientRequestDto requestDto) {
+  public ResponseEntity<RegisterClientResponseDto> registerClient(@RequestBody RegisterClientRequestDto requestDto) {
 
-    ClientValidationResultDto resultDto = this.registerClientService.execValidation(requestDto.getClient());
-    Client clientRegistered = this.registerClientService.execute(requestDto.getClient(), resultDto);
+    try {
+      ClientValidationResultDto resultDto = this.registerClientService.execValidation(requestDto.getClient());
+      Client clientRegistered = this.registerClientService.execute(requestDto.getClient(), resultDto);
 
-    ResponseClientDto responseClientDto = this.convertClientToResponseClientDto(clientRegistered);
+      ResponseClientDto responseClientDto = this.convertClientToResponseClientDto(clientRegistered);
 
-    return new RegisterClientResponseDto(responseClientDto);
+      return ResponseEntity.status(HttpStatus.CREATED).body(new RegisterClientResponseDto(responseClientDto));
+
+    } catch (ApiException e) {
+      RegisterClientResponseDto responseDto = new RegisterClientResponseDto(e.getErrorMessage());
+      return ResponseEntity.status(e.getStatusCode()).body(responseDto);
+
+    } catch (Exception e) {
+      return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   /**
