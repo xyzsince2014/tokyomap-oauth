@@ -1,4 +1,4 @@
-package tokyomap.oauth.application.register;
+package tokyomap.oauth.application.api.v1.register;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,10 +12,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import tokyomap.oauth.domain.entities.postgres.Client;
 import tokyomap.oauth.domain.services.api.v1.ApiException;
-import tokyomap.oauth.domain.services.register.CheckRegistrationAccessTokenService;
-import tokyomap.oauth.domain.services.register.RegisterClientService;
-import tokyomap.oauth.domain.services.register.UnregisterClientService;
-import tokyomap.oauth.domain.services.register.UpdateClientService;
+import tokyomap.oauth.domain.services.api.v1.register.CheckRegistrationAccessTokenService;
+import tokyomap.oauth.domain.services.api.v1.register.RegisterClientService;
+import tokyomap.oauth.domain.services.api.v1.register.UnregisterClientService;
+import tokyomap.oauth.domain.services.api.v1.register.UpdateClientService;
 import tokyomap.oauth.dtos.ClientValidationResultDto;
 import tokyomap.oauth.dtos.ReadClientResponseDto;
 import tokyomap.oauth.dtos.RegisterClientRequestDto;
@@ -26,7 +26,7 @@ import tokyomap.oauth.dtos.UpdateClientRequestDto;
 import tokyomap.oauth.dtos.UpdateClientResponseDto;
 
 @RestController
-@RequestMapping("/register")
+@RequestMapping("/api/v1/register")
 public class RegisterRestController {
 
   private final RegisterClientService registerClientService;

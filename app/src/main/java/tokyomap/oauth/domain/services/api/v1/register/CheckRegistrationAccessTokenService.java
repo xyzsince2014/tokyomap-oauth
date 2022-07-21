@@ -1,4 +1,4 @@
-package tokyomap.oauth.domain.services.register;
+package tokyomap.oauth.domain.services.api.v1.register;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -37,7 +37,7 @@ public class CheckRegistrationAccessTokenService {
 
     String token = authorization.substring("bearer ".length());
     if (!token.equals(client.getRegistrationAccessToken())) {
-      throw new ApiException(HttpStatus.UNAUTHORIZED, "Invali Access Token");
+      throw new ApiException(HttpStatus.UNAUTHORIZED, "Invalid Access Token");
     }
 
     return client;

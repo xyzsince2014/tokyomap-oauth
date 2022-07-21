@@ -1,4 +1,4 @@
-package tokyomap.oauth.domain.services.register;
+package tokyomap.oauth.domain.services.api.v1.register;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
