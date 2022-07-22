@@ -19,25 +19,16 @@
 </nav>
 <div class="container">
   <section class="jumbotron">
-    <h2>Authorise this client ?</h2>
-    <p>requestId:&nbsp;<span th:text="${dto.requestId}"/></p>
-    <p>requestedScope:&nbsp;<span th:text="${dto.requestedScope}"/></p>
+    <h2>Authorise the client ?</h2>
     <p>Client Name:&nbsp;<span th:text="${dto.client.clientName}"/></p>
-    <p>Client Id:&nbsp;<span th:text="${dto.client.clientId}"/></p>
-    <p>Client URI:&nbsp;<span th:text="${dto.client.clientUri}"/></p>
-    <p>Client Token Endpoint Auth Method:&nbsp;<span th:text="${dto.client.tokenEndpointAuthMethod}"/></p>
-    <p>Client Redirect Uris:&nbsp;<span th:text="${dto.client.redirectUris}"/></p>
-    <p>Client Grant Types:&nbsp;<span th:text="${dto.client.grantTypes}"/></p>
-    <p>Client Response Types:&nbsp;<span th:text="${dto.client.responseTypes}"/></p>
-    <p>Client Scopes:&nbsp;<span th:text="${dto.client.scopes}"/></p>
-    <p>Client Registration Access Token:&nbsp;<span th:text="${dto.client.registrationAccessToken}"/></p>
-    <p>Client Registration Client Uri:&nbsp;<span th:text="${dto.client.registrationClientUri}"/></p>
     <form th:object="${authorisationForm}" th:action="@{/authorise}" method="POST" class="form" >
       <input type="hidden" name="requestId" th:value="${dto.requestId}">
       <input type="hidden" name="clientUri" th:value="${dto.client.clientUri}"/>
-      <input type="submit" class="btn btn-success" value="Authorise">
+      <div style="display: inline-block">
+        <input type="submit" class="btn btn-success" value="Authorise">
+        <button class="btn btn-danger" th:onclick="|location.href='__${dto.client.clientUri}__'|">Deny</button>
+      </div>
     </form>
-    <p><a th:href="${dto.client.clientUri}">Back</a></p>
   </section>
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
