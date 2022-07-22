@@ -11,6 +11,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.Email;
 
 @Entity
 @Table(name = "t_usr")
@@ -59,6 +60,7 @@ public class Usr implements Serializable {
   private String password;
 
   @Column(name = "email")
+  @Email
   private String email;
 
   @Column(name = "email_verified")
@@ -191,13 +193,9 @@ public class Usr implements Serializable {
     this.password = password;
   }
 
-  public String getEmail() {
-    return email;
-  }
+  public String getEmail() {return email;}
 
-  public void setEmail(String email) {
-    this.email = email;
-  }
+  public void setEmail(String email) {this.email = email;}
 
   public Boolean getEmailVerified() {
     return emailVerified;

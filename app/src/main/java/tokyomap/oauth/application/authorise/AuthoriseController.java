@@ -34,7 +34,7 @@ public class AuthoriseController {
   }
 
   @ModelAttribute("authorisationForm")
-  public AuthorisationForm setUpForm() {
+  public AuthorisationForm authorisationForm() {
     return new AuthorisationForm();
   }
 

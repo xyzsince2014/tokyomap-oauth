@@ -33,8 +33,8 @@ import tokyomap.oauth.dtos.GenerateTokensResponseDto;
 public class TokenLogic {
 
   // todo: define in rsaKey.properties
-  private static final String AUTH_SERVER_HOST = "http://localhost:80";
-  private static final String AUDIENCE = "http://localhost:9002"; // todo: malfunctioning if use `private static final String[] AUDIENCE = new String[] {"http://localhost:9002"};`
+  private static final String AUTH_SERVER_HOST = "http://auth:8080";
+  private static final String AUDIENCE = "http://resource:8081"; // todo: malfunctioning if use `private static final String[] AUDIENCE = new String[] {"http://localhost:9002"};`
   private static final int ACCESS_TOKEN_LIFETIME = 30;
   private static final int REFRESH_TOKEN_LIFETIME = 90;
   private static final int ID_TOKEN_LIFETIME = 60;
@@ -96,6 +96,7 @@ public class TokenLogic {
     return optionalRefreshToken.orElse(null);
   }
 
+  // todo: do not delete, update t_access(refesh)_token.expires_at instead
   /**
    * delete the AccessToken and the RefreshToken
    * @param accessToken

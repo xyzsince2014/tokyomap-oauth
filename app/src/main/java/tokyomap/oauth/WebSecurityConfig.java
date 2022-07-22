@@ -36,13 +36,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter { // todo: u
     http.authorizeRequests()
         .antMatchers("/css/**", "/img/**", "/js/**").permitAll()
         .antMatchers("/api/**").permitAll()
-        .antMatchers("/authenticate/**").not().authenticated()
+        .antMatchers("/authenticate/**", "/sign-up").not().authenticated()
         .anyRequest().authenticated();
 
     http.formLogin()
         .loginPage("/authenticate/pre")
         .loginProcessingUrl("/authenticate/pro")
-        .usernameParameter("username")
+        .usernameParameter("email")
         .passwordParameter("password")
         .failureUrl("/authenticate/pre?error=true");
 

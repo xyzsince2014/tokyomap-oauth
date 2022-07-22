@@ -20,9 +20,15 @@ public class AuthenticateService implements UserDetailsService {
     this.usrLogic = usrLogic;
   }
 
+  /**
+   * load user by email instead of usename
+   * @param email
+   * @return ResourceOwnerDetails
+   * @throws UsernameNotFoundException
+   */
   @Override
-  public ResourceOwnerDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-    Usr usr = this.usrLogic.getUsrByName(username);
+  public ResourceOwnerDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+    Usr usr = this.usrLogic.getUsrByEmail(email);
     if(usr == null) {
       throw new UsernameNotFoundException("Resource Owner Not Found");
     }

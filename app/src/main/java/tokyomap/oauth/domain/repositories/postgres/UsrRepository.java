@@ -6,5 +6,5 @@ import tokyomap.oauth.domain.entities.postgres.Usr;
 
 @Repository
 public interface UsrRepository extends JpaRepository<Usr, String> {
-  Usr findByName(String name);
+  Usr findByEmail(String email);
 }
