@@ -1,6 +1,5 @@
 package tokyomap.oauth.domain.logics;
 
-import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -18,7 +17,7 @@ public class UsrLogic {
   }
 
   /**
-   * get a usr for the given sub
+   * get the usr for a given sub
    * @param sub
    * @return
    */
@@ -27,32 +26,37 @@ public class UsrLogic {
     return optionalUsr.orElse(null);
   }
 
-  public Usr getUsrByName(String name) {
-    return this.usrRepository.findByName(name);
-  }
+//  /**
+//   * get all usrs
+//   * @return usrList
+//   */
+//  public List<Usr> getAllUsrs() {
+//    return this.usrRepository.findAll();
+//  }
 
   /**
-   * get all usrs
-   * @return usrList
+   * get the usr for a given email
+   * @param email
+   * @return Usr
    */
-  public List<Usr> getAllUsrs() {
-    return this.usrRepository.findAll();
+  public Usr getUsrByEmail(String email) {
+    return this.usrRepository.findByEmail(email);
   }
 
   /**
    * register the given usr
    * @param usr
-   * @return usr saved
+   * @return usr registered
    */
-  public Usr register(Usr usr) {
-    return this.usrRepository.save(usr);
+  public Usr registerUsr(Usr usr) {
+    return this.usrRepository.saveAndFlush(usr);
   }
 
-  /**
-   * delete the usr by sub
-   * @param sub
-   */
-  public void deleteUsrBySub(String sub) {
-    this.usrRepository.deleteById(sub);
-  }
+//  /**
+//   * delete the usr by sub
+//   * @param sub
+//   */
+//  public void deleteUsrBySub(String sub) {
+//    this.usrRepository.deleteById(sub);
+//  }
 }

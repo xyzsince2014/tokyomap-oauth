@@ -7,7 +7,7 @@ import tokyomap.oauth.domain.entities.postgres.Client;
 import tokyomap.oauth.domain.logics.ClientLogic;
 import tokyomap.oauth.domain.logics.TokenLogic;
 import tokyomap.oauth.domain.services.api.v1.ApiException;
-import tokyomap.oauth.domain.services.common.TokenScrutiny;
+import tokyomap.oauth.domain.services.api.v1.TokenScrutiny;
 import tokyomap.oauth.dtos.CredentialsDto;
 import tokyomap.oauth.dtos.RevokeRequestDto;
 import tokyomap.oauth.utils.Decorder;

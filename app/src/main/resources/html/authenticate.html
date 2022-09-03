@@ -2,25 +2,34 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
   <title>Authenticate</title>
 </head>
 <body>
-  <section>
-    <h3>Authenticate</h3>
-    <p th:if="${param.error}">Error!</p>
-    <form th:action="@{/authenticate/pro}" method="POST">
-      <table>
-        <tr>
-          <td><input type="text" id="username" name="username" placeholder="username" /></td>
-        </tr>
-        <tr>
-          <td><input type="password" id="password" name="password" placeholder="password" /></td>
-        </tr>
-        <tr>
-          <td><button type="submit">Authenticate</button></td>
-        </tr>
-      </table>
-    </form>
-  </section>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="#h2">Tokyomap: <span class="label label-danger">Sign In</span></a>
+        </div>
+      </div>
+    </nav>
+  </nav>
+  <div class="container">
+    <section class="jumbotron">
+      <h2>Sign In</h2>
+      <p th:if="${param.error}">Error!</p>
+      <form th:action="@{/authenticate/pro}" method="POST" style="display: inline-block">
+        <input type="email" id="email" name="email" placeholder="email" required/>
+        <input type="password" id="password" name="password" placeholder="password" required/>
+        <div style="display: inline-block">
+          <input class="btn btn-primary" type="submit" value="Sign In"/>
+          <input class="btn btn-default" type="button" value="Sign up here" onclick="location.href='/sign-up'"/>
+        </div>
+      </form>
+    </section>
+  </div>
 </body>
 </html>

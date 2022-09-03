@@ -15,7 +15,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
   protected ResponseEntity<Object> handleExceptionInternal(Exception e, Object body, HttpHeaders headers, HttpStatus status, WebRequest req) {
     ApiError apiError = new ApiError();
     apiError.setMessage(e.getMessage());
-    apiError.setDocumentationUrl("http://localhost:80/api/errors");
+    apiError.setDocumentationUrl("http://localhost:8080/api/errors");
 
     return super.handleExceptionInternal(e, apiError, headers, status, req);
   }

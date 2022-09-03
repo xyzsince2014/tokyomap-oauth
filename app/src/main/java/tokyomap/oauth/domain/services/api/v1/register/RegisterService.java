@@ -18,7 +18,7 @@ public abstract class RegisterService {
       "PRIVATE_KEY_JWT" // the client will create a JWT asymmetrically signed with its private key. The public key will need to be registered with the authorisation server
   };
 
-  protected final String REGISTRATION_ENDPOINT = "http://localhost:80/api/v1/register";
+  protected final String REGISTRATION_ENDPOINT = "http://localhost:8080/api/v1/register";
 
   protected final String[] GRANT_TYPES = new String[] {
       "AUTHORISATION_CODE", // the authorisation code grant, where the client sends the resource owner to the authorisation endpoint to obtain an authorisation code
