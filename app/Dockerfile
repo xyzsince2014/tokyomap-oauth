@@ -16,7 +16,6 @@ COPY tomcat/conf/tomcat.conf /usr/share/tomcat/conf/tomcat.conf
 COPY tomcat/conf/context.xml /usr/share/tomcat/conf/context.xml
 COPY tomcat/conf/tomcat-users.xml /usr/share/tomcat/conf/tomcat-users.xml
 COPY tomcat/conf/server.xml /usr/share/tomcat/conf/server.xml
-# COPY target/ROOT.war /usr/local/tomcat/webapps/ROOT.war // for production env
 
 EXPOSE 8080
 

@@ -20,9 +20,7 @@ report() {
   echo "report() completed."
 }
 
-# todo: build and deploy should be done by Jenkins or something
 build() {
-  # todo: mvn --settings .mvn/settings.xml -P production -Dmaven.test.skip=true package
   mvn --settings .mvn/settings.xml -P $1 -Dmaven.test.skip=true package
   echo "build() completed."
 }
@@ -31,12 +29,6 @@ deploy() {
   cp ./target/ROOT.war ./tomcat/webapps
   echo "deploy() completed."
 }
-
-# todo
-#buildImage () {
-#  docker build -t <ECR Repo>:<ver> .
-#  docker build -t test:dev .
-#}
 
 PROFILES=("develop" "production")
 
@@ -49,7 +41,6 @@ for PROFILE in ${PROFILES[@]}; do
   report
   build $1
   deploy
-  #todo  buildImage
 
   exit 0
 done
