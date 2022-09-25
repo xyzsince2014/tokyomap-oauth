@@ -21,7 +21,7 @@ report() {
 }
 
 build() {
-  mvn --settings .mvn/settings.xml -P $1 -Dmaven.test.skip=true package
+  mvn --settings .mvn/settings.xml -P $1 -DskipTests=true package
   echo "build() completed."
 }
 
