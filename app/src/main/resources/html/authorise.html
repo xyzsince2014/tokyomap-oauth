@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Authorization</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+  <link rel="stylesheet" href="../css/authenticate.css">
+</head>
+<body>
+  <nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="#h2">Tokyomap: <span class="label label-danger">Authorization</span></a>
+      </div>
+    </div>
+  </nav>
+  <div class="container">
+    <section class="jumbotron">
+      <h2>Authorise the client ?</h2>
+      <p>Client Name:&nbsp;<span th:text="${dto.client.clientName}"/></p>
+      <form th:object="${authorisationForm}" th:action="@{/authorise}" method="POST" class="form" >
+        <input type="hidden" name="requestId" th:value="${dto.requestId}">
+        <input type="hidden" name="clientUri" th:value="${dto.client.clientUri}"/>
+        <div style="display: inline-block">
+          <input type="submit" class="btn btn-success" value="Authorise">
+          <input type="button" class="btn btn-danger" value="Deny" th:onclick="|location.href='__${dto.client.clientUri}__'|"/>
+        </div>
+      </form>
+    </section>
+  </div>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+</body>
+</html>

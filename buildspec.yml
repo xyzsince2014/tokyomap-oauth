@@ -1,0 +1,16 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - aws s3 cp --recursive s3://tokyomap-oauth/resources/conf/ ./app/src/profiles/production/resources/conf/
+      - cd app && ./deploy.sh production
+    runtime-versions:
+      java: corretto8
+  build:
+    commands:
+      - docker build -t ${ECR_REPO}:${VERSION} app
+  post_build:
+    commands:
+      - aws ecr get-login-password | docker login --username AWS --password-stdin ${ECR_REPO}
+      - docker push ${ECR_REPO}:${VERSION}
