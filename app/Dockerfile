@@ -11,9 +11,14 @@ ENV TZ='Asia/Tokyo'
 RUN systemctl enable tomcat.service
 RUN echo 'alias ls="ls --color"' >> ~/.bashrc
 
-# todo: use /usr/local instead of /usr/share
 COPY tomcat/conf/ /usr/share/tomcat/conf/
-COPY tomcat/webapps/ /usr/share/tomcat/webapps/
+COPY tomcat/webapps/ROOT.war /usr/share/tomcat/webapps/ROOT.war
+
+RUN rm -r /usr/share/tomcat/webapps/ROOT/
+RUN rm -r /usr/share/tomcat/webapps/examples/
+RUN rm -r /usr/share/tomcat/webapps/host-manager/
+RUN rm -r /usr/share/tomcat/webapps/manager/
+RUN rm -r /usr/share/tomcat/webapps/sample/
 
 EXPOSE 8080
 
