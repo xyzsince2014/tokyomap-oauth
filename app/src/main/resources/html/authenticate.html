@@ -21,12 +21,12 @@
     <section class="jumbotron">
       <h2>Sign In</h2>
       <p th:if="${param.error}">Error!</p>
-      <form th:action="@{/authenticate/pro}" method="POST" style="display: inline-block">
+      <form th:action="@{{domain}/auth/authenticate/pro(domain=${@environment.getProperty('domain.web')})}" method="POST" style="display: inline-block">
         <input type="email" id="email" name="email" placeholder="email" required/>
         <input type="password" id="password" name="password" placeholder="password" required/>
-        <div style="display: inline-block">
-          <input class="btn btn-primary" type="submit" value="Sign In"/>
-          <input class="btn btn-default" type="button" value="Sign up here" onclick="location.href='/sign-up'"/>
+        <div>
+          <input class="btn btn-primary" type="submit" value="Sign in" style="margin-top: 10px;"/>
+          <p style="margin-top: 10px; font-size: 16px;">Not registered yet ? <a th:href="@{{domain}/auth/sign-up(domain=${@environment.getProperty('domain.web')})}">Sign up</a></p>
         </div>
       </form>
     </section>
