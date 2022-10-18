@@ -7,11 +7,11 @@ fi
 
 echo "execute $(pwd)/$0"
 
-clean() {
-  mvn --settings .mvn/settings.xml -P develop clean test
+cleanUp() {
+  mvn --settings .mvn/settings.xml -P develop cleanUp test
   rm -rf ./tomcat/webapps
   mkdir -p ./tomcat/webapps
-  echo "clean() completed."
+  echo "cleanUp() completed."
 }
 
 report() {
@@ -37,7 +37,7 @@ for PROFILE in ${PROFILES[@]}; do
     continue;
   fi
 
-  clean
+  cleanUp
   report
   build $1
   deploy

@@ -4,7 +4,7 @@ phases:
   install:
     commands:
       - aws s3 cp --recursive s3://tokyomap-oauth/resources/conf/ ./app/src/profiles/production/resources/conf/
-      - cd app && ./deploy.sh production
+      - cd app && ./build-war.sh production
     runtime-versions:
       java: corretto8
   build:
