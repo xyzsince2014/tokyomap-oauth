@@ -5,6 +5,7 @@ docker container run -d \
   -v $(pwd)/app/tomcat/logs:/usr/share/tomcat/logs \
   --name auth \
   --net network_dev \
+  --ip 192.168.56.110 \
   --rm \
   --privileged \
   tokyomap.oauth:dev
