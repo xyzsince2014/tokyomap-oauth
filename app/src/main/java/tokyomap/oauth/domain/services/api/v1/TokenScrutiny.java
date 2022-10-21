@@ -21,7 +21,8 @@ import tokyomap.oauth.dtos.CredentialsDto;
 public class TokenScrutiny {
 
   // todo: define in a config file
-  private static final String AUTH_SERVER_HOST = "http://auth:8080";
+//  private static final String AUTH_SERVER_HOST = "http://auth:8080"; // for dev
+  private static final String AUTH_SERVER_HOST = "http://localhost:8080"; // for prod
 
   // todo: malfunctioning if use `private static final String[] AUDIENCE = new String[] {"http://localhost:9002"};`
   private static final String AUDIENCE = "http://resource:8081"; // registered resource servers
