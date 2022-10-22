@@ -12,6 +12,7 @@ import java.security.interfaces.RSAPublicKey;
 import java.text.ParseException;
 import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import tokyomap.oauth.domain.logics.TokenLogic;
@@ -20,17 +21,18 @@ import tokyomap.oauth.dtos.CredentialsDto;
 @Component
 public class TokenScrutiny {
 
-  // todo: define in a config file
-//  private static final String AUTH_SERVER_HOST = "http://auth:8080"; // for dev
-  private static final String AUTH_SERVER_HOST = "http://localhost:8080"; // for prod
-
-  // todo: malfunctioning if use `private static final String[] AUDIENCE = new String[] {"http://localhost:9002"};`
-  private static final String AUDIENCE = "http://resource:8081"; // registered resource servers
-
   private final TokenLogic tokenLogic;
+  private final String authServerHost;
+
+  // todo: malfunctioning if use `private static final String[] audience = new String[] {"http://resource:8081"};`
+  private final String audience; // registered resource servers
 
   @Autowired
-  public TokenScrutiny(TokenLogic tokenLogic) { this.tokenLogic = tokenLogic; }
+  public TokenScrutiny(TokenLogic tokenLogic, @Value("${docker.container.auth}") String containerAuth, @Value("${docker.container.resource}") String containerResource) {
+    this.tokenLogic = tokenLogic;
+    this.authServerHost = containerAuth;
+    this.audience = containerResource;
+  }
 
   /**
    * scrutinise the given signed JWT
@@ -47,10 +49,10 @@ public class TokenScrutiny {
 
       // check JWT claims
       JWTClaimsSet jwtClaimsSet = signedJWT.getJWTClaimsSet();
-      if (!jwtClaimsSet.getIssuer().equals(AUTH_SERVER_HOST)) {
+      if (!jwtClaimsSet.getIssuer().equals(this.authServerHost)) {
         throw new ApiException(HttpStatus.UNAUTHORIZED, "Invalid Token Issuer");
       }
-      if (jwtClaimsSet.getAudience().indexOf(AUDIENCE) == -1) {
+      if (jwtClaimsSet.getAudience().indexOf(this.audience) == -1) {
         throw new ApiException(HttpStatus.UNAUTHORIZED, "Invalid Token Audience");
       }
 
