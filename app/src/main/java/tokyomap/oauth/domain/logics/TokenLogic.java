@@ -20,6 +20,7 @@ import java.time.ZoneOffset;
 import java.util.Optional;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import tokyomap.oauth.domain.entities.postgres.AccessToken;
 import tokyomap.oauth.domain.entities.postgres.RefreshToken;
@@ -32,14 +33,6 @@ import tokyomap.oauth.dtos.GenerateTokensResponseDto;
 @Component
 public class TokenLogic {
 
-  // todo: define in rsaKey.properties
-  // for dev
-//  private static final String AUTH_SERVER_HOST = "http://auth:8080";
-//  private static final String AUDIENCE = "http://resource:8081"; // todo: malfunctioning if use `private static final String[] AUDIENCE = new String[] {"http://localhost:9002"};`
-  // for prod
-  private static final String AUTH_SERVER_HOST = "http://localhost:8080";
-  private static final String AUDIENCE = "http://localhost:8081"; // todo: malfunctioning if use `private static final String[] AUDIENCE = new String[] {"http://localhost:9002"};`
-
   private static final int ACCESS_TOKEN_LIFETIME = 30;
   private static final int REFRESH_TOKEN_LIFETIME = 90;
   private static final int ID_TOKEN_LIFETIME = 60;
@@ -49,16 +42,25 @@ public class TokenLogic {
   private final AccessTokenRepository accessTokenRepository;
   private final RefreshTokenRepository refreshTokenRepository;
   private final RsaPublicKeyRepository rsaPublicKeyRepository;
+  private final String authServerHost;
+
+  // todo: malfunctioning if use `private static final String[] audience = new String[] {"http://resource:8081"};`
+  private final String audience; // registered resource servers
 
   private RSAPublicKey rsaPublicKey;
   private RSAPrivateKey rsaPrivateKey;
   private String kid;
 
   @Autowired
-  public TokenLogic(AccessTokenRepository accessTokenRepository, RefreshTokenRepository refreshTokenRepository, RsaPublicKeyRepository rsaPublicKeyRepository) {
+  public TokenLogic(
+      AccessTokenRepository accessTokenRepository, RefreshTokenRepository refreshTokenRepository, RsaPublicKeyRepository rsaPublicKeyRepository,
+      @Value("${docker.container.auth}") String containerAuth, @Value("${docker.container.resource}") String containerResource
+  ) {
     this.accessTokenRepository = accessTokenRepository;
     this.refreshTokenRepository = refreshTokenRepository;
     this.rsaPublicKeyRepository = rsaPublicKeyRepository;
+    this.authServerHost = containerAuth;
+    this.audience = containerResource;
 
     try {
       KeyPairGenerator keyGenerator = KeyPairGenerator.getInstance(ALGORITHM);
@@ -187,9 +189,9 @@ public class TokenLogic {
 
     // payload
     JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
-        .claim("iss", AUTH_SERVER_HOST) // the issuer, normally the URI of the auth server
+        .claim("iss", this.authServerHost) // the issuer, normally the URI of the auth server
         .claim("sub", sub) // the subject, normally the unique identifier for the resource owner
-        .claim("aud", AUDIENCE) // the audience, normally the URI(s) of the protected resource(s) the access token can be sent to
+        .claim("aud", this.audience) // the audience, normally the URI(s) of the protected resource(s) the access token can be sent to
         .claim("iat", iat.toEpochSecond(ZoneOffset.ofHours(+9))) // the issued-at timestamp of the token in seconds from 1 Jan 1970 (GMT)
         .claim("exp", iat.plusDays(days).toEpochSecond(ZoneOffset.ofHours(+9))) // the expiration time, the token expires in 5 min later in this case
         .claim("jti", jti) // the unique identifier of the token, that is a value unique to each token created by the issuer, and it’s often a cryptographically random value
@@ -216,7 +218,7 @@ public class TokenLogic {
 
     // payload
     JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
-        .claim("iss", AUTH_SERVER_HOST) // the issuer of the token, i.e. the URL of the ID Provider
+        .claim("iss", this.authServerHost) // the issuer of the token, i.e. the URL of the ID Provider
         .claim("sub", sub) // the subject of the token, a stable and unique identifier for the user at the ID Provider, which is usually a machine-readable string and shouldn’t be used as a username
         .claim("aud", clientId) // the audience of the id token that must contain the client ID of the Relying Party
         .claim("iat", iat.toEpochSecond(ZoneOffset.ofHours(+9))) // the timestamp at which the token is issued
