@@ -28,8 +28,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class WebMvcConfig implements WebMvcConfigurer {
 
 //  /**
-//   * enable injenctions by @Value
-//   * unnecessarty from Spring ≥ 4.3
+//   * enable injections by @Value
+//   * unnecessary from Spring ≥ 4.3
 //   * @return PropertySourcesPlaceholderConfigurer
 //   */
 //  @Bean
