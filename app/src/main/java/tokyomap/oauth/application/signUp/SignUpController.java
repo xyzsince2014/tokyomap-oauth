@@ -34,7 +34,7 @@ public class SignUpController {
   public String proSingUp(@Validated SignUpForm signUpForm) {
     try {
       this.signUpService.execute(signUpForm);
-      return "redirect:/authenticate/pre"; // todo: directly sign in after signing up
+      return "redirect:/authenticate"; // todo: directly sign in after signing up
     } catch (SignUpException e) {
       return "error"; // todo: handle properly
     }

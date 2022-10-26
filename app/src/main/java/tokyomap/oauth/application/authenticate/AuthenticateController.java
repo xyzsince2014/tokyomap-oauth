@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @RequestMapping("/authenticate")
 public class AuthenticateController {
 
-  @RequestMapping(path = "/pre", method = RequestMethod.GET)
+  @RequestMapping(method = RequestMethod.GET)
   public String preAuthenticate() {
     return "authenticate";
   }

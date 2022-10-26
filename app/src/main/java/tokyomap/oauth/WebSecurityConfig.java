@@ -1,6 +1,7 @@
 package tokyomap.oauth;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -20,10 +21,12 @@ import tokyomap.oauth.domain.services.authenticate.AuthenticateService;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter { // todo: use SpringSecurity@5.7
 
   private final AuthenticateService authenticateService;
+  private final String domain;
 
   @Autowired
-  public WebSecurityConfig (AuthenticateService authenticateService) {
+  public WebSecurityConfig (AuthenticateService authenticateService, @Value("${domain.web}") String domain) {
     this.authenticateService = authenticateService;
+    this.domain = domain;
   }
 
   @Bean
@@ -40,11 +43,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter { // todo: u
         .anyRequest().authenticated();
 
     http.formLogin()
-        .loginPage("/authenticate/pre")
-        .loginProcessingUrl("/authenticate/pro")
+        .loginPage("/authenticate")
+        .loginProcessingUrl("/authenticate")
         .usernameParameter("email")
         .passwordParameter("password")
-        .failureUrl("/authenticate/pre?error=true");
+        .defaultSuccessUrl(domain + "/api/auth/authorise")
+        .failureUrl("/authenticate?error=true");
 
     http.logout()
         .logoutUrl("/sign-out/pro")
