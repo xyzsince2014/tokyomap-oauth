@@ -3,7 +3,7 @@
 docker container run -d \
   -p 8080:8080 \
   -v $(pwd)/app/tomcat/logs:/usr/share/tomcat/logs \
-  --name auth \
+  --name oauth \
   --net network_dev \
   --ip 192.168.56.110 \
   --rm \
