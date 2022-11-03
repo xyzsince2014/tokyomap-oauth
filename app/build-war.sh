@@ -8,7 +8,7 @@ fi
 echo "execute $(pwd)/$0"
 
 cleanUp() {
-  mvn --settings .mvn/settings.xml -P develop cleanUp test
+  mvn --settings .mvn/settings.xml -P develop clean test
   rm -rf ./tomcat/webapps
   mkdir -p ./tomcat/webapps
   echo "cleanUp() completed."
