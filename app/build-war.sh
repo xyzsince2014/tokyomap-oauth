@@ -37,7 +37,7 @@ for PROFILE in ${PROFILES[@]}; do
     continue;
   fi
 
-  cleanUp
+  cleanUp $1
   report
   build $1
   deploy
