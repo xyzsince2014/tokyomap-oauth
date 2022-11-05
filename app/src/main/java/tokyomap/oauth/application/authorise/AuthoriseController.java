@@ -19,7 +19,6 @@ import tokyomap.oauth.domain.services.authorise.InvalidProAuthoriseException;
 import tokyomap.oauth.domain.services.authorise.PreAuthoriseService;
 import tokyomap.oauth.domain.services.authorise.ProAuthoriseService;
 import tokyomap.oauth.dtos.PreAuthoriseResponseDto;
-import tokyomap.oauth.utils.Logger;
 
 @Controller
 @RequestMapping("/authorise")
@@ -27,13 +26,11 @@ public class AuthoriseController {
 
   private final PreAuthoriseService preAuthoriseService;
   private final ProAuthoriseService proAuthoriseService;
-  private final Logger logger;
 
   @Autowired
-  public AuthoriseController(PreAuthoriseService preAuthoriseService, ProAuthoriseService proAuthoriseService, Logger logger) {
+  public AuthoriseController(PreAuthoriseService preAuthoriseService, ProAuthoriseService proAuthoriseService) {
     this.preAuthoriseService = preAuthoriseService;
     this.proAuthoriseService = proAuthoriseService;
-    this.logger = logger;
   }
 
   @ModelAttribute("authorisationForm")
@@ -62,8 +59,6 @@ public class AuthoriseController {
         return "error";
       }
 
-      this.logger.log(AuthoriseController.class.getName() + "preAuthoriseCache = ", preAuthoriseCache.toString());
-
       PreAuthoriseResponseDto responseDto = this.preAuthoriseService.execute(preAuthoriseCache);
       model.addAttribute("dto", responseDto);
       return "authorise"; // todo: separate authentication from authorisation, use WebSecurityConfigurerAdapter ?
@@ -72,7 +67,6 @@ public class AuthoriseController {
       return "error";
 
     } catch(InvalidPreAuthoriseException e) {
-      this.logger.log(AuthoriseController.class.getName() + "e.getMessage()", e.getMessage());
       model.addAttribute("clientUri", e.getClientUri());
       return "invalidRequest";
     }
