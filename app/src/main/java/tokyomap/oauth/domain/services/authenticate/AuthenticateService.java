@@ -5,18 +5,15 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import tokyomap.oauth.domain.entities.postgres.Usr;
-import tokyomap.oauth.domain.logics.RedisLogic;
 import tokyomap.oauth.domain.logics.UsrLogic;
 
 @Service
 public class AuthenticateService implements UserDetailsService {
 
-  private final RedisLogic redisLogic;
   private final UsrLogic usrLogic;
 
   @Autowired
-  public AuthenticateService(RedisLogic redisLogic, UsrLogic usrLogic) {
-    this.redisLogic = redisLogic;
+  public AuthenticateService(UsrLogic usrLogic) {
     this.usrLogic = usrLogic;
   }
 
