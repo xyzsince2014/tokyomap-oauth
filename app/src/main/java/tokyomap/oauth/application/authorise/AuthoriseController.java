@@ -3,7 +3,7 @@ package tokyomap.oauth.application.authorise;
 import java.net.URI;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
@@ -78,10 +78,14 @@ public class AuthoriseController {
    * @return String
    */
   @RequestMapping(method = RequestMethod.POST, headers = "Content-Type=application/x-www-form-urlencoded;charset=utf-8")
-  public String proAuthorise(Model model, @Validated AuthorisationForm authorisationForm) {
+  public String proAuthorise(
+      Model model,
+      @Validated AuthorisationForm authorisationForm,
+      @AuthenticationPrincipal ResourceOwnerDetails resourceOwnerDetails
+  ) {
 
     try {
-      Usr resourceOwner = ((ResourceOwnerDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getResourceOwner();
+      Usr resourceOwner = resourceOwnerDetails.getResourceOwner();
       URI redirectUri = this.proAuthoriseService.execute(resourceOwner, authorisationForm);
       return "redirect:" + redirectUri.toString();
 

@@ -1,9 +1,13 @@
 package tokyomap.oauth.domain.services.authenticate;
 
+import java.util.Collection;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import tokyomap.oauth.domain.entities.postgres.Role;
 import tokyomap.oauth.domain.entities.postgres.Usr;
 import tokyomap.oauth.domain.logics.UsrLogic;
 
@@ -18,7 +22,7 @@ public class AuthenticateService implements UserDetailsService {
   }
 
   /**
-   * load user by email instead of usename
+   * load usr by email
    * @param email
    * @return ResourceOwnerDetails
    * @throws UsernameNotFoundException
@@ -29,6 +33,13 @@ public class AuthenticateService implements UserDetailsService {
     if(usr == null) {
       throw new UsernameNotFoundException("Resource Owner Not Found");
     }
-    return new ResourceOwnerDetails(usr);
+    return new ResourceOwnerDetails(usr, getAuthorities(usr));
+  }
+
+  private Collection<GrantedAuthority> getAuthorities(Usr usr) {
+    if(usr.getRole() == Role.ROLE_ADMIN) {
+      return AuthorityUtils.createAuthorityList(Role.ROLE_ADMIN.name(), Role.ROLE_USER.name());
+    }
+    return AuthorityUtils.createAuthorityList(Role.ROLE_USER.name());
   }
 }

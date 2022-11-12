@@ -10,7 +10,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import tokyomap.oauth.domain.services.authenticate.AuthenticateService;
@@ -36,6 +35,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter { // todo: u
 
   @Override
   protected void configure(HttpSecurity http) throws Exception {
+
     http.authorizeRequests()
         .antMatchers("/css/**", "/img/**", "/js/**").permitAll()
         .antMatchers("/api/**").permitAll()
@@ -47,7 +47,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter { // todo: u
         .loginProcessingUrl("/authenticate")
         .usernameParameter("email")
         .passwordParameter("password")
-        .defaultSuccessUrl(domain + "/api/auth/authorise")
+        .defaultSuccessUrl(this.domain + "/api/auth/authorise") // todo: redirect to the URI originally requested
         .failureUrl("/authenticate?error=true");
 
     http.logout()
@@ -57,7 +57,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter { // todo: u
     // todo: refine config
     http.sessionManagement()
         .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
-        .sessionFixation().newSession()
+        .sessionFixation().none()
+//        .sessionFixation().newSession() // todo: renew session after sign in to prevent https://www.ipa.go.jp/security/awareness/vendor/programmingv2/contents/305.html
         .maximumSessions(1)
         .maxSessionsPreventsLogin(false);
 //        .expiredSessionStrategy(new CustomSessionInformationExpiredStrategy());
@@ -65,12 +66,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter { // todo: u
     http.csrf().disable();
   }
 
-  @Override
-  protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-    try {
-      auth.userDetailsService(this.authenticateService).passwordEncoder(passwordEncoder());
-    } catch (UsernameNotFoundException e) {
-      throw new Exception(e.getMessage());
-    }
+  /**
+   * enables DaoAuthenticationProvider with the passwordEncoder
+   * @param auth
+   * @throws Exception
+   */
+  @Autowired
+  protected void configureAuthenticationManager(AuthenticationManagerBuilder auth) throws Exception {
+    auth.userDetailsService(this.authenticateService).passwordEncoder(passwordEncoder());
   }
 }

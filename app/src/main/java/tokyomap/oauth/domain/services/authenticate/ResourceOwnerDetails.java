@@ -10,15 +10,17 @@ import tokyomap.oauth.domain.entities.postgres.Usr;
 public class ResourceOwnerDetails implements UserDetails {
 
   private final Usr resourceOwner;
+  private Collection<? extends GrantedAuthority> authorities;
 
   @Autowired
-  public ResourceOwnerDetails(Usr usr) {
+  public ResourceOwnerDetails(Usr usr, Collection<? extends GrantedAuthority> authorities) {
     this.resourceOwner = usr;
+    this.authorities = authorities;
   }
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
-    return AuthorityUtils.createAuthorityList(this.resourceOwner.getRole().name());
+    return this.authorities;
   }
 
   @Override
