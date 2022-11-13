@@ -54,25 +54,22 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter { // todo: u
         .logoutUrl("/sign-out/pro")
         .deleteCookies("JSESSIONID");
 
-    // todo: refine config
     http.sessionManagement()
         .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
-        .sessionFixation().none()
-//        .sessionFixation().newSession() // todo: renew session after sign in to prevent https://www.ipa.go.jp/security/awareness/vendor/programmingv2/contents/305.html
-        .maximumSessions(1)
-        .maxSessionsPreventsLogin(false);
-//        .expiredSessionStrategy(new CustomSessionInformationExpiredStrategy());
+        .sessionFixation().none();
+        // todo: .sessionFixation().newSession() // renew session after sign in in order to prevent https://www.ipa.go.jp/security/awareness/vendor/programmingv2/contents/305.html
+        // todo: .maximumSessions(1).maxSessionsPreventsLogin(false);
 
     http.csrf().disable();
   }
 
   /**
    * enables DaoAuthenticationProvider with the passwordEncoder
-   * @param auth
+   * @param builder
    * @throws Exception
    */
   @Autowired
-  protected void configureAuthenticationManager(AuthenticationManagerBuilder auth) throws Exception {
-    auth.userDetailsService(this.authenticateService).passwordEncoder(passwordEncoder());
+  protected void configureAuthenticationManager(AuthenticationManagerBuilder builder) throws Exception {
+    builder.userDetailsService(this.authenticateService).passwordEncoder(passwordEncoder());
   }
 }
