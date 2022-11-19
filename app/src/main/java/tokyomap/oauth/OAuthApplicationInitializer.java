@@ -3,14 +3,22 @@ package tokyomap.oauth;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration.Dynamic;
-import org.springframework.web.WebApplicationInitializer;
+import org.springframework.session.web.context.AbstractHttpSessionApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.filter.DelegatingFilterProxy;
 import org.springframework.web.filter.HiddenHttpMethodFilter;
 import org.springframework.web.servlet.DispatcherServlet;
 
-public class OAuthApplicationInitializer implements WebApplicationInitializer {
+/**
+ * Implementing WebApplicationInitializer is the minimal configuration to work Spring Framework,
+ * extending AbstractHttpSessionApplicationInitializer enables Spring Session with Redis
+ *
+ * Exactly speaking, by extending AbstractHttpSessionApplicationInitializer,
+ * we ensure that the Spring Bean by the name springSessionRepositoryFilter is registered with our Servlet Container
+ * for every request before Spring Security’s springSecurityFilterChain.
+ */
+public class OAuthApplicationInitializer extends AbstractHttpSessionApplicationInitializer {
 
   /**
    * @see @link{https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/WebApplicationInitializer.html}
@@ -20,6 +28,8 @@ public class OAuthApplicationInitializer implements WebApplicationInitializer {
    */
   @Override
   public void onStartup(ServletContext servletContext) throws ServletException {
+
+    super.onStartup(servletContext);
 
     // todo: webApplicationContext should have business logics only, e.g. services, repositories, ORMs and data sources
     AnnotationConfigWebApplicationContext webApplicationContext = new AnnotationConfigWebApplicationContext();

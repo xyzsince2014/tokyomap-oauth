@@ -34,7 +34,7 @@ public class SignUpService {
     usr.setPassword(B_CRYPT_PASSWORD_ENCODER.encode(signUpForm.getPassword()));
     usr.setPhoneNumberVerified(false);
     usr.setScopes(SCOPES);
-    usr.setRole(Role.USER);
+    usr.setRole(Role.ROLE_USER);
     usr.setCreatedAt(now);
     usr.setUpdatedAt(now);
 
