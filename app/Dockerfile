@@ -8,7 +8,6 @@ RUN yum install -y tomcat-webapps tomcat-admin-webapps vim fileutils
 
 ENV TZ='Asia/Tokyo'
 
-RUN systemctl enable tomcat.service
 RUN echo 'alias ls="ls --color"' >> ~/.bashrc
 
 COPY tomcat/conf/ /usr/share/tomcat/conf/
@@ -22,4 +21,5 @@ RUN rm -r /usr/share/tomcat/webapps/sample/
 
 EXPOSE 8080
 
-CMD ["/sbin/init"]
+# start Tomcat directly in foreground
+CMD ["/usr/libexec/tomcat/server", "start"]
