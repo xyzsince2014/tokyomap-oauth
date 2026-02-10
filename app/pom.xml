@@ -27,10 +27,18 @@
   </repositories>
 
   <properties>
-    <jdk.version>1.8</jdk.version><!-- use Java 8 -->
+    <!-- Java 8 -->
+    <jdk.version>1.8</jdk.version>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.version>3.8.1</maven.version>
+
+    <!-- Maven Plugins -->
+    <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+    <maven-dependency-plugin.version>3.2.0</maven-dependency-plugin.version>
+    <maven-war-plugin.version>3.3.1</maven-war-plugin.version>
+    <maven-surefire-plugin.version>2.22.0</maven-surefire-plugin.version>
+
+    <!-- Dependencies -->
     <servlet-api.version>3.0.1</servlet-api.version>
     <spring-framework.version>5.3.9</spring-framework.version>
     <spring-framework-data.version>3.5.4</spring-framework-data.version>
@@ -302,7 +310,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>${maven.version}</version>
+        <version>${maven-compiler-plugin.version}</version>
         <configuration>
           <source>${jdk.version}</source>
           <target>${jdk.version}</target>
@@ -312,7 +320,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
-        <version>3.2.0</version>
+        <version>${maven-dependency-plugin.version}</version>
         <executions>
           <execution>
             <id>copy-dependencies</id>
@@ -332,7 +340,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
-        <version>3.3.1</version>
+        <version>${maven-war-plugin.version}</version>
         <configuration>
           <archive>
             <manifest>
@@ -342,7 +350,6 @@
           </archive>
         </configuration>
       </plugin>
-      <!-- execute the unit tests during the test phase of the build lifecycle -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>

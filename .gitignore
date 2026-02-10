@@ -30,11 +30,6 @@ redis/data/*
 # Redis
 redis/data/*.rdb
 
-# Maven
-app/.mvn/repository
-app/.mvn/effective-pom.xml
-app/.mvn/effective-settings.xml
-
 # Miscellaneous
 target/
 app/src/main/webapp/META-INF/MANIFEST.MF
