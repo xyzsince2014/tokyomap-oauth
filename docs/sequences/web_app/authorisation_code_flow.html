@@ -1,4 +1,12 @@
-```mermaid
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>Mermaid Demo</title>
+    <script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+<div class="mermaid">
 sequenceDiagram
 autonumber
 
@@ -42,5 +50,11 @@ res->>res: get user by sub of token
 res->>res: create userInfo according to scopes of token
 res-->>app: 200 OK + userInfo
 app->>user: 200 OK + index.html with userInfo
-
-```
+</div>
+<script>
+    mermaid.initialize({
+        startOnLoad: true
+    });
+</script>
+</body>
+</html>
